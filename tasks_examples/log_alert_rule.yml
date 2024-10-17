@@ -1,0 +1,24 @@
+---
+- name: Install log alerts on {{ log_alert_rule.key }}
+  axonops.configuration.log_alert_rule:
+    org: "{{ org }}"
+    cluster: "{{ log_alert_rule.key }}"
+    name: "{{ item.name }}"
+    content: "{{ item.content |default('') }}"
+    operator: "{{ item.operator |default('>=')}}"
+    description: "{{ item.description |default('')}}"
+    level: "{{ item.level |default('')}}"
+    type: "{{ item.type |default('')}}"
+    source: "{{ item.source |default('')}}"
+    warning_value: "{{ item.warning_value }}"
+    critical_value: "{{ item.critical_value }}"
+    duration: "{{ item.duration }}"
+    present: "{{ item.present|default(true) }}"
+  with_items:
+    "{{ log_alert_rule.value }}"
+  tags:
+  - axonops_log_alert_rule
+  - log_alert_rule
+  - alert_rule
+  - alert
+  - rule

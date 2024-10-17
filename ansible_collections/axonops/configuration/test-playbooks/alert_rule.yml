@@ -1,0 +1,67 @@
+- name: test
+  hosts: localhost
+  tasks:
+  - name: Set alert rule for IO Wait
+    axonops.configuration.alert_rule:
+      auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      org: my_org
+      cluster: my_clust
+      dashboard: "System"
+      chart: "Avg IO wait CPU per Host"
+      operator: ">="
+      warning_value: 50
+      critical_value: 90
+      duration: "15m"
+      present: true
+
+  - name: Set alert disk usage
+    axonops.configuration.alert_rule:
+      auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      org: my_org
+      cluster: my_clust
+      dashboard: "System"
+      chart: "Disk % Usage $mountpoint"
+      operator: ">="
+      warning_value: 70
+      critical_value: 90
+      duration: "15m"
+      present: true
+
+  - name: CPU usage
+    axonops.configuration.alert_rule:
+      auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      org: my_org
+      cluster: my_clust
+      dashboard: "System"
+      chart: "CPU usage per host"
+      operator: ">="
+      warning_value: 80
+      critical_value: 90
+      duration: "1h"
+      present: true
+
+  - name: Load Average (15m)
+    axonops.configuration.alert_rule:
+      auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      org: my_org
+      cluster: my_clust
+      dashboard: "System"
+      chart: "Load Average (15m)"
+      operator: ">="
+      warning_value: 15
+      critical_value: 20
+      duration: "1h"
+      present: true
+
+  - name: Used Memory Percentage
+    axonops.configuration.alert_rule:
+      auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      org: my_org
+      cluster: my_clust
+      dashboard: "System"
+      chart: "Used Memory Percentage"
+      operator: ">="
+      warning_value: 85
+      critical_value: 90
+      duration: "5m"
+      present: true

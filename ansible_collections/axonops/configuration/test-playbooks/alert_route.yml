@@ -1,0 +1,14 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: Configure alert routing for slack
+      axonops.configuration.alert_route:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        type: global              # global, metrics, backups, servicechecks, nodes, commands, repairs, rollingrestart
+        enable_override: true     # Ignored for global, enables/disables override on non-global routes. Default true.
+        severity: error           # info, warning, error
+        integration_type: slack   # email, smtp, pagerduty, slack, teams, servicenow, webhook, opsgenie
+        integration_name: "slack integration"
+        present: true

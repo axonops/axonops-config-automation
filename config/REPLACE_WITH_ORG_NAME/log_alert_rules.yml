@@ -1,0 +1,99 @@
+######## Cassandra Log Alert Rules ########
+# This is an example set of log alert rules for Cassandra system.log.
+# These rules are some examples of how alerts can be configured for
+# your Apache Cassandra cluster. The rules defined here will be applied
+# all clusters.
+# Log phrases must be wrapped as: \"text to search\"
+
+axonops_log_alert_rule:
+
+- name: Node Down
+  warning_value: 1
+  critical_value: 5
+  duration: 5m
+  content: \"is now DOWN\"
+  description: Detected node down
+  source: "/var/log/cassandra/system.log"
+  present: true
+
+- name: Unsupported Protocol
+  warning_value: 1
+  critical_value: 30
+  duration: 5m
+  content: \"Invalid or unsupported protocol version\"
+  source: "/var/log/cassandra/system.log"
+  description: Detected clients connecting with invalid or unsupported protocol version
+  present: true
+
+- name: Repair are not in progress
+  warning_value: 1
+  critical_value: 1
+  operator: '<'
+  duration: 24h
+  content: repair
+  source: "/var/log/cassandra/system.log"
+  description: "Detected no repair has been seen in the last 24h"
+  present: true
+
+- name: TLS failed to handshake with peer
+  warning_value: 50
+  critical_value: 100
+  duration: 5m
+  content: \"Failed to handshake with peer\"
+  source: "/var/log/cassandra/system.log"
+  description: "Detected TLS handshake error with peer"
+  present: true
+
+- name: Dropping gossip message
+  warning_value: 1
+  critical_value: 1
+  duration: 1m
+  content: \"dropping message of type GOSSIP\"
+  source: "/var/log/cassandra/system.log"
+  description: "Detected gossip message drops"
+  present: true
+
+- name: Failed stream session
+  warning_value: 1
+  critical_value: 1
+  duration: 5ms
+  content: \"failed stream session\"
+  source: "/var/log/cassandra/system.log"
+  description: "Detected stream session failure"
+  present: true
+
+- name: Corrupt SSTable
+  warning_value: 1
+  critical_value: 1
+  duration: 10s
+  content: \"Corrupt sstable\"
+  source: "/var/log/cassandra/system.log"
+  description: "Detected SSTable file corruption"
+  present: true
+
+- name: Anticompaction
+  warning_value: 1
+  critical_value: 1000
+  duration: 5m
+  content: \"Starting anticompaction\"
+  source: "/var/log/cassandra/system.log"
+  description: "Detected anticompaction - possibly triggered by an incremental repair"
+  present: true
+
+- name: JNA Check
+  warning_value: 1
+  critical_value: 1
+  duration: 30s
+  content: \"JNA not found\"
+  source: "/var/log/cassandra/system.log"
+  description: "Missing JNA"
+  present: true
+
+- name: Unable to compact due to disk space
+  warning_value: 1
+  critical_value: 1
+  duration: 15m
+  content: \"Not enough space for compaction\"
+  source: "/var/log/cassandra/system.log"
+  description: "Unable to compact due to disk space"
+  present: true

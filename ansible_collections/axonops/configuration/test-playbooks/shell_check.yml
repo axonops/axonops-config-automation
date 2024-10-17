@@ -1,0 +1,22 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: set shell check
+      axonops.configuration.shell_check:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        present: true
+        cluster: my_clust
+        interval: '1h'
+        name: 'check_certificates_ssl_transport'
+        script: |-
+          if echo | openssl s_client -connect {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port_ssl {{'}}'}} 2> /dev/null | openssl x509 -noout -checkend 2592000
+          then
+            echo "The certificate on {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port_ssl {{'}}'}} will not expire in the next 30 days!"
+            exit 0
+          else
+            echo "Certificate has expired or will do so within 30 days!"
+            echo "(or is invalid)"
+            exit 1
+          fi
+        timeout: '1h'

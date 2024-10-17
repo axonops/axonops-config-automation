@@ -1,0 +1,17 @@
+---
+- name: Apply TCP Check on {{ tcp_check.key }}
+  axonops.configuration.tcp_check:
+    org: "{{ org }}"
+    cluster: "{{ tcp_check.key }}"
+    present: "{{ item.present|default(true) }}"
+    name: "{{ item.name|default('') }}"
+    interval: "{{ item.interval }}"
+    timeout: "{{ item.timeout }}"
+    tcp: "{{ item.tcp }}"
+  with_items:
+    "{{ tcp_check.value }}"
+  tags:
+  - axonops_tcp_check
+  - tcp_check
+  - check
+  - tcp

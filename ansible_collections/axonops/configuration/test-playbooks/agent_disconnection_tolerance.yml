@@ -1,0 +1,10 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: set agent disconnection
+      axonops.configuration.agent_disconnection_tolerance:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        warn_timeout: '60s'
+        error_timeout: '120s'

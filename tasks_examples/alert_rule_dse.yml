@@ -1,0 +1,25 @@
+---
+- name: Install alerts on {{ alert_rule.key }}
+  axonops.configuration.alert_rule:
+    cluster_type: dse
+    org: "{{ org }}"
+    cluster: "{{ alert_rule.key }}"
+    dashboard: "{{ item.dashboard }}"
+    chart: "{{ item.chart }}"
+    operator: "{{ item.operator }}"
+    warning_value: "{{ item.warning_value }}"
+    critical_value: "{{ item.critical_value }}"
+    duration: "{{ item.duration }}"
+    present: "{{ item.present|default(true) }}"
+    description: "{{ item.description|default(omit) }}"
+    name: "{{ item.name|default() }}"
+    scope: "{{ item.scope|default([]) }}"
+    group_by: "{{ item.group_by|default([]) }}"
+    routing: "{{ item.routing|default(omit) }}"
+  with_items:
+    "{{ alert_rule.value }}"
+  tags:
+  - axonops_alert_rule
+  - alert_rule
+  - alert
+  - rule

@@ -1,0 +1,40 @@
+---
+- name: Install backup on {{ backup.key }}
+  axonops.configuration.backup:
+    org: "{{ org }}"
+    cluster: "{{ backup.key }}"
+    present: "{{ item.present|default(true) }}"
+    local_retention: "{{ item.local_retention|default('10d') }}"
+    remote_path: "{{ item.remote_path }}"
+    remote_retention: "{{ item.remote_retention|default('60d') }}"
+    remote_type: "{{ item.remote_type|default('s3') }}"
+    timeout: "{{ item.timeout|default('10h') }}"
+    transfers: "{{ item.transfers|default('1') }}"
+    remote: "{{ item.remote|default(True) }}"
+    tps_limit: "{{ item.tps_limit|default('50') }}"
+    bw_limit: "{{ item.bw_limit|default('') }}"
+    tag: "{{ item.tag }}"
+    datacenters: "{{ item.datacenters }}"
+    # nodes: {'type': 'list', 'default': []},
+    # tables_keyspace': {'type': 'list'},
+    # tables: {'type': 'list'},
+    keyspaces: "{{ item.keyspaces|default([]) }}"
+    schedule: "{{ item.schedule|default(True) }}"
+    schedule_expr: "{{ item.schedule_expr|default('0 1 * * *') }}"
+    s3_region: "{{ item.s3_region |default('')}}"
+    #s3_access_key_id: "{{ item.s3_access_key_id|default(none) }}"
+    #s3_secret_access_key: "{{ item.s3_secret_access_key|default(none) }}"
+    s3_storage_class: "{{ item.s3_storage_class|default('STANDARD') }}"
+    s3_acl: "{{ item.s3_acl|default('private') }}"
+    s3_encryption: "{{ item.s3_encryption|default('AES256') }}"
+    s3_no_check_bucket: "{{ item.s3_no_check_bucket|default('False') }}"
+    s3_disable_checksum: "{{ item.s3_disable_checksum|default('False') }}"
+    host: "{{ item.host |default('')}}"
+    ssh_user: "{{ item.ssh_user |default(omit)}}"
+    ssh_pass: "{{ item.ssh_pass |default(omit)}}"
+    key_file: "{{ item.key_file |default(omit)}}"
+  with_items:
+    "{{ backup.value }}"
+  tags:
+  - axonops_backup
+  - backup

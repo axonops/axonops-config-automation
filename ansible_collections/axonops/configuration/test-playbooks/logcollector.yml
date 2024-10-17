@@ -1,0 +1,14 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: install the logcollector on SaaS
+      axonops.configuration.log_alert_rule:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        name: GC grace log file
+        interval: 5s
+        timeout: 1m
+        filename: /var/log/cassandra/gc.log.0.current
+        dateFormat: yyyy-MM-ddTHH:mm:ssZ
+        readonly: true

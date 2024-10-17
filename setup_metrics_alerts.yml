@@ -1,0 +1,67 @@
+- hosts: localhost
+  name: "Creates or Update the AxonOps metrics alerts"
+  become: false
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Get the Org name
+      tags: always
+      ansible.builtin.set_fact:
+        org: "{{ lookup('env', 'AXONOPS_ORG') }}"
+      when: org is not defined
+
+    - name: Get the cluster name
+      tags: always
+      ansible.builtin.set_fact:
+        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cluster is not defined
+
+    - name: Fail if no org
+      ansible.builtin.assert:
+        that:
+          - org is defined
+          - org | length > 1
+          - cluster is defined
+
+    - name: Include the org configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/metric_alert_rules.yml"
+
+    - name: Include the default configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/{{ cluster }}/metric_alert_rules.yml"
+
+    - name: Install alerts on {{ org }}/{{ cluster }}
+      axonops.configuration.alert_rule:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        dashboard: "{{ item.dashboard }}"
+        chart: "{{ item.chart }}"
+        operator: "{{ item.operator }}"
+        warning_value: "{{ item.warning_value }}"
+        critical_value: "{{ item.critical_value }}"
+        duration: "{{ item.duration }}"
+        present: "{{ item.present|default(true) }}"
+        description: "{{ item.description|default() }}"
+        name: "{{ item.name|default() }}"
+        scope: "{{ item.scope|default([]) }}"
+        group_by: "{{ item.group_by|default([]) }}"
+        routing: "{{ item.routing|default(omit) }}"
+        percentile: "{{ item.percentile|default([]) }}"
+        consistency: "{{ item.consistency|default([]) }}"
+        metric: "{{ item.metric|default(omit) }}"
+        keyspace: "{{ item.keyspace|default([]) }}"
+      loop: "{{ axonops_alert_rules }}"
+      tags:
+      - axonops_alert_rule
+      - alert_rule
+      - alert
+      - rule
+
+
+# code: language=ansible

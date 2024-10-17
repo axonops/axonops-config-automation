@@ -1,0 +1,74 @@
+- hosts: localhost
+  name: "Creates or Update the AxonOps service checks"
+  become: false
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Get the Org name
+      tags: always
+      ansible.builtin.set_fact:
+        org: "{{ lookup('env', 'AXONOPS_ORG') }}"
+      when: org is not defined
+
+    - name: Get the cluster name
+      tags: always
+      ansible.builtin.set_fact:
+        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cluster is not defined
+
+    - name: Fail if no org
+      ansible.builtin.assert:
+        that:
+          - org is defined
+          - org | length > 1
+          - cluster is defined
+
+    - name: Include the org configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/service_checks.yml"
+
+    - name: Include the default configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/{{ cluster }}/service_checks.yml"
+
+    - name: Apply TCP Check on {{ org }}/{{ cluster }}
+      axonops.configuration.tcp_check:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        present: "{{ item.present|default(true) }}"
+        name: "{{ item.name|default('') }}"
+        interval: "{{ item.interval }}"
+        timeout: "{{ item.timeout }}"
+        tcp: "{{ item.tcp }}"
+      with_items:
+        "{{ axonops_tcp_check }}"
+      tags:
+      - axonops_tcp_check
+      - tcp_check
+      - check
+      - tcp
+
+    - name: Apply Shell Check on {{ org }}/{{ cluster }}
+      axonops.configuration.shell_check:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        present: "{{ item.present|default(true) }}"
+        name: "{{ item.name|default('') }}"
+        interval: "{{ item.interval }}"
+        timeout: "{{ item.timeout }}"
+        shell: "{{ item.shell|default('/bin/bash') }}"
+        script: "{{ item.script }}"
+      with_items:
+        "{{ axonops_shell_check }}"
+      tags:
+      - axonops_shell_check
+      - shell_check
+      - check
+      - shell
+
+# code: language=ansible

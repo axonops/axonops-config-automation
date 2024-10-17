@@ -1,0 +1,11 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: install the repair
+      axonops.configuration.adaptive_repair:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        active: true
+        segments: 3
+        parallelism: 100

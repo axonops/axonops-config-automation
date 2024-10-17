@@ -1,0 +1,58 @@
+- hosts: localhost
+  name: "Creates or Update AxonOps alert routes"
+  become: false
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Get the Org name
+      tags: always
+      ansible.builtin.set_fact:
+        org: "{{ lookup('env', 'AXONOPS_ORG') }}"
+      when: org is not defined
+
+    - name: Get the cluster name
+      tags: always
+      ansible.builtin.set_fact:
+        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cluster is not defined
+
+    - name: Fail if no org
+      ansible.builtin.assert:
+        that:
+          - org is defined
+          - org | length > 1
+          - cluster is defined
+
+    - name: Include the org configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/alert_routes.yml"
+
+    - name: Include the default configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/{{ cluster }}/alert_routes.yml"
+
+    - name: Install alerts on {{ org }}/{{ cluster }}
+      axonops.configuration.alert_route:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        type: "{{ item.type }}"
+        severity: "{{ item.severity }}"
+        integration_type: "{{ item.integration_type }}"
+        integration_name: "{{ item.integration_name }}"
+        enable_override: "{{ item.enable_override }}"
+
+        present: "{{ item.present|default(true) }}"
+      loop: "{{ axonops_alert_routes }}"
+      tags:
+      - axonops_alert_route
+      - alert_route
+      - alert
+      - route
+
+
+# code: language=ansible

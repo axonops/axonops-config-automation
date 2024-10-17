@@ -1,0 +1,30 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: set local backup
+      axonops.configuration.backup:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        present: true
+        local_retention: "3d"
+        datacenters:
+            - 'us-east-101'
+        tag: "local backup set by Ansible"
+        schedule_expr: '0 1 * * *'
+
+    - name: set backup
+      axonops.configuration.backup:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        present: true
+        local_retention: "10d"
+        remote: true
+        remote_type: s3
+        s3_region: us-east-1
+        remote_path: cassandra-s3-my-bucket/my_clust
+        datacenters:
+            - 'us-east-101'
+        tag: "set by Ansible"
+        schedule_expr: '0 2 * * *'

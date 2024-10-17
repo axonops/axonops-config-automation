@@ -1,0 +1,13 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: set http check
+      axonops.configuration.http_check:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        present: true
+        cluster: my_clust
+        interval: '1h'
+        name: 'Check HTTP is working'
+        http: http://127.0.0.1:80
+        timeout: '2m'

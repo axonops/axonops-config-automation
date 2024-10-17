@@ -1,0 +1,13 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: set a log alert rule
+      axonops.configuration.log_alert_rule:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        name: 'Node Down'
+        warning_value: 1
+        critical_value: 10
+        duration: 30s
+        content: 'DOWN'

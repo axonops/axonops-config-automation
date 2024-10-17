@@ -1,0 +1,145 @@
+- hosts: localhost
+  name: "Creates or Update AxonOps alert endpoints"
+  become: false
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Get the Org name
+      tags: always
+      ansible.builtin.set_fact:
+        org: "{{ lookup('env', 'AXONOPS_ORG') }}"
+      when: org is not defined
+
+    - name: Fail if no org
+      ansible.builtin.assert:
+        that:
+          - org is defined
+          - org | length > 1
+
+    - name: Include the default configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/all/alert_endpoints.yml"
+
+    - name: Include the org configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/alert_endpoints.yml"
+
+    - name: List clusters in the org
+      axonops.configuration.get_clusters:
+        org: "{{ org }}"
+      register: _clusters
+      tags: always
+
+    - name: Define primary cluster
+      tags: always
+      ansible.builtin.set_fact:
+        cluster: "{{ _clusters['clusters']['cassandra'][0] }}"
+
+  tasks:
+    - name: Install pagerduty integrations
+      axonops.configuration.pagerduty_integration:
+        org: "{{ org }}"
+        cluster: "{{ cluster}}"
+        name: "{{ item.name }}"
+        integration_key: "{{ item.integration_key }}"
+        present: "{{ item.present|default(true) }}"
+      with_items:
+        "{{ axonops_pagerduty_integration }}"
+      when: axonops_pagerduty_integration is defined
+      tags:
+      - axonops_pagerduty_integration
+      - pagerduty_integration
+      - integration
+      - pagerduty
+
+    - name: Apply Slack Integrations
+      axonops.configuration.slack_integration:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        name: "{{ item.name }}"
+        webhook_url: "{{ item.webhook_url }}"
+      when: axonops_slack_integration is defined
+      with_items:
+        "{{ axonops_slack_integration }}"
+      tags:
+      - axonops_slack_integration
+      - slack_integration
+      - integration
+      - slack
+
+    - name: Apply OpsGenie Integrations
+      axonops.configuration.opsgenie_integration:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        name: "{{ item.name }}"
+        opsgenie_key: "{{ item.opsgenie_key }}"
+      when: axonops_opsgenie_integration is defined
+      with_items:
+        "{{ axonops_opsgenie_integration }}"
+      tags:
+      - axonops_opsgenie_integration
+      - opsgenie_integration
+      - integration
+      - opsgenie
+
+    - name: Apply ServiceNow Integrations
+      axonops.configuration.servicenow_integration:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        name: "{{ item.name }}"
+        instance_name: "{{ item.instance_name }}"
+        user: "{{ item.user }}"
+        password: "{{ item.password }}"
+      when: axonops_servicenow_integration is defined
+      with_items:
+        "{{ axonops_servicenow_integration }}"
+      tags:
+      - axonops_servicenow_integration
+      - servicenow_integration
+      - integration
+      - servicenow
+
+    - name: Apply Microsoft Teams Integrations
+      axonops.configuration.teams_integration:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        name: "{{ item.name }}"
+        webhook_url: "{{ item.webhook_url }}"
+      when: axonops_teams_integration is defined
+      with_items:
+        "{{ axonops_teams_integration }}"
+      tags:
+      - axonops_teams_integration
+      - teams_integration
+      - integration
+      - teams
+
+
+    # Set up alert routes for:
+    # - Global
+    # - Metrics
+    # - Backups
+    # - Service checks
+    # - Nodes
+    # - Repairs
+    - name: Set Up Routes
+      axonops.configuration.teams_integration:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        name: "{{ item.name }}"
+        webhook_url: "{{ item.webhook_url }}"
+      when: axonops_teams_integration is defined
+      with_items:
+        "{{ axonops_teams_integration }}"
+      tags:
+      - axonops_teams_integration
+      - teams_integration
+      - integration
+      - teams
+
+# code: language=ansible

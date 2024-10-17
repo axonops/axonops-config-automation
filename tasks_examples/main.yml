@@ -1,0 +1,15 @@
+---
+
+- include_tasks: cassandra.yml
+  vars:
+    cassandra_data: "{{ cassandra }}"
+  when: cassandra is defined
+  tags:
+  - always
+
+- include_tasks: dse.yml
+  vars:
+    cassandra_data: "{{ dse }}"
+  when: dse is defined
+  tags:
+  - always

@@ -1,0 +1,9 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: set axonops_humanReadableid
+      axonops.configuration.human_readableid:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        id: axon_agent_hostname

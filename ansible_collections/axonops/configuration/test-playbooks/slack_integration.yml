@@ -1,0 +1,11 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: apply Slack integration
+      axonops.configuration.slack_integration:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        name: "my slack integration"
+        webhook_url: "https://hooks.slack.com/services/AAAA/bbbb/ccccdddddeeee"
+        present: true

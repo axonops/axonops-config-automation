@@ -1,0 +1,11 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: apply PagerDuty integration
+      axonops.configuration.pagerduty_integration:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        cluster: my_clust
+        name: "axonops my PD integration"
+        integration_key: "12345678901234567890"
+        present: true

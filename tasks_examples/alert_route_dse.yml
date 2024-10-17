@@ -1,0 +1,19 @@
+---
+- name: Install alert route on {{ alert_route.key }}
+  axonops.configuration.alert_route:
+    cluster_type: dse
+    org: "{{ org }}"
+    cluster: "{{ alert_route.key }}"
+    type: "{{ item.type|default('global') }}"
+    enable_override: "{{ item.enable_override|default(true) }}"
+    severity: "{{ item.severity|default('error') }}"
+    integration_type: "{{ item.integration_type }}"
+    integration_name: "{{ item.integration_name }}"
+    present: "{{ item.present|default(true) }}"
+  with_items:
+    "{{ alert_route.value }}"
+  tags:
+  - axonops_alert_route
+  - alert_route
+  - route
+  - alert

@@ -1,0 +1,48 @@
+
+## Add all Slack integration endpoints here
+axonops_slack_integration:
+- name: example_slack_integration_developer
+  webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+- name: example_slack_integration_ops
+  webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+- name: example_slack_integration_backups
+  webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+- name: example_slack_integration_metrics
+  webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+- name: example_slack_integration_repair
+  webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+
+## Add all Pagerduty integration endpoints here
+axonops_pagerduty_integration:
+- name: example_pagerduty_integration_developer
+  integration_key: REPLACE_WITH_INTEGRATION_KEY 
+- name: example_pagerduty_integration_ops
+  integration_key: REPLACE_WITH_INTEGRATION_KEY 
+
+
+## Add all Opsgenie integration endpoints here
+axonops_opsgenie_integration:
+- name: example_opsgenie_integration_developer
+  opsgenie_key: REPLACE_WITH_OPSGENIE_KEY  
+- name: example_opsgenie_integration_ops
+  opsgenie_key: REPLACE_WITH_OPSGENIE_KEY  
+
+
+## Add all ServiceNow integration endpoints here
+axonops_servicenow_integration:
+- name: example_servicenow_integration_developer
+  instance_name: REPLACE_WITH_INSTANCE_NAME
+  user: RELACE_WITH_SERVICENOW_USER
+  password: REPLACE_WITH_SERVICENOW_PASSWORD
+- name: example_servicenow_integration_ops
+  instance_name: REPLACE_WITH_INSTANCE_NAME
+  user: RELACE_WITH_SERVICENOW_USER
+  password: REPLACE_WITH_SERVICENOW_PASSWORD
+
+## Add all Microsoft Teams integration endpoints here
+axonops_teams_integration:
+- name: example_teams_integration_developer
+  webhook_url: REPLACE_WITH_TEAMS_URL
+- name: example_teams_integration_ops
+  webhook_url: REPLACE_WITH_TEAMS_URL
+

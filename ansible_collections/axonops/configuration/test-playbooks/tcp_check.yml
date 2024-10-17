@@ -1,0 +1,13 @@
+- name: test
+  hosts: localhost
+  tasks:
+    - name: set tcp check
+      axonops.configuration.tcp_check:
+        auth_token: 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+        org: my_org
+        present: false
+        cluster: my_clust
+        interval: '1h'
+        name: 'cql_client_port'
+        tcp: "{{'{{'}}.comp_listen_address{{'}}'}}:{{'{{'}}.comp_native_transport_port{{'}}'}}"
+        timeout: '1m'

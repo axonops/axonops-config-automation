@@ -1,0 +1,18 @@
+---
+- name: Apply Shell Check on {{ shell_check.key }}
+  axonops.configuration.shell_check:
+    org: "{{ org }}"
+    cluster: "{{ shell_check.key }}"
+    present: "{{ item.present|default(true) }}"
+    name: "{{ item.name|default('') }}"
+    interval: "{{ item.interval }}"
+    timeout: "{{ item.timeout }}"
+    shell: "{{ item.shell|default('/bin/bash') }}"
+    script: "{{ item.script }}"
+  with_items:
+    "{{ shell_check.value }}"
+  tags:
+  - axonops_shell_check
+  - shell_check
+  - check
+  - shell

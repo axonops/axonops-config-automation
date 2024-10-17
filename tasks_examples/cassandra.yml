@@ -1,0 +1,134 @@
+---
+- name: Print debug info if in debug mode {{ cassandra_data.key }}
+  ansible.builtin.debug:
+    var: cassandra_data
+    verbosity: 2
+
+- include_tasks: pagerduty_integration.yml
+  with_dict: "{{ cassandra_data.axonops_pagerduty_integration }}"
+  loop_control:
+    loop_var: pagerduty_integration
+  when: cassandra_data.axonops_pagerduty_integration is defined
+  tags:
+  - axonops_pagerduty_integration
+  - pagerduty_integration
+  - integration
+  - pagerduty
+
+- include_tasks: slack_integration.yml
+  with_dict: "{{ cassandra_data.axonops_slack_integration }}"
+  loop_control:
+    loop_var: slack_integration
+  when: cassandra_data.axonops_slack_integration is defined
+  tags:
+  - axonops_slack_integration
+  - slack_integration
+  - integration
+  - slack
+
+- include_tasks: adaptive_repair.yml
+  with_dict: "{{ cassandra_data.axonops_adaptive_repair }}"
+  loop_control:
+    loop_var: adaptive_repair
+  when: cassandra_data.axonops_adaptive_repair is defined
+  tags:
+  - axonops_adaptive_repair
+  - adaptive_repair
+  - repair
+
+- include_tasks: agent_disconnection_tolerance.yml
+  with_dict: "{{ cassandra_data.axonops_agent_disconnection_tolerance }}"
+  loop_control:
+    loop_var: agent_disconnection_tolerance
+  when: cassandra_data.axonops_agent_disconnection_tolerance is defined
+  tags:
+  - axonops_agent_disconnection_tolerance
+  - agent_disconnection_tolerance
+  - disconnection_tolerance
+
+- include_tasks: alert_rule.yml
+  with_dict: "{{ cassandra_data.axonops_alert_rule }}"
+  loop_control:
+    loop_var: alert_rule
+  when: cassandra_data.axonops_alert_rule is defined
+  tags:
+  - axonops_alert_rule
+  - alert_rule
+  - alert
+  - rule
+
+- include_tasks: alert_route.yml
+  with_dict: "{{ cassandra_data.axonops_alert_route }}"
+  loop_control:
+    loop_var: alert_route
+  when: cassandra_data.axonops_alert_route is defined
+  tags:
+  - axonops_alert_route
+  - alert_route
+  - route
+  - alert
+
+- include_tasks: backup.yml
+  with_dict: "{{ cassandra_data.axonops_backup }}"
+  loop_control:
+    loop_var: backup
+  when: cassandra_data.axonops_backup is defined
+  tags:
+  - axonops_backup
+  - backup
+
+- include_tasks: human_readableid.yml
+  with_dict: "{{ cassandra_data.axonops_human_readableid }}"
+  loop_control:
+    loop_var: human_readableid
+  when: cassandra_data.axonops_human_readableid is defined
+  tags:
+  - axonops_human_readableid
+  - human_readableid
+  - readableid
+
+- include_tasks: log_alert_rule.yml
+  with_dict: "{{ cassandra_data.axonops_log_alert_rule }}"
+  loop_control:
+    loop_var: log_alert_rule
+  when: cassandra_data.axonops_log_alert_rule is defined
+  tags:
+  - axonops_log_alert_rule
+  - log_alert_rule
+  - alert_rule
+  - alert
+  - rule
+
+- include_tasks: logcollector.yml
+  with_dict: "{{ cassandra_data.axonops_logcollector }}"
+  loop_control:
+    loop_var: logcollector
+  when: cassandra_data.axonops_logcollector is defined
+  tags:
+  - axonops_logcollector
+  - logcollectors
+  - logcollector
+  - logs
+  - log
+
+- include_tasks: shell_check.yml
+  with_dict: "{{ cassandra_data.axonops_shell_check }}"
+  loop_control:
+    loop_var: shell_check
+  when: cassandra_data.axonops_shell_check is defined
+  tags:
+  - axonops_shell_check
+  - shell_check
+  - check
+  - shell
+
+- include_tasks: tcp_check.yml
+  with_dict: "{{ cassandra_data.axonops_tcp_check }}"
+  loop_control:
+    loop_var: tcp_check
+  when: cassandra_data.axonops_tcp_check is defined
+  tags:
+  - axonops_tcp_check
+  - tcp_check
+  - check
+  - tcp

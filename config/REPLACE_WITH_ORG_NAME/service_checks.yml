@@ -1,0 +1,88 @@
+######## Service Checks ########
+# This is an example set of service checks for the health of your cluster.
+# These rules are some examples of how checks can be configured for
+# your Apache Cassandra cluster. The checks defined here will be applied
+# to all clusters
+
+
+axonops_shell_check:
+
+- name: SSL certificate check
+  interval: 12h
+  timeout: 1m
+  script: |-
+    set -euo pipefail
+    EXIT_OK=0
+    EXIT_WARNING=1
+    EXIT_CRITICAL=2
+    if output=$(echo | openssl s_client -connect {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port {{'}}'}} 2>/dev/null); then
+      # Check OCSP validity
+      if echo "$output" | openssl x509 -noout -ocspid > /dev/null 2>&1; then
+        echo "OCSP stapling is OK."
+      else
+        echo "OCSP stapling is NOT available or the OCSP response is INVALID."
+        exit $EXIT_CRITICAL
+      fi
+      # Check certificate expiration
+      if echo "$output" | openssl x509 -noout -checkend 432000; then
+        if echo "$output" | openssl x509 -noout -checkend 864000; then
+          echo "The certificate on {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port {{'}}'}} will NOT expire in the next 10 days!"
+        else
+          echo "Certificate will expire within 10 days!"
+          echo "(or is invalid)"
+          exit $EXIT_WARNING
+        fi
+      else
+        echo "Certificate has expired or will do so within 5 days!"
+        echo "(or is invalid)"
+        exit $EXIT_CRITICAL
+      fi
+    else
+      echo "Unable to connect to {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port {{'}}'}}. Endpoint is unreachable."
+      exit $EXIT_OK
+    fi
+
+- name: Debian / Ubuntu - Check host needs reboot
+  interval: 12h
+  present: true
+  timeout: 1m
+  script: |-
+    set -euo pipefail
+
+    if [ -f /var/run/reboot-required ]
+    then
+        echo `hostname` Reboot required
+        exit 1
+    else
+        echo "Nothing to do"
+    fi
+
+- name: Check AWS events
+  interval: 12h
+  present: true
+  timeout: 1m
+  shell: '/usr/bin/python3'
+  script: |-
+    import urllib.request
+    import json
+
+    url = "http://169.254.169.254/latest/meta-data/events/maintenance/scheduled"
+    response = urllib.request.urlopen(url).read()
+
+    data = json.loads(response.decode('utf-8'))
+
+    if not data:
+        print("No events for this node")
+        exit(0)
+    else:
+        print("Events detected:")
+        for event in data:
+            print(f"{event['NotBefore']} - {event['Description']}")
+        exit(1)
+
+axonops_tcp_check:
+- name: cql_client_port
+  interval: 3m
+  timeout: 1m
+  tcp: "{{'{{'}}.comp_listen_address{{'}}'}}:{{'{{'}}.comp_native_transport_port{{'}}'}}"
+  present: true
