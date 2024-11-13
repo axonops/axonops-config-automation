@@ -128,13 +128,16 @@ An example configuration for a metric alert is shown below.
 `name:` is the name of the alert
 
 `dashboard:` must correspond to the dashboard name in the AxonOps right-hand menu.
+
 ![Dashboard -> System](./assets/axonops-dashboard-system.png)
 
 `chart:` must correspond to the name of the chart within the above dashboard. In this case `CPU usage per host`. The metric query is
 automatically detected by specifying the chart name.
+
 ![Chart - CPU usage per host](./assets/axonops-chart-cpu-usage.png)
 
 `operator:` options are: `==`, `>=`, `>`, `<=`, `<`, `!=`.
+
 ![Alert Rule Operators](./assets/axonops-alert-rule-operators.png)
 
 `critical_value:` is the critical value threshold.
@@ -173,6 +176,7 @@ An example configuration for a log alert is shown below.
 `content`: is the text search. Double quotes must be escaped.
 
 `source`: specifies the log source.
+
 ![Event Source](./assets/axonops-event-source.png)
 
 `description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
