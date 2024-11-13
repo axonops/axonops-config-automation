@@ -1,4 +1,4 @@
-# axonops-alerts
+# axonops-config-automation
 
 Tool to manage AxonOps settings
 
