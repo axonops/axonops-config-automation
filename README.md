@@ -156,6 +156,9 @@ Currently the following matching syntax is supported:
 * `hello` - matches `hello`
 * `hello world` - matches `hello` or `world`
 * `"hello world"` - matches exact `hello world`
+* `-hello` - matches excluding `hello`
+* `-"hello world"` - matches excluding `hello world`
+* `-hello -world` - matches excluding `hello` or `world`
 
 An example configuration for a log alert is shown below.
 ```
@@ -166,6 +169,7 @@ An example configuration for a log alert is shown below.
   content: \"Failed to handshake with peer\"
   source: "/var/log/cassandra/system.log"
   description: "Detected TLS handshake error with peer"
+  level: warning,error,info
   present: true
 ```
 `name:` is the name of the alert.
@@ -183,6 +187,8 @@ An example configuration for a log alert is shown below.
 ![Event Source](./assets/axonops-event-source.png)
 
 `description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
+
+`level:` sets the event level filter - a comma separated list with the following values: `debug`, `error`, `warning`, `info`
 
 `present:` `true|false` - by setting it to `false` it will remove the alert.
 
