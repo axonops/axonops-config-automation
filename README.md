@@ -104,24 +104,100 @@ files are provided under `config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME
 in this folder will append and override the settings provided in the org folder.
 
 
-## Playbooks
+## Alert Endpoints
+Alert endpoints such as Slack, Teams, PagerDuty, OpsGenie can be configured using this Ansible playbook.
+Since alert enpoints configurations are AxonOps org-level setting, the configuration file is placed at `./config/<org_name>/alert_endpoints`.
 
+
+## Metric Alert Rules
+The metric alert rules are configured against the charts that exists for the AxonOps dashboard in each cluster.
+Multiple alert rules can be configured against each chart.
+
+An example configuration for a metric alert is shown below.
+
+```
+- name: CPU usage per host
+  dashboard: System
+  chart: CPU usage per host
+  operator: '>='
+  critical_value: 99
+  warning_value: 90
+  duration: 1h
+  description: Detected High CPU usage
+```
+`name:` is the name of the alert
+
+`dashboard:` must correspond to the dashboard name in the AxonOps right-hand menu.
+![Dashboard -> System](./assets/axonops-dashboard-system.png)
+
+`chart:` must correspond to the name of the chart within the above dashboard. In this case `CPU usage per host`. The metric query is
+automatically detected by specifying the chart name.
+![Chart - CPU usage per host](./assets/axonops-chart-cpu-usage.png)
+
+`operator:` options are: `==`, `>=`, `>`, `<=`, `<`, `!=`
+![Alert Rule Operators](./assets/axonops-alert-rule-operators.png)
+
+`critical_value:` is the critical value threshold
+
+`warning_value:` is the warning value threshold
+
+`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered
+
+`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised
+
+## Log Alert Rules
+Currently the following matching syntax is supported
+* `hello` - matches `hello`
+* `hello world` - matches `hello` or `world`
+* `"hello world"` - matches exact `hello world`
+
+An example configuration for a log alert is shown below.
+```
+- name: TLS failed to handshake with peer
+  warning_value: 50
+  critical_value: 100
+  duration: 5m
+  content: \"Failed to handshake with peer\"
+  source: "/var/log/cassandra/system.log"
+  description: "Detected TLS handshake error with peer"
+  present: true
+```
+`name:` is the name of the alert
+
+`warning_value:` is the warning value threshold based on the count of matched logs
+
+`critical_value:` is the critical value threshold based on the count of matched logs
+
+`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered
+
+`content`: is the text search. Double quotes must be escaped
+
+`source`: specifies the log source.
+![Event Source](./assets/axonops-event-source.png)
+
+`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised
+
+## Service Checks
+Service checks in AxonOps can be configured using this playbook. Example service check configurations can be found
+in `./config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml`
+
+
+## Playbooks
 The playbooks are designed to run in a predefined order as some of them depend on the others. For example,
 you'll need to create the alert endpoints before you can set up alert routing.
 
-1. Set up endpoints
+1. Set up alert endpoints
 2. Set up routes
 3. Set up metrics alerts
 4. Set up log alerts
 5. Set up Service checks
 
 ### Running
-
 The provided [Makefile](./Makefile) is the easiest way to run the playbooks:
 
 ```
 ❯ make help
-metrics-alerts                         Create alerts based on metrics
+metrics-alerts                 Create alerts based on metrics
 check                          run pre-commit tests
 endpoints                      Create alert endpoints and integrations
 log-alerts                     Create alerts based on logs
