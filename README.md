@@ -106,7 +106,7 @@ in this folder will append and override the settings provided in the org folder.
 
 ## Alert Endpoints
 Alert endpoints such as Slack, Teams, PagerDuty, OpsGenie can be configured using this Ansible playbook.
-Since alert enpoints configurations are AxonOps org-level setting, the configuration file is placed at `./config/<org_name>/alert_endpoints`.
+Since alert enpoints configurations are AxonOps org-level setting, the configuration file is placed at `./config/<org_name>/alert_endpoints.yml`.
 
 
 ## Metric Alert Rules
@@ -152,6 +152,8 @@ automatically detected by specifying the chart name.
 `present:` `true|false` - by setting it to `false` it will remove the alert.
 
 ## Log Alert Rules
+Log alerts can be defined using this Ansible playbook. The 
+
 Currently the following matching syntax is supported:
 * `hello` - matches `hello`
 * `hello world` - matches `hello` or `world`
