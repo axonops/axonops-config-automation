@@ -134,19 +134,19 @@ An example configuration for a metric alert is shown below.
 automatically detected by specifying the chart name.
 ![Chart - CPU usage per host](./assets/axonops-chart-cpu-usage.png)
 
-`operator:` options are: `==`, `>=`, `>`, `<=`, `<`, `!=`
+`operator:` options are: `==`, `>=`, `>`, `<=`, `<`, `!=`.
 ![Alert Rule Operators](./assets/axonops-alert-rule-operators.png)
 
-`critical_value:` is the critical value threshold
+`critical_value:` is the critical value threshold.
 
-`warning_value:` is the warning value threshold
+`warning_value:` is the warning value threshold.
 
-`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered
+`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered.
 
-`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised
+`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
 
 ## Log Alert Rules
-Currently the following matching syntax is supported
+Currently the following matching syntax is supported:
 * `hello` - matches `hello`
 * `hello world` - matches `hello` or `world`
 * `"hello world"` - matches exact `hello world`
@@ -162,24 +162,25 @@ An example configuration for a log alert is shown below.
   description: "Detected TLS handshake error with peer"
   present: true
 ```
-`name:` is the name of the alert
+`name:` is the name of the alert.
 
-`warning_value:` is the warning value threshold based on the count of matched logs
+`warning_value:` is the warning value threshold based on the count of matched logs.
 
-`critical_value:` is the critical value threshold based on the count of matched logs
+`critical_value:` is the critical value threshold based on the count of matched logs.
 
-`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered
+`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered.
 
-`content`: is the text search. Double quotes must be escaped
+`content`: is the text search. Double quotes must be escaped.
 
 `source`: specifies the log source.
 ![Event Source](./assets/axonops-event-source.png)
 
-`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised
+`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
 
 ## Service Checks
 Service checks in AxonOps can be configured using this playbook. Example service check configurations can be found
-in `./config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml`
+in:
+`./config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml`
 
 
 ## Playbooks
