@@ -183,7 +183,7 @@ Currently the following matching syntax is supported:
 * `-"hello world"` - matches excluding `hello world`
 * `-hello -world` - matches excluding `hello` or `world`
 
-`source`: specifies the log source.
+`source`: specifies the log source. This must match with one of the options available in the `Source` filter found in the Logs&Events view.
 
 ![Event Source](./assets/axonops-event-source.png)
 
