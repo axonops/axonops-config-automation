@@ -152,15 +152,7 @@ automatically detected by specifying the chart name.
 `present:` `true|false` - by setting it to `false` it will remove the alert.
 
 ## Log Alert Rules
-Log alerts can be defined using this Ansible playbook. The 
-
-Currently the following matching syntax is supported:
-* `hello` - matches `hello`
-* `hello world` - matches `hello` or `world`
-* `"hello world"` - matches exact `hello world`
-* `-hello` - matches excluding `hello`
-* `-"hello world"` - matches excluding `hello world`
-* `-hello -world` - matches excluding `hello` or `world`
+Log alerts can be defined using this Ansible playbook.
 
 An example configuration for a log alert is shown below.
 ```
@@ -183,6 +175,13 @@ An example configuration for a log alert is shown below.
 `duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered.
 
 `content`: is the text search. Double quotes must be escaped.
+Currently the following matching syntax is supported:
+* `hello` - matches `hello`
+* `hello world` - matches `hello` or `world`
+* `"hello world"` - matches exact `hello world`
+* `-hello` - matches excluding `hello`
+* `-"hello world"` - matches excluding `hello world`
+* `-hello -world` - matches excluding `hello` or `world`
 
 `source`: specifies the log source.
 
