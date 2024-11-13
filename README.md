@@ -124,6 +124,7 @@ An example configuration for a metric alert is shown below.
   warning_value: 90
   duration: 1h
   description: Detected High CPU usage
+  present: true
 ```
 `name:` is the name of the alert
 
@@ -147,6 +148,8 @@ automatically detected by specifying the chart name.
 `duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered.
 
 `description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
+
+`present:` `true|false` - by setting it to `false` it will remove the alert.
 
 ## Log Alert Rules
 Currently the following matching syntax is supported:
@@ -180,6 +183,8 @@ An example configuration for a log alert is shown below.
 ![Event Source](./assets/axonops-event-source.png)
 
 `description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
+
+`present:` `true|false` - by setting it to `false` it will remove the alert.
 
 ## Service Checks
 Service checks in AxonOps can be configured using this playbook. Example service check configurations can be found
