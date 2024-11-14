@@ -175,7 +175,7 @@ def run_module():
         module.exit_json(**result)
         return
 
-    new_check['readonly'] = True
+    new_check['readonly'] = False
 
     new_check['integrations'] = {
         'OverrideError': False,
