@@ -56,25 +56,44 @@ options:
             - It can be read from the environment variable AXONOPS_CLUSTER_TYPE.
         required: false
         type: str
-
 '''
 
 EXAMPLES = r'''
-# Activate Adaptive Repair on cluster `my_cluster` of `my_company`
-  - name: Activate Adaptive Repair on my_cluster
-    axonops_adaptive_repair:
-      auth_token: "{{ secret }}"
-      org: my_company
-      cluster: my_cluster
-      active: true
-# Make sure single_instance has no Adaptive Repair active
-  - name: Make sure single_instance has no Adaptive Repair active
-    axonops_adaptive_repair:
-      auth_token: "{{ secret }}"
-      org: my_company
-      cluster: single_instance
-      active: false
+# setup backup to Azure blob on cluster `my_cluster` of `my_company`
+  - name: Setup backup to azure blob using MSI for auth
+    axonops.configuration.backup:
+        org: my_company
+        cluster: my_cluster
+        present: true
+        local_retention: 10d
+        remote_path: /mybackup/path
+        remote_retention: 60d
+        remote_type: azure
+        tag: "{{ item.tag }}"
+        datacenters: dc1
+        schedule: True
+        schedule_expr: '0 1 * * *'
+        azure_account: blob_account_name
+        azure_use_msi: true
 
+# setup backup to S3 bucket on cluster `my_cluster` of `my_company`
+  - name: Setup backup to azure blob using MSI for auth
+    axonops.configuration.backup:
+        org: my_company
+        cluster: my_cluster
+        present: true
+        local_retention: 10d
+        remote_path: /mybackup/path
+        remote_retention: 60d
+        remote_type: s3
+        tag: "{{ item.tag }}"
+        datacenters: dc1
+        schedule: True
+        schedule_expr: '0 1 * * *'
+        s3_region: eu-west-1
+        s3_access_key_id: key-id
+        s3_secret_access_key: access-key
+        s3_acl: private
 '''
 
 RETURN = r'''
@@ -100,7 +119,7 @@ def run_module():
         'local_retention': {'type': 'str', 'default': "10d"},
         'remote_path': {'type': 'str', 'required': False, 'default': ''},
         'remote_retention': {'type': 'str', 'default': "60d"},
-        'remote_type': {'type': 'str', 'required': False, 'default': 'local', 'choices': ['local', 's3', 'sftp']},
+        'remote_type': {'type': 'str', 'required': False, 'default': 'local', 'choices': ['local', 's3', 'sftp', 'azure']},
         'timeout': {'type': 'str', 'default': "10h"},
         'transfers': {'type': 'int', 'default': 1},
         'remote': {'type': 'bool', 'default': False},
@@ -133,6 +152,14 @@ def run_module():
         'ssh_user': {'type': 'str'},
         'ssh_pass': {'type': 'str'},
         'key_file': {'type': 'str'},
+        # Azure Blob only
+        'azure_account': {'type': 'str'},
+        'azure_endpoint': {'type': 'str', 'required': False},
+        'azure_key': {'type': 'str', 'required': False},
+        'azure_use_msi': {'type': 'bool', 'default': False},
+        'azure_msi_object_id': {'type': 'str', 'required': False},
+        'azure_msi_client_id': {'type': 'str', 'required': False},
+        'azure_msi_mi_res_id': {'type': 'str', 'required': False},
     })
 
     module = AnsibleModule(
@@ -140,11 +167,13 @@ def run_module():
         supports_check_mode=True,
         required_if=[
             ('remote', True, ('remote_path', 'remote_type',)),
-            ('remote_type', 's3', ('s3_region',))
+            ('remote_type', 's3', ('s3_region',)),
+            ('remote_type', 'azure', ('azure_account',))
         ],
         mutually_exclusive=[
             ('tables', 'keyspaces'),
             ('tables_keyspace', 'keyspaces'),
+            ('azure_msi_object_id', 'azure_msi_client_id', 'azure_msi_mi_res_id')
         ],
         required_together=[
             ('tables', 'tables_keyspace'),
@@ -249,6 +278,34 @@ def run_module():
                     'ssh_pass': string_or_none(remote_config.get('password')),
                     'key_file': string_or_none(remote_config.get('key_file')),
                 }
+            elif existing_backup_details['remoteType'] == 'azure':
+                current_setting = {
+                    'present': True,
+                    'ID': existing_backup['ID'],
+                    'local_retention': existing_backup_details['LocalRetentionDuration'],
+                    'remote_path': existing_backup_details['remotePath'],
+                    'remote_retention': existing_backup_details['RemoteRetentionDuration'],
+                    'remote_type': existing_backup_details['remoteType'],
+                    'timeout': existing_backup_details['timeout'],
+                    'transfers': existing_backup_details['transfers'],
+                    'remote': True,
+                    'tps_limit': existing_backup_details['tpslimit'],
+                    'bw_limit': existing_backup_details['bwlimit'],
+                    'tag': existing_backup_details['tag'],
+                    'datacenters': existing_backup_details['datacenters'],
+                    'nodes': existing_backup_details['nodes'] if 'nodes' in existing_backup_details else [],
+                    'tables': existing_backup_details['tables'] if 'tables' in existing_backup_details else [],
+                    'keyspaces': existing_backup_details['keyspaces'] if 'keyspaces' in existing_backup_details else [],
+                    'schedule': existing_backup_details['schedule'],
+                    'schedule_expr': existing_backup_details['scheduleExpr'],
+                    'azure_account': string_or_none(remote_config.get('account')),
+                    'azure_endpoint': string_or_none(remote_config.get('endpoint')),
+                    'azure_key': string_or_none(remote_config.get('key')),
+                    'azure_use_msi': string_or_none(remote_config.get('use_msi')),
+                    'azure_msi_object_id': string_or_none(remote_config.get('msi_object_id')),
+                    'azure_msi_client_id': string_or_none(remote_config.get('msi_client_id')),
+                    'azure_msi_mi_res_id': string_or_none(remote_config.get('msi_mi_res_id')),
+                }                
         else:
             # for local only backups
             current_setting = {
@@ -345,8 +402,35 @@ def run_module():
                 'ssh_user': module.params['ssh_user'],
                 'ssh_pass': module.params['ssh_pass'],
                 'key_file': module.params['key_file'],
-
             }
+        elif module.params['remote_type'] == 'azure':
+            requested_setting = {
+                'present': module.params['present'],
+                'ID': existing_backup['ID'] if existing_backup else str(uuid.uuid4()),
+                'local_retention': module.params['local_retention'],
+                'remote_path': module.params['remote_path'],
+                'remote_retention': module.params['remote_retention'],
+                'remote_type': module.params['remote_type'].lower(),
+                'timeout': module.params['timeout'],
+                'transfers': module.params['transfers'],
+                'remote': module.params['remote'],
+                'tps_limit': module.params['tps_limit'],
+                'bw_limit': module.params['bw_limit'],
+                'tag': module.params['tag'],
+                'datacenters': module.params['datacenters'],
+                'nodes': requested_nodes,
+                'tables': requested_tables,
+                'keyspaces': requested_keyspaces,
+                'schedule': module.params['schedule'],
+                'schedule_expr': module.params['schedule_expr'],
+                'azure_account': module.params['azure_account'],
+                'azure_endpoint': module.params['azure_endpoint'],
+                'azure_key': module.params['azure_key'],
+                'azure_use_msi': module.params['azure_use_msi'],
+                'azure_msi_object_id': module.params['azure_msi_object_id'],
+                'azure_msi_client_id': module.params['azure_msi_client_id'],
+                'azure_msi_mi_res_id': module.params['azure_msi_mi_res_id'],
+            }            
     else:
         # for local only
         requested_setting = {
@@ -396,6 +480,25 @@ def run_module():
             }
 
             remote_config = "\n".join([f"{k} = {v}" for k, v in remote_config_dict.items()])
+        elif requested_setting['remote_type'] == 'azure':
+            # Note if use_msi is true then need to unset env_auth
+            remote_config_dict = {
+                'type': 'azureblob',
+                'account': requested_setting['azure_account'],
+            }
+
+            if requested_setting.get('azure_use_msi'):
+                remote_config_dict['use_msi'] = 'true'
+                if requested_setting['azure_msi_object_id']:
+                    remote_config_dict['msi_object_id '] = requested_setting['azure_msi_object_id']
+                if requested_setting['azure_msi_client_id']:
+                    remote_config_dict['msi_client_id '] = requested_setting['azure_msi_client_id']
+                if requested_setting['azure_msi_mi_res_id']:
+                    remote_config_dict['msi_mi_res_id '] = requested_setting['azure_msi_mi_res_id']
+
+            # transform the dict in the prom like format needed by AxonOps
+            remote_config = "\n".join([f"{k} = {v}" for k, v in remote_config_dict.items()])
+
         else:
             remote_config = ''
             module.fail_json(msg=f"remote type {requested_setting['remote_type']} unsupported", **result)
