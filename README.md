@@ -29,14 +29,14 @@ export AXONOPS_ORG='example'
 export AXONOPS_TOKEN='aaaabbbbccccddddeeee'
 ```
 
-To make the process easier the file `export_tokens.sh` was created with all the accepted variables.
-Modify the file with your details and exports them with
+To simplify the process, the `export_tokens.sh` file has been created with all the accepted variables. Modify this file with your specific details, and then export the variables.
 
 ```commandline
 source ./export_tokens.sh
 ```
 
-See the file itself for more details on the accepted environment variables
+The `AXONOPS_TOKEN` parameter is used only for AxonOps SaaS. For AxonOps on-premises, you can use a username and password or configure it to allow anonymous login. 
+Refer to `export_tokens.sh` for more information on configuring the Ansible Playbook for AxonOps on-premises and on the accepted environment variables.
 
 ### Ansible preparation
 
