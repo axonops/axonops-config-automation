@@ -199,6 +199,133 @@ in:
 `./config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml`
 
 
+## Backups
+Backup Schedules can be create and Backup snapshots taken
+
+Supported backup locations are: 
+* local
+* s3
+* sftp
+* azure
+
+Remote Backup paths take the form of 
+```$remote_path/cassandra/$cluster_name/$node_id```
+
+### General options
+These following options apply to all backup configurations
+
+
+| Option | Required | Type | Description |
+| ------ | ------ | ------ | ------ |
+| present | No | Bool | Whether a backup schedule should exist.  Setting to False will remove an existing schedule. Defaults to True |
+| local_retention | No | Str | How long to keep a snapshot on the local node.  Defaults to 10d (10 Days) |
+| remote | No | Bool | Whether backup is to a remote.  Defaults to False |
+| remote_retention | No | Str | How long to keep a snapshot on the remote location.  Defaults to 60d (60 Days) |
+| remote_type | Only if remote is True | Str |  Where to send backups.  One of 'local', 's3', 'sftp', 'azure'. Defaults to local.  |
+| timeout | No | Str | Time before backup times out.  Defaults to 10h (10 Hours) |
+| transfers | No | Int | File Transfers Parallelism |
+| tps_limit | No | Int | Throttle transfer amount |
+| bw_limit | No | Str | Apply bandwith throttling. Use a suffix b|k|M|G. The default is 0 which means no limit. 10M corresponds to 10 MBytes/s |
+| tag | No | Str | Tag to apply to the backup |
+| datacenters | Yes | List(Str) | Datacenters to include in backup |
+| nodes | No | List(str) | Nodes to include in backup |
+| tables_keyspace | No | List(str) | Mutually exclusive with tables |
+| tables | No | List(str) | Tables to include in backup. Mutually exclusive with tables_keyspace |
+| keyspaces | No | List(str) | Keyspaces to include in backup |
+| schedule | No | Bool | Whether to schedule a future backup.  If False then an immediate snapshot will be taken |
+| schedule_expre | No | Str | Crontab expression of backup schedule. Defaults to '0 1 * * *' |
+
+
+### Local Options
+Backs up to the local filesystem of the node.
+
+
+### S3 
+Sends backups to an S3 bucket
+
+#### S3 Options
+
+| Option | Required | Type | Description |
+| ------ | ------ | ------ | ------ |
+| remote_path | Yes | Str | Path to store the backups, Needs to include the bucketname. eg mybucket/path/to/backups |
+| s3_region | Yes | Bool | S3 region that bucket is in |
+| s3_access_key_id | No | Str | S3 Access key ID if not using IAM authentication |
+| s3_secret_access_key | No | Str | S3 Access key if not using IAM authentication |
+| s3_storage_class | No | Str | Storage class of bucket.  Defaults to STANDARD. One of 'default', 'STANDARD', 'reduced_redundancy', 'standard_ia', 'onezone_ia', 'glacier', 'deep_archive', 'intelligent_tiering' |
+| s3_acl | No | Str | ACL type of bucket. Defaults to private.  One of 'private', 'public-read', 'public-read-write','authenticated-read', 'bucket-owner-read' |
+| s3_encryption | No | Str | Encryption to apply. Defaults to AES256.  One of 'none', 'AES256' |
+| s3_no_check_bucket | No | Bool | |
+| s3_disable_checksum | No | Bool | |
+
+
+### SFTP
+Sends backups to and SFTP/SSH server
+
+#### sftp options
+| Option | Required | Type | Description |
+| ------ | ------ | ------ | ------ |
+| remote_path | Yes | Str | Path to store the backups on the remote server |
+| host | Yes | Str | Host to connect to |
+| ssh_user | Yes | Str | Username to connect as |
+| ssh_pass | No | Str | Password to connect with. Either ssh_pass or key_file needs to be set |
+| key_file | No | Str | Location of key file on the host. Either ssh_pass or key_file needs to be set |
+
+
+### Azure
+Sends backups to an Azure Storage Blob container
+
+#### Azure options
+| Option | Required | Type | Description |
+| ------ | ------ | ------ | ------ |
+| remote_path | Yes | Str | Path to store the backups, Needs to include the container name. eg mycontainer/path/to/backups |
+| azure_account | Yes | Str | The name of the Azure storage account |
+| azure_endpoint | No | Str | To override the endpoint destination for the Azure storage account.  Generally not required |
+| azure_key | No | Str | Storage account key.  Only required if not using Azure MSI authentication |
+| azure_msi | No | Bool | Whether to use Azure MSI authentication to connect to the storage account |
+| azure_msi_object_id | No | Only required if there are multiple user assigned identities.  Mutually exlusive with azure_msi_client_id and azure_msi_mi_res_id |
+| azure_msi_client_id | No | Only required if there are multiple user assigned identities.  Mutually exlusive with azure_msi_object_id and azure_msi_mi_res_id |
+| azure_msi_mi_res_id | No | Only required if there are multiple user assigned identities.  Mutually exlusive with azure_msi_object_id and azure_msi_client_id |
+
+
+### Backup Examples
+```
+- name: Schedule a backup to S3 bucket
+  remote_type: s3
+  cluster: testcluster
+  datacenters: dc1
+  remote_path: bucketname/path
+  local_retention: 10d
+  remote_retention: 60d
+  tag: "scheduled backup"
+  timeout: 10h
+  remote: True
+  schedule: True
+  schedule_expr: 0 1 * * *
+  s3_region: eu-west-2
+  s3_acl: private
+```
+
+
+
+```
+- name: Snapshot a table to an Azure Blob
+  remote_type: azure
+  cluster: testcluster
+  datacenters: dc1
+  remote_path: foo
+  local_retention: 10d
+  remote_retention: 30d
+  tag: "Snapshot appTable"
+  timeout: 10h
+  remote: True
+  tables: ['appKeyspace.appTable']
+  keyspaces: ['appKeyspace']
+  schedule: False
+  azure_account: azure_storage_account_name
+  azure_use_msi: True
+```
+
+
 ## Playbooks
 The playbooks are designed to run in a predefined order as some of them depend on the others. For example,
 you'll need to create the alert endpoints before you can set up alert routing.
