@@ -45,3 +45,6 @@ log-alerts: check-env ## Create alerts based on logs
 
 service-checks: check-env ## Create alerts for TCP and shell connections
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_service_checks.yml --diff ${EXTRA}
+
+backups: check-env ## Create backup
+	@${PIPENVCMD} ansible-playbook -i localhost, setup_backups.yml --diff ${EXTRA}
