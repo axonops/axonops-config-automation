@@ -1,5 +1,7 @@
-ansible==2.10.7
-ansible-base==2.10.7
+ansible==10.6
+ansible-base==2.14.1
 ansible-lint==6.18.0
 jinja2==3.0.0
 pre-commit==3.8.0
+DateTime==5.5
+python-dateutil==2.9.0.post0

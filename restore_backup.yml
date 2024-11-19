@@ -1,0 +1,59 @@
+- hosts: localhost
+  name: "Creates or Update the AxonOps service checks"
+  become: false
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Get the Org name
+      tags: always
+      ansible.builtin.set_fact:
+        org: "{{ lookup('env', 'AXONOPS_ORG') }}"
+      when: org is not defined
+
+    - name: Get the cluster name
+      tags: always
+      ansible.builtin.set_fact:
+        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cluster is not defined
+
+    - name: Fail if no org
+      ansible.builtin.assert:
+        that:
+          - org is defined
+          - org | length > 1
+          - cluster is defined
+
+    - name: Fail if no cluster
+      ansible.builtin.assert:
+        that:
+          - cluster is defined
+          - cluster | length > 1
+          - cluster is defined          
+
+    - name: Include the org configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/service_checks.yml"
+
+    - name: Include the default configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/{{ cluster }}/backups.yml"
+
+    - name: "Restoring backup to {{ org }}/{{ cluster }}"
+      axonops.configuration.restore_snapshot:
+        org: "{{ org }}"
+        cluster: "{{ cluster }}"
+        tables: []
+        snapshotId: "<your_snapshot_id>"
+        nodes: []
+        remote: true
+        restoreAllTables: true
+        restoreAllNodes: true
+      register: restore
+
+    - debug:
+        msg: "restore finished with a status of {{ restore.restore_status }}"

@@ -59,41 +59,16 @@ options:
 '''
 
 EXAMPLES = r'''
-# setup backup to Azure blob on cluster `my_cluster` of `my_company`
-  - name: Setup backup to azure blob using MSI for auth
-    axonops.configuration.backup:
-        org: my_company
-        cluster: my_cluster
-        present: true
-        local_retention: 10d
-        remote_path: /mybackup/path
-        remote_retention: 60d
-        remote_type: azure
-        tag: "{{ item.tag }}"
-        datacenters: dc1
-        schedule: True
-        schedule_expr: '0 1 * * *'
-        azure_account: blob_account_name
-        azure_use_msi: true
-
-# setup backup to S3 bucket on cluster `my_cluster` of `my_company`
-  - name: Setup backup to azure blob using MSI for auth
-    axonops.configuration.backup:
-        org: my_company
-        cluster: my_cluster
-        present: true
-        local_retention: 10d
-        remote_path: /mybackup/path
-        remote_retention: 60d
-        remote_type: s3
-        tag: "{{ item.tag }}"
-        datacenters: dc1
-        schedule: True
-        schedule_expr: '0 1 * * *'
-        s3_region: eu-west-1
-        s3_access_key_id: key-id
-        s3_secret_access_key: access-key
-        s3_acl: private
+  - name: Restore snapshot to a Cassandra cluster
+    axonops.configuration.restore_snapshot:
+        org: "your_org"
+        cluster: "your_cluster_name"
+        tables: []
+        snapshotId: "snashot_id_to_restore"
+        nodes: []
+        remote: false
+        restoreAllTables: true
+        restoreAllNodes: true
 '''
 
 RETURN = r'''
@@ -182,7 +157,7 @@ def run_module():
     # The cassandraSnapshotRestore call doesn't return a specific id that we can query directly so have to 
     # do a fair amount of payload searching to try and find the triggered restore
     # keep querying the endpoint until we either whether the job has finished/failed/been cancelled
-    while result['restore_status'] != "Success" or result['restore_status'] != "Cancelled":
+    while result['restore_status'] != "Done":
         saas_check, return_error = axonops.do_request(restore_snapshot_url, method="GET")
         if return_error:
             module.fail_json(msg=return_error, **result)
@@ -208,8 +183,11 @@ def run_module():
                             result['restore_status'] = restore["Status"]
                             result['restore_last_value'] = restore["LastReturnValue"]
 
-                            if result['restore_status'] == "Failed":
+                            if restore["Status"] == "Failed":
                                 module.fail_json(**result, msg="Restore attempt failed")
+                                return
+                            elif restore["IsCancelled"]: 
+                                module.fail_json(**result, msg="Restore attempt was cancelled")
                                 return
                             
         time.sleep(5)
