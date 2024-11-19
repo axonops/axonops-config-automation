@@ -22,7 +22,7 @@ endif
 
 check-env:
 	@echo $(ANSIBLE_COLLECTIONS_PATH)
-	@if [ ! "$(AXONOPS_TOKEN)" ]; then echo "$(BOLD)$(RED)AXONOPS_TOKEN is not set$(RESET)"; exit 1;fi
+	@if [ ! "$(AXONOPS_ORG)" ]; then echo "$(BOLD)$(RED)AXONOPS_ORG is not set$(RESET)"; exit 1;fi
 
 
 check: ## run pre-commit tests
