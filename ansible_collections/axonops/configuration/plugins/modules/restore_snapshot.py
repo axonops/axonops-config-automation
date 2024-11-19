@@ -66,7 +66,7 @@ EXAMPLES = r'''
         tables: []
         snapshotId: "snashot_id_to_restore"
         nodes: []
-        remote: false
+        remote: true
         restoreAllTables: true
         restoreAllNodes: true
 '''
@@ -96,9 +96,9 @@ def run_module():
         'tables': {'type': 'list', 'default': []},
         'snapshotId': {'type': 'str', 'required': True},
         'nodes': {'type': 'list', 'default': []},
-        'remote': {'type': 'bool', 'default': False},
+        'remote': {'type': 'bool', 'default': True},
         'restoreAllTables': {'type': 'bool', 'default': True},
-        'restoreAllNodes': {'type': 'bool', 'default': False},
+        'restoreAllNodes': {'type': 'bool', 'default': True},
     })
 
     module = AnsibleModule(

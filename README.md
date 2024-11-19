@@ -326,6 +326,44 @@ Sends backups to an Azure Storage Blob container
 ```
 
 
+## Backup Restores
+You can use a playbook to trigger a restore of a remote backup.
+
+*Note:* There are a few prerequisite steps that need to be taken before running a restore so please [read the restore documentation](https://axonops.com/docs/operations/cassandra/restore/restore-node-same-ip/) before you run a restore.
+
+
+### Restore Options
+| Option | Required | Type | Description |
+| ------ | ------ | ------ | ------ |
+| remote | No | Bool | Whether to restore from a remote.  Defaults to True |
+| snapshotId | Yes | str | The backup id that you want to restore from |
+| restoreAllTables | No | Bool | whether to restore all tables from the snapshot. Defaults to True |
+| restoreAllNodes | No | Bool | Whether to restore to all nodes in the cluster.  Defaults to True |
+| tables | No | List(str) | Tables to include in restore. Required if restoreAllTables is false  |
+| nodes | No | List(str) | nodes to restore to. Required if restoreAllNodes is false |
+
+#### snapshotId
+The easiest way to get the snapshotID is to get it from the axonops console.  Go to Operations->Backups->Backups History (tab).
+You can then select from the list of backups and this will provide the Backup ID which is the snapshot ID
+
+![Restore Snapshot](./assets/axonops-restore-snapshotid.png)
+
+### Restore example
+```
+- name: "Restoring backup to {{ org }}/{{ cluster }}"
+  axonops.configuration.restore_snapshot:
+    org: "{{ org }}"
+    cluster: "{{ cluster }}"
+    tables: []
+    snapshotId: "<your_snapshot_id>"
+    nodes: []
+    remote: true
+    restoreAllTables: true
+    restoreAllNodes: true
+```    
+
+
+
 ## Playbooks
 The playbooks are designed to run in a predefined order as some of them depend on the others. For example,
 you'll need to create the alert endpoints before you can set up alert routing.
