@@ -348,6 +348,7 @@ endpoints                      Create alert endpoints and integrations
 log-alerts                     Create alerts based on logs
 routes                         Create alert routes
 service-checks                 Create alerts for TCP and shell connections
+backups                        Create backup schedules
 ```
 
 You can dedide to either configure all the parameters as explained above using the [export_tokens.sh](./export_tokens.sh) file
