@@ -335,6 +335,7 @@ you'll need to create the alert endpoints before you can set up alert routing.
 3. Set up metrics alerts
 4. Set up log alerts
 5. Set up Service checks
+6. Set up backup schedules
 
 ### Running
 The provided [Makefile](./Makefile) is the easiest way to run the playbooks:
@@ -358,6 +359,7 @@ make routes AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make metrics-alerts AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make log-alerts AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make service-checks AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
+make backups AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 ```
 
 
