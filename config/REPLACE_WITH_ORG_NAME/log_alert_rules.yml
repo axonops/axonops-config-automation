@@ -5,8 +5,7 @@
 # all clusters.
 # Log phrases must be wrapped as: \"text to search\"
 
-axonops_log_alert_rule:
-
+axonops_log_alert_rule_org:
 - name: Node Down
   warning_value: 1
   critical_value: 5

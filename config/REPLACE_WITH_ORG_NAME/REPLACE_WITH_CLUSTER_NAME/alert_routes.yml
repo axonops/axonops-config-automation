@@ -3,7 +3,7 @@
 # Alert endpoints are defined for your entire org. However. the routes
 # are defined per cluster.
 
-axonops_alert_routes:
+axonops_alert_routes_cluster:
 
 #### Global Alert Routes ####
 - integration_name: example_opsgenie_integration_ops
@@ -82,5 +82,3 @@ axonops_alert_routes:
   type: repairs
   severity: info
   enable_override: true
-
-

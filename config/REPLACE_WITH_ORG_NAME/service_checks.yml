@@ -3,10 +3,7 @@
 # These rules are some examples of how checks can be configured for
 # your Apache Cassandra cluster. The checks defined here will be applied
 # to all clusters
-
-
-axonops_shell_check:
-
+axonops_shell_check_org:
 - name: SSL certificate check
   interval: 12h
   timeout: 1m

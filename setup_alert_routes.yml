@@ -36,6 +36,11 @@
       with_fileglob:
         - "config/{{ org }}/{{ cluster }}/alert_routes.yml"
 
+    - name: Merge configs
+      ansible.builtin.set_fact:
+        axonops_alert_routes: "{{ axonops_alert_routes_org | default([]) + axonops_alert_routes_cluster | default([]) }}"
+
+  tasks:
     - name: Install alerts on {{ org }}/{{ cluster }}
       axonops.configuration.alert_route:
         org: "{{ org }}"

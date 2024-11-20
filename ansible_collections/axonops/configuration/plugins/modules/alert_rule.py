@@ -125,13 +125,13 @@ def normalize_numbers(d):
 # Function to get the ID by name
 def get_integration_id_by_name(data, target_name):
     definitions = data.get("Definitions", [])
-    
+
     for definition in definitions:
         params = definition.get("Params", {})
         name = params.get("name")
         if name == target_name:
             return definition.get("ID")
-    
+
     return None
 
 
@@ -331,7 +331,7 @@ def run_module():
         #             # Add the integration name to the list for the specific severity
         #             # old_data['routing'][routing['Severity']].append(integration_name)
         #             old_data['routing'][routing['Severity']].append(routing['ID'])
-                    
+
         #     # If routing ends up being empty after processing, remove it from old_data
         #     if not old_data['routing']:
         #         del old_data['routing']

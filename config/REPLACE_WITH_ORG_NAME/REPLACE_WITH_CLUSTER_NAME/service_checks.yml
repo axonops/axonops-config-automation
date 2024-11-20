@@ -4,8 +4,7 @@
 # your Apache Cassandra cluster. The checks defined here will be applied
 # to this specific cluster.
 
-axonops_shell_check:
-
+axonops_shell_check_cluster:
 - name: SSL certificate check
   interval: 12h
   timeout: 1m

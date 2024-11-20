@@ -1,6 +1,5 @@
-
 ## Add all Slack integration endpoints here
-axonops_slack_integration:
+axonops_slack_integration_org:
 - name: example_slack_integration_developer
   webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
 - name: example_slack_integration_ops
@@ -15,17 +14,17 @@ axonops_slack_integration:
 ## Add all Pagerduty integration endpoints here
 axonops_pagerduty_integration:
 - name: example_pagerduty_integration_developer
-  integration_key: REPLACE_WITH_INTEGRATION_KEY 
+  integration_key: REPLACE_WITH_INTEGRATION_KEY
 - name: example_pagerduty_integration_ops
-  integration_key: REPLACE_WITH_INTEGRATION_KEY 
+  integration_key: REPLACE_WITH_INTEGRATION_KEY
 
 
 ## Add all Opsgenie integration endpoints here
 axonops_opsgenie_integration:
 - name: example_opsgenie_integration_developer
-  opsgenie_key: REPLACE_WITH_OPSGENIE_KEY  
+  opsgenie_key: REPLACE_WITH_OPSGENIE_KEY
 - name: example_opsgenie_integration_ops
-  opsgenie_key: REPLACE_WITH_OPSGENIE_KEY  
+  opsgenie_key: REPLACE_WITH_OPSGENIE_KEY
 
 
 ## Add all ServiceNow integration endpoints here
@@ -45,4 +44,3 @@ axonops_teams_integration:
   webhook_url: REPLACE_WITH_TEAMS_URL
 - name: example_teams_integration_ops
   webhook_url: REPLACE_WITH_TEAMS_URL
-
