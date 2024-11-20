@@ -146,9 +146,14 @@ def run_module():
     # The underlying do_request call uses open_url and that doesn't actually return any error messages
     # that come up. So if you try and restore a snapshot where the snapshotid doesn't exists you only 
     # get a generic 400 BAD REQUEST error rather than the handled error message "Could not find snapshot ID"
-    _, return_error = axonops.do_request(restore_snapshot_url, method="POST", json_data=payload)
+    restore_response, return_error = axonops.do_request(restore_snapshot_url, method="POST", json_data=payload)
     if return_error:
         module.fail_json(msg=return_error, **result)
+
+    # Restore id being retured by axonops is a new feature so may not always be available
+    restore_id = None
+    if restore_response is not None and "ID" in restore_response:
+        restore_id = restore_response["ID"]
 
     # Need to check for a restoreRequest that has a timestamp after 
     result['changed'] = True
@@ -166,30 +171,56 @@ def run_module():
         
         for restore in saas_check:
             if restore['Type'] == "restoreBackup":
-                if (restore['Params'][3]['RestoreRequest']['snapshotId'] == payload['snapshotId'] 
-                    and restore['Params'][3]['RestoreRequest']['tables'] == payload['tables']
-                    and restore['Params'][3]['RestoreRequest']['nodes'] == payload['nodes']
-                    and restore['Params'][3]['RestoreRequest']['restoreAllTables'] == payload['restoreAllTables']
-                    and restore['Params'][3]['RestoreRequest']['restoreAllNodes'] == payload['restoreAllNodes']
-                ):
-                    item_last_run = parser.parse(restore['LastRun']).replace(tzinfo=timezone.utc)
-                    # Make sure only consider records from after the restore was run and grab the most recent one.
-                    if item_last_run > restore_dateTime:
-                        if not most_recent_event_time:
-                            most_recent_event_time = item_last_run
-                        if item_last_run >= most_recent_event_time:
-                            result['restore_backup_id'] = restore["ID"]
-                            result['restore_time'] = restore["LastRun"]
-                            result['restore_status'] = restore["Status"]
-                            result['restore_last_value'] = restore["LastReturnValue"]
+                if restore_id == None:
+                    if "RestoreRequest" not in restore['Params'][3]:
+                        break
 
-                            if restore["Status"] == "Failed":
-                                module.fail_json(**result, msg="Restore attempt failed")
-                                return
-                            elif restore["IsCancelled"]: 
-                                module.fail_json(**result, msg="Restore attempt was cancelled")
-                                return
-                            
+                    if (restore['Params'][3]['RestoreRequest']['snapshotId'] == payload['snapshotId'] 
+                        and restore['Params'][3]['RestoreRequest']['tables'] == payload['tables']
+                        and restore['Params'][3]['RestoreRequest']['nodes'] == payload['nodes']
+                        and restore['Params'][3]['RestoreRequest']['restoreAllTables'] == payload['restoreAllTables']
+                        and restore['Params'][3]['RestoreRequest']['restoreAllNodes'] == payload['restoreAllNodes']
+                    ):
+                        item_last_run = parser.parse(restore['LastRun']).replace(tzinfo=timezone.utc)
+                        # Make sure only consider records from after the restore was run and grab the most recent one.
+                        if item_last_run > restore_dateTime:
+                            if not most_recent_event_time:
+                                most_recent_event_time = item_last_run
+                            if item_last_run >= most_recent_event_time:
+                                result['restore_id'] = restore["ID"]
+                                result['restore_time'] = restore["LastRun"]
+                                result['restore_status'] = restore["Status"]
+                                result['restore_last_value'] = restore["LastReturnValue"]
+                                result['restore_id_provided'] = False
+
+                                if restore["Status"] == "Failed":
+                                    module.fail_json(**result, msg="Restore attempt failed")
+                                    return
+                                elif restore["IsCancelled"]: 
+                                    module.fail_json(**result, msg="Restore attempt was cancelled")
+                                    return
+                else:
+                    if restore["ID"] == restore_id:
+                            item_last_run = parser.parse(restore['LastRun']).replace(tzinfo=timezone.utc)
+                            # Make sure only consider records from after the restore was run and grab the most recent one.
+                            if item_last_run > restore_dateTime:
+                                if not most_recent_event_time:
+                                    most_recent_event_time = item_last_run
+                                if item_last_run >= most_recent_event_time:
+                                    result['restore_backup_id'] = restore["ID"]
+                                    result['restore_time'] = restore["LastRun"]
+                                    result['restore_status'] = restore["Status"]
+                                    result['restore_last_value'] = restore["LastReturnValue"]
+                                    result['restore_id'] = restore_id
+                                    result['restore_id_provided'] = True
+
+                                    if restore["Status"] == "Failed":
+                                        module.fail_json(**result, msg="Restore attempt failed")
+                                        return
+                                    elif restore["IsCancelled"]: 
+                                        module.fail_json(**result, msg="Restore attempt was cancelled")
+                                        return
+
         time.sleep(5)
 
     module.exit_json(**result)
