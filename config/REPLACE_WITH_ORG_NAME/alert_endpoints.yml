@@ -3,14 +3,19 @@
 axonops_slack_integration:
 - name: example_slack_integration_developer
   webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+  channel: example_slack_integration_developer
 - name: example_slack_integration_ops
   webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+  channel: example_slack_integration_ops
 - name: example_slack_integration_backups
   webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+  channel: example_slack_integration_backups
 - name: example_slack_integration_metrics
   webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+  channel: example_slack_integration_metrics
 - name: example_slack_integration_repair
   webhook_url: https://hooks.slack.com/services/ADD-ME-HERE
+  channel: example_slack_integration_repair
 
 ## Add all Pagerduty integration endpoints here
 axonops_pagerduty_integration:

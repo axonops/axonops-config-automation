@@ -76,6 +76,7 @@ def run_module():
     module_args = make_module_args({
         'name': {'type': 'str', 'required': True},
         'webhook_url': {'type': 'str'},
+        'channel': {'type': 'str'},
         'present': {'type': 'bool', 'default': True},
         'axonops_url': {'type': 'str', 'required': False, 'default': ''},
     })
@@ -111,6 +112,7 @@ def run_module():
         old_data = {
             'name': found_definition['Params']['name'],
             'webhook_url': found_definition['Params']['url'],
+            'channel': found_definition['Params'].get('channel', ''),
             'axonops_url': found_definition['Params']['axondashUrl'],
             'present': True,
         }
@@ -121,6 +123,7 @@ def run_module():
         new_data = {
             'name': module.params['name'],
             'webhook_url': module.params['webhook_url'],
+            'channel': module.params['channel'],
             'axonops_url': module.params['axonops_url'] if module.params['axonops_url'] != '' else axonops.dash_url(),
             'present': module.params['present'],
         }
@@ -129,6 +132,7 @@ def run_module():
             'name': '',
             'webhook_url': '',
             'axonops_url': '',
+            'channel': '',
             'present': False,
         }
 
@@ -162,6 +166,7 @@ def run_module():
         'params': {
             'name': new_data['name'],
             'url': new_data['webhook_url'],
+            'channel': new_data['channel'],
             'axondashUrl': new_data['axonops_url'],
         }
     }

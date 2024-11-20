@@ -4,7 +4,7 @@
 # your Apache Cassandra cluster. The rules defined here will be applied
 # to all clusters
 
-axonops_alert_rules:
+axonops_alert_rules_all:
 
 ######## OVERVIEW ALERTS ########
 - name: DOWN count per node
