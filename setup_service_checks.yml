@@ -36,6 +36,11 @@
       with_fileglob:
         - "config/{{ org }}/{{ cluster }}/service_checks.yml"
 
+    - name: Merge configs
+      ansible.builtin.set_fact:
+        axonops_shell_check: "{{ axonops_shell_check_org | default([]) + axonops_shell_check_cluster | default([]) }}"
+        axonops_tcp_check: "{{ axonops_tcp_check_org | default([]) + axonops_tcp_check_cluster | default([]) }}"
+  tasks:
     - name: Apply TCP Check on {{ org }}/{{ cluster }}
       axonops.configuration.tcp_check:
         org: "{{ org }}"

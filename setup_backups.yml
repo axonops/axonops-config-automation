@@ -36,6 +36,7 @@
       with_fileglob:
         - "config/{{ org }}/{{ cluster }}/backups.yml"
 
+  tasks:
     - name: Apply Backup on {{ org }}/{{ cluster }}
       axonops.configuration.backup:
         org: "{{ org }}"
