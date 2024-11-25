@@ -1,0 +1,69 @@
+- hosts: localhost
+  name: "Creates or Update the AxonOps CommitLog Archive settings"
+  become: false
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Get the Org name
+      tags: always
+      ansible.builtin.set_fact:
+        org: "{{ lookup('env', 'AXONOPS_ORG') }}"
+      when: org is not defined
+
+    - name: Get the cluster name
+      tags: always
+      ansible.builtin.set_fact:
+        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cluster is not defined
+
+    - name: Fail if no org
+      ansible.builtin.assert:
+        that:
+          - org is defined
+          - org | length > 1
+          - cluster is defined
+
+    - name: Include the default configs
+      tags: always
+      ansible.builtin.include_vars: "{{ item }}"
+      with_fileglob:
+        - "config/{{ org }}/{{ cluster }}/commitlog_archive.yml"
+
+    - name: Apply Commitlog Archive Settings on {{ org }}/{{ cluster }}
+      axonops.configuration.commitlog_archive:
+        org: "{{ org }}"
+        cluster: "{{ item.cluster }}"
+        # cluster_type: dse
+        present: "{{ item.present|default(true) }}"
+        remote_path: "{{ item.remote_path }}"
+        remote_retention: "{{ item.remote_retention|default('60d') }}"
+        remote_type: "{{ item.remote_type }}"
+        timeout: "{{ item.timeout|default('10h') }}"
+        transfers: "{{ item.transfers|default('0') }}"
+        bw_limit: "{{ item.bw_limit|default('') }}"
+        datacenters: "{{ item.datacenters }}"
+        azure_account: "{{ item.azure_account | default(omit) }}"
+        azure_endpoint: "{{ item.azure_endpoint | default(omit)}}"
+        azure_key: "{{ item.azure_key | default(omit)}}"
+        azure_use_msi: "{{ item.azure_use_msi | default(omit)}}"
+        azure_msi_object_id: "{{ item.azure_msi_object_id | default(omit)}}"
+        azure_msi_client_id: "{{ item.azure_msi_client_id | default(omit)}}"
+        azure_msi_mi_res_id: "{{ item.azure_msi_mi_res_id | default(omit)}}"
+        s3_region: "{{ item.s3_region |default('')}}"
+        s3_access_key_id: "{{ item.s3_access_key_id|default(none) }}"
+        s3_secret_access_key: "{{ item.s3_secret_access_key|default(none) }}"
+        s3_storage_class: "{{ item.s3_storage_class|default('STANDARD') }}"
+        s3_acl: "{{ item.s3_acl|default('private') }}"
+        s3_encryption: "{{ item.s3_encryption|default('AES256') }}"
+        s3_disable_checksum: "{{ item.s3_disable_checksum|default('False') }}"
+        host: "{{ item.host |default('')}}"
+        ssh_user: "{{ item.ssh_user |default(omit)}}"
+        ssh_pass: "{{ item.ssh_pass |default(omit)}}"
+        key_file: "{{ item.key_file |default(omit)}}"
+      with_items:
+        "{{ axonops_commitlog_archive }}"
+      tags:
+      - commitlogs
+      - commitlogs_archive
+# code: language=ansible
