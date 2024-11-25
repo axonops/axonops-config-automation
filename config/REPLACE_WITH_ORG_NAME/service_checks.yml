@@ -7,6 +7,125 @@
 
 axonops_shell_check:
 
+- name: Check for schema disagreement
+  interval: 5m
+  timeout: 1m
+  shell: /bin/bash
+  present: true
+  script: |-
+    EXIT_OK=0
+    EXIT_WARNING=1
+    EXIT_CRITICAL=2
+
+    NODETOOL=/path/to/nodetool # REPLACE PATH TO nodetool
+
+    schema_variations=$($NODETOOL gossipinfo | grep SCHEMA | grep -vi UNREACHABLE | sed -e 's/SCHEMA:[0-9]*://g' | uniq | wc -l)
+    if [ $? -gt 0 ]; then
+        exit $EXIT_CRITICAL=2
+    fi
+
+    if [ $schema_variations -gt 1 ]; then
+      exit $EXIT_CRITICAL
+    else
+      exit $EXIT_OK
+    fi
+
+- name: Check for node DOWN
+  interval: 30s
+  timeout: 1m
+  shell: /bin/bash
+  present: true
+  script: |-
+    EXIT_OK=0
+    EXIT_WARNING=1
+    EXIT_CRITICAL=2
+
+    NODETOOL=/path/to/nodetool # REPLACE PATH TO nodetool
+    WARNING_DN_COUNT=1
+    CRITICAL_DN_COUNT=2
+
+    # Get the local Data Center from 'nodetool info'
+    local_dc=$($NODETOOL info | awk -F: '/Data Center/{gsub(/^[ \t]+/, "", $2); print $2}')
+    if [ -z $local_dc ]; then
+        exit $EXIT_WARN
+    fi
+
+    # Initialize counts
+    local_dn_count=0
+    remote_dn_count=0
+
+    # Declare associative arrays
+    declare -A dc_dn_counts  # Counts of DN per Data Center
+    declare -A dcrack_dn_counts  # Counts of DN per Data Center and Rack
+
+    # Initialize variables
+    current_dc=""
+    in_node_section=false
+
+    # Process 'nodetool status' output without using a subshell
+    while read -r line; do
+        # Check for Data Center line
+        if [[ "$line" =~ ^Datacenter:\ (.*) ]]; then
+            current_dc="${BASH_REMATCH[1]}"
+            continue
+        fi
+
+        # Skip irrelevant lines
+        if [[ "$line" =~ ^\s*$ ]] || [[ "$line" =~ ^==+ ]] || [[ "$line" =~ ^Status= ]]; then
+            continue
+        fi
+
+        # Trim leading spaces
+        line=$(echo "$line" | sed 's/^[ \t]*//')
+
+        # Get the status code (first field)
+        status=$(echo "$line" | awk '{print $1}')
+
+        # Process nodes with status 'DN'
+        if [[ "$status" == "DN" ]]; then
+            # Extract the Rack (last field)
+            rack=$(echo "$line" | awk '{print $NF}')
+
+            # Update counts based on whether the node is in the local DC
+            if [[ "$current_dc" == "$local_dc" ]]; then
+                ((local_dn_count++))
+            else
+                ((remote_dn_count++))
+            fi
+
+            # Update per-DC counts
+            dc_dn_counts["$current_dc"]=$(( ${dc_dn_counts["$current_dc"]} + 1 ))
+
+            # Update per-DC:Rack counts
+            dcrack_key="${current_dc}:${rack}"
+            dcrack_dn_counts["$dcrack_key"]=$(( ${dcrack_dn_counts["$dcrack_key"]} + 1 ))
+        fi
+    done < <($NODETOOL status)
+
+    # Output the counts
+    echo "DN in local DC ($local_dc): $local_dn_count"
+    echo "DN in remote DC: $remote_dn_count"
+
+    echo -e "\n'DN' node counts per Data Center:"
+    for dc in "${!dc_dn_counts[@]}"; do
+        echo "DC '$dc': ${dc_dn_counts[$dc]} DN nodes"
+    done
+
+    echo -e "\n'DN' node counts per Data Center and Rack:"
+    for dcrack in "${!dcrack_dn_counts[@]}"; do
+        echo "$dcrack: ${dcrack_dn_counts[$dcrack]} DN nodes"
+    done
+
+    for dc in "${!dc_dn_counts[@]}"; do
+        if [ ${dc_dn_counts[$dc]} -ge $CRITICAL_DN_COUNT ]; then
+            exit $EXIT_CRITICAL
+        elif [ ${dc_dn_counts[$dc]} -eq $WARNING_DN_COUNT ]; then
+            exit $EXIT_WARNING
+        fi
+    done
+
+    exit $EXIT_OK
+
 - name: SSL certificate check
   interval: 12h
   timeout: 1m
@@ -15,7 +134,7 @@ axonops_shell_check:
     EXIT_OK=0
     EXIT_WARNING=1
     EXIT_CRITICAL=2
-    if output=$(echo | openssl s_client -connect {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port {{'}}'}} 2>/dev/null); then
+    if output=$(echo | openssl s_client -connect {{.comp_listen_address}}:{{.comp_native_transport_port}} 2>/dev/null); then
       # Check OCSP validity
       if echo "$output" | openssl x509 -noout -ocspid > /dev/null 2>&1; then
         echo "OCSP stapling is OK."
@@ -26,7 +145,7 @@ axonops_shell_check:
       # Check certificate expiration
       if echo "$output" | openssl x509 -noout -checkend 432000; then
         if echo "$output" | openssl x509 -noout -checkend 864000; then
-          echo "The certificate on {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port {{'}}'}} will NOT expire in the next 10 days!"
+          echo "The certificate on {{.comp_listen_address}}:{{.comp_native_transport_port}} will NOT expire in the next 10 days!"
         else
           echo "Certificate will expire within 10 days!"
           echo "(or is invalid)"
@@ -38,7 +157,7 @@ axonops_shell_check:
         exit $EXIT_CRITICAL
       fi
     else
-      echo "Unable to connect to {{'{{'}} .comp_listen_address {{'}}'}}:{{'{{'}} .comp_native_transport_port {{'}}'}}. Endpoint is unreachable."
+      echo "Unable to connect to {{.comp_listen_address}}:{{.comp_native_transport_port}}. Endpoint is unreachable."
       exit $EXIT_OK
     fi
 
@@ -80,9 +199,4 @@ axonops_shell_check:
             print(f"{event['NotBefore']} - {event['Description']}")
         exit(1)
 
-axonops_tcp_check:
-- name: cql_client_port
-  interval: 3m
-  timeout: 1m
-  tcp: "{{'{{'}}.comp_listen_address{{'}}'}}:{{'{{'}}.comp_native_transport_port{{'}}'}}"
-  present: true
+axonops_tcp_check: []

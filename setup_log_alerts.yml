@@ -24,7 +24,7 @@
           - org | length > 1
           - cluster is defined
 
-    - name: Initialize axonops_alert_rules
+    - name: Initialize axonops_log_alert_rule
       tags: always
       ansible.builtin.set_fact:
         axonops_log_alert_rule: "{{ axonops_log_alert_rule | default([]) }}"
