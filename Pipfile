@@ -4,10 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ansible = ">=2.10,<2.16"
 pre-commit = "~=3.8"
 ansible-lint = "~=4.2.0"
 hvac = "*"
+ansible = "==10.6"
+python-dateutil = "*"
+datetime = "*"
 
 [dev-packages]
 

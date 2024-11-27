@@ -1,0 +1,14 @@
+---
+- name: Restore Snapshot
+  axonops.configuration.restore_snapshot:
+    org: "{{ org }}"
+    cluster: "{{ cluster }}"
+    tables: []
+    snapshotId: "snapshot id"
+    nodes: []
+    remote: False,
+    restoreAllTables: True,
+    restoreAllNodes: True,
+  tags:
+  - axonops_restore_snapshot
+  - restore_snapshot
