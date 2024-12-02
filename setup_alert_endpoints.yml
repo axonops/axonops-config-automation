@@ -63,7 +63,7 @@
         cluster: "{{ cluster }}"
         name: "{{ item.name }}"
         webhook_url: "{{ item.webhook_url }}"
-        channel: "{{ item.channel }}"
+        channel: "{{ item.channel|default(omit) }}"
       when: axonops_slack_integration is defined
       with_items:
         "{{ axonops_slack_integration }}"
