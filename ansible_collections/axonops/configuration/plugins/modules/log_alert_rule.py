@@ -226,7 +226,7 @@ def run_module():
     # If it is an old alert, read it
     if old_alert:
         pattern = r'events\{(.+)\}'
-        pattern_element = r'(.+?)="(.+?)"'
+        pattern_element = r'(.+?)="((?:[^"\\]|\\.)*?)"'
         match = re.search(pattern, old_alert['expr'])
         old_alert_expr = {}
         if match:
@@ -235,9 +235,9 @@ def run_module():
                 if match_element:
                     old_alert_expr[match_element.group(1)] = match_element.group(2).replace('|', ',')
                 else:
-                    module.fail_json(msg=r'pattern not found for expr element')
+                    module.fail_json(msg=r'pattern not found for expr element ' + element)
         else:
-            module.fail_json(msg=r'pattern not found for expr')
+            module.fail_json(msg=r'pattern not found for expr ' + old_alert['expr'])
 
         old_data = {
             'name': old_alert['alert'],
