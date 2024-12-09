@@ -72,67 +72,7 @@ import uuid
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.axonops.configuration.plugins.module_utils.axonops import AxonOps
-from ansible_collections.axonops.configuration.plugins.module_utils.axonops_utils import make_module_args, find_by_field, dicts_are_different
-
-
-def get_value_by_name(checked_filters, filter_name):
-    """
-    search in a Value / Name dictionary
-    """
-    if checked_filters:
-        for checked_filter in checked_filters:
-            if checked_filter['Name'] == filter_name:
-                return checked_filter['Value']
-    return None
-
-def normalize_numbers(d):
-    """
-    Recursively normalizes numbers and lists in a dictionary:
-    - Converts all integers and floats to floats to ensure consistent comparison.
-    - Sorts lists for consistent comparison, unless they contain dictionaries.
-    """
-    if isinstance(d, dict):
-        return {k: normalize_numbers(v) for k, v in d.items()}
-    elif isinstance(d, list):
-        # Only sort the list if it contains non-dictionary elements
-        if all(isinstance(i, (int, float, str)) for i in d):
-            return sorted(normalize_numbers(i) for i in d)
-        else:
-            return [normalize_numbers(i) for i in d]  # Do not sort if dictionaries are present
-    elif isinstance(d, (int, float)):
-        return float(d)  # Convert all numbers to floats
-    elif isinstance(d, str):
-        return d.strip()  # Handle strings by stripping whitespace
-    return d
-
-
-# def normalize_numbers(d):
-#     """
-#     Recursively normalizes numbers and lists in a dictionary:
-#     - Converts all integers and floats to floats to ensure consistent comparison.
-#     - Sorts lists for consistent comparison.
-#     """
-#     if isinstance(d, dict):
-#         return {k: normalize_numbers(v) for k, v in d.items()}
-#     elif isinstance(d, list):
-#         return sorted(normalize_numbers(i) for i in d)
-#     elif isinstance(d, (int, float)):
-#         return float(d)  # Convert all numbers to floats
-#     elif isinstance(d, str):
-#         return d.strip()  # Handle strings by stripping whitespace
-#     return d
-
-# Function to get the ID by name
-def get_integration_id_by_name(data, target_name):
-    definitions = data.get("Definitions", [])
-    
-    for definition in definitions:
-        params = definition.get("Params", {})
-        name = params.get("name")
-        if name == target_name:
-            return definition.get("ID")
-    
-    return None
+from ansible_collections.axonops.configuration.plugins.module_utils.axonops_utils import make_module_args, find_by_field, dicts_are_different, get_value_by_name, normalize_numbers, get_integration_id_by_name
 
 
 def run_module():
@@ -156,8 +96,7 @@ def run_module():
         'present': {'type': 'bool', 'default': True},
         'percentile': {'type': 'list', 'default': [], 'choices': ['','75thPercentile','95thPercentile','98thPercentile','99thPercentile','999thPercentile']},
         'consistency': {'type': 'list', 'default': [], 'choices': ['','ALL','ANY','ONE','TWO','THREE','SERIAL','QUORUM','EACH_QUORUM','LOCAL_ONE','LOCAL_QUORUM','LOCAL_SERIAL']},
-        'keyspace': {'type': 'list', 'default': []},
-        'scope': {'type': 'list', 'default': []}
+        'keyspace': {'type': 'list', 'default': []}
     })
 
     module = AnsibleModule(
@@ -312,6 +251,7 @@ def run_module():
             'integrations': old_alert.get('integrations', {}),
             'present': True
         }
+        result['old_data'] = old_data
 
         # Check if 'integrations' and 'Routing' exist before adding routing to old_data
         # if 'integrations' in old_alert and 'Routing' in old_alert['integrations']:
@@ -409,6 +349,9 @@ def run_module():
             })
     if routing:
         new_data['integrations']['Routing'] = routing
+        new_data['integrations']['OverrideError'] = True
+        new_data['integrations']['OverrideInfo'] = True
+        new_data['integrations']['OverrideWarning'] = True
     elif 'integrations' in new_data:
         new_data['integrations']['Routing'] = []
 
@@ -434,14 +377,64 @@ def run_module():
         return
 
     # Set up alert expression
-    alert_expression = ''
-    if (len(group_by) > 0):
-        alert_expression = metric.replace('$groupBy', ",".join(group_by))
-    else:
-        alert_expression = f"{metric} {module.params['operator']} {module.params['warning_value']}"
+    orig_query = new_chart['details']['queries'][0]['query']
+    pattern = re.compile(r"\{([^}]*)\}")
+    match = pattern.search(orig_query)
+    label_filters_str = match.group(1)
+    labels = [label.strip() for label in label_filters_str.split(",")]
+    filtered_labels = [lbl for lbl in labels if '$' not in lbl]
+    reconstructed_filters = ",".join(filtered_labels)
+    cleaned_expr = pattern.sub('{' + reconstructed_filters + '}', orig_query)
 
-    result['alert_expression'] = alert_expression
+    group_by_expr = ""
+    if (len(group_by) > 0) :
+        group_by_list = ",".join(group_by)
+        group_by_expr = f"{group_by_list}"
 
+    pattern = re.compile(r'by \([^\)]*\)')
+    expression_updated_groupby = pattern.sub('by (' + group_by_expr + ')', cleaned_expr)
+
+    consistency_filter = ""
+    percentile_filter = ""
+    keyspace_filter = ""
+    scope_filter = ""
+    dc_filter = ""
+    rack_filter = ""
+    host_id_filter = ""
+
+    if module.params['consistency']:
+        consistecy_list = ",".join(module.params['consistency'])
+        consistency_filter = f",consistency='{consistecy_list}'"
+    if module.params['percentile']:
+        percentile_list = ",".join(module.params['percentile'])
+        percentile_filter = f",percentile='{percentile_list}'"
+    if module.params['keyspace']:
+        keyspace_list = ",".join(module.params['keyspace'])
+        keyspace_filter = f",keyspace='{keyspace_list}'"
+    if module.params['scope']:
+        scope_list = ",".join(module.params['scope'])
+        scope_filter = f",scope='{scope_list}'"
+    if module.params['dc']:
+        dc_list = ",".join(module.params['dc'])
+        dc_filter = f",dc='{dc_list}'"
+    if module.params['rack']:
+        rack_list = ",".join(module.params['rack'])
+        rack_filter = f",rack='{rack_list}'"
+    if module.params['host_id']:
+        host_id_list = ",".join(module.params['host_id'])
+        host_id_filter = f",host_id='{host_id_list}'"
+    
+    new_filters = consistency_filter + percentile_filter + keyspace_filter + scope_filter + dc_filter + rack_filter + host_id_filter
+
+    pattern = re.compile(r'\{([^}]*)\}')
+    match = pattern.search(expression_updated_groupby)
+
+    existing_filters = match.group(1).strip()
+    result['existing_filters'] = existing_filters
+    to_apply_filters = existing_filters + new_filters
+    result['to_apply_filters'] = to_apply_filters
+    new_expression = pattern.sub('{' + to_apply_filters + '}', expression_updated_groupby)
+    result['new_expression'] = new_expression
 
     # Create or update the alert rule
     payload = {
@@ -457,12 +450,12 @@ def run_module():
             'widget_url': "/%s/%s/%s/performance/%s?uuid=%s&%s" % (
                 org, cluster_type, cluster, new_dash['uuid'], new_chart['uuid'], url_filter),
         },
-        'integrations': {'Routing': routing},
-        'expr': alert_expression,
+        'integrations': new_data['integrations'],
+        'expr': new_expression,
         'widgetTitle': module.params['chart'],
         'id': old_alert["id"] if old_alert else str(uuid.uuid4()),
         'correlationId': new_chart['uuid'],
-        'Filters': [
+        'filters': [
             {
                 "Name": "consistency",
                 "Value": consistency

@@ -63,6 +63,9 @@
         consistency: "{{ item.consistency|default([]) }}"
         metric: "{{ item.metric|default(omit) }}"
         keyspace: "{{ item.keyspace|default([]) }}"
+        dc: "{{ item.dc|default([]) }}"
+        rack: "{{ item.rack|default([]) }}"
+        host_id: "{{ item.host_id|default([]) }}"
       loop: "{{ axonops_alert_rules }}"
       tags:
       - axonops_alert_rule

@@ -159,8 +159,8 @@ import uuid
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.axonops.configuration.plugins.module_utils.axonops import AxonOps
-from ansible_collections.axonops.configuration.plugins.module_utils.axonops_utils import make_module_args, \
-    dicts_are_different, find_by_field
+from ansible_collections.axonops.configuration.plugins.module_utils.axonops_utils import make_module_args, find_by_field, dicts_are_different, get_value_by_name, normalize_numbers, get_integration_id_by_name
+
 
 
 def run_module():
@@ -175,7 +175,11 @@ def run_module():
         'operator': {'type': 'str', 'choices': ['=', '>=', '>', '<=', '<', '!='], 'default': '>='},
         'level': {'type': 'str', 'default': ''},
         'type': {'type': 'str', 'default': ''},
-        'source': {'type': 'str', 'default': ''}
+        'source': {'type': 'str', 'default': ''},
+        'dc': {'type': 'list', 'default': []},
+        'rack': {'type': 'list', 'default': []},
+        'host_id': {'type': 'list', 'default': []},
+        'routing': {'type': 'dict', 'default': {}}
     })
 
     module = AnsibleModule(
@@ -223,6 +227,8 @@ def run_module():
         module.exit_json(**result)
         return
 
+
+    result['old_alert'] = old_alert
     # If it is an old alert, read it
     if old_alert:
         pattern = r'events\{(.+)\}'
@@ -251,9 +257,13 @@ def run_module():
             'type': old_alert_expr['type'] if 'type' in old_alert_expr else '',
             'source': old_alert_expr['source'] if 'source' in old_alert_expr else '',
             'present': True,
+            'integrations': old_alert['integrations']
         }
     else:
         old_data = {'present': False}
+
+    old_data_normalized = normalize_numbers(old_data)
+
 
     # create the new alert
     if module.params['present']:
@@ -269,13 +279,42 @@ def run_module():
             'type': module.params['type'],
             'source': module.params['source'],
             'present': True,
+            'integrations': {}
         }
     else:
         new_data = {
             'name': module.params['name'],
             'present': False,
         }
-    changed = dicts_are_different(new_data, old_data)
+
+    # create routing override list
+    routing = []  # format [{id: 'id33s', severity: 'error'},...]
+    for severity in module.params['routing']:
+        if severity not in {"error", "warning", "info"}:
+            module.fail_json(msg=f'{severity} is not a valid level, accepted: info, warn, error')
+        else:
+            for override in module.params['routing'][severity]:
+                integration_id, error = axonops.find_integration_id_by_name(cluster, override)
+                if integration_id is None:
+                    module.fail_json(msg=f"Integration name {override} not configured in AxonOps integrations.")
+                if error is not None:
+                    module.fail_json(msg=error)
+                    return
+                routing.append({
+                    'ID': integration_id,
+                    'Severity': severity,
+                })
+    if routing:
+        new_data['integrations']['Routing'] = routing
+        new_data['integrations']['OverrideError'] = True
+        new_data['integrations']['OverrideInfo'] = True
+        new_data['integrations']['OverrideWarning'] = True
+    elif 'integrations' in new_data:
+        new_data['integrations']['Routing'] = []
+
+    new_data_normalized = normalize_numbers(new_data)
+    
+    changed = dicts_are_different(new_data_normalized, old_data_normalized)
     result['changed'] = changed
     result['diff'] = {'before': old_data, 'after': new_data}
 
@@ -314,14 +353,15 @@ def run_module():
             'summary': "%s is %s than %s (current value: {{$value}}" % (
                 module.params['name'], module.params['operator'], module.params['warning_value']),
         },
-        'integrations': {'Routing': []},  # TODO: Support overriding integrations
+        'integrations': new_data['integrations'],
         'expr': events_string,
         'id': old_alert["id"] if old_alert else str(uuid.uuid4()),
     }
-
+    result['payload'] = payload
     _, error = axonops.do_request(rel_url=alerts_url, method='POST', json_data=payload)
     if error is not None:
-        module.fail_json(msg=error)
+        result['error'] = error
+        module.fail_json(msg=result)
         return
 
     module.exit_json(**result)

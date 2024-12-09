@@ -57,7 +57,11 @@
         warning_value: "{{ item.warning_value }}"
         critical_value: "{{ item.critical_value }}"
         duration: "{{ item.duration }}"
+        routing: "{{ item.routing|default(omit) }}"
         present: "{{ item.present|default(true) }}"
+        dc: "{{ item.dc|default([]) }}"
+        rack: "{{ item.rack|default([]) }}"
+        host_id: "{{ item.host_id|default([]) }}"
       with_items:
         "{{ axonops_log_alert_rule }}"
       tags:
