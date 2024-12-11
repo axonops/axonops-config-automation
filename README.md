@@ -11,10 +11,6 @@ To run the Ansible AxonOps Playbook you will need:
 - Anisble >= 2.10
 - Python3.8 or above
 
-### Download The Repo
-
-Clone this repo https://github.com/axonops/axonops-alerts
-
 ### Export Environment Variables
 
 The Ansible Playbook takes as input environment variables, the standard for a SaaS connections are:
@@ -179,9 +175,9 @@ Currently the following matching syntax is supported:
 * `hello` - matches `hello`
 * `hello world` - matches `hello` or `world`
 * `"hello world"` - matches exact `hello world`
-* `-hello` - matches excluding `hello`
-* `-"hello world"` - matches excluding `hello world`
-* `-hello -world` - matches excluding `hello` or `world`
+* `+-hello` - matches excluding `hello`
+* `+-"hello world"` - matches excluding `hello world`
+* `+-hello +-world` - matches excluding `hello` or `world`
 
 `source`: specifies the log source. This must match with one of the options available in the `Source` filter found in the Logs&Events view.
 
