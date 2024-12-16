@@ -25,6 +25,13 @@ axonops_alert_rules:
   - peers
   percentile:
   - 99thPercentile
+  routing:
+    error:
+      - example_slack_integration_developer
+    warning:
+      - example_slack_integration_developer
+    info:
+      - example_slack_integration_developer
 
 - name: Max Partition Size - system.peers table
   dashboard: Table

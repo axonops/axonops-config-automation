@@ -248,7 +248,7 @@ def run_module():
             'percentile': get_value_by_name(old_alert.get('filters', []), 'percentile') or [],
             'consistency': get_value_by_name(old_alert.get('filters', []), 'consistency') or [],
             'keyspace': get_value_by_name(old_alert.get('filters', []), 'keyspace') or [],
-            'integrations': old_alert.get('integrations', {}),
+            'integrations': old_integrations,
             'present': True
         }
         result['old_data'] = old_data
@@ -435,6 +435,7 @@ def run_module():
     result['to_apply_filters'] = to_apply_filters
     new_expression = pattern.sub('{' + to_apply_filters + '}', expression_updated_groupby)
     result['new_expression'] = new_expression
+    result['new_data'] = new_data
 
     # Create or update the alert rule
     payload = {
