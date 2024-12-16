@@ -10,6 +10,7 @@ To run the Ansible AxonOps Playbook you will need:
 
 - Anisble >= 2.10
 - Python3.8 or above
+- make
 
 ### Export Environment Variables
 
@@ -37,6 +38,9 @@ Refer to `export_tokens.sh` for more information on configuring the Ansible Play
 ### Ansible preparation
 
 The playbooks have been tested on Ansible 2.10 but it should work on most versions.
+
+> *NOTE:* We prefer using the GNU Make to run these playbooks but you can
+>         use the `make.sh` script instead if you prefer.
 
 #### RedHat and RockyLinux
 
