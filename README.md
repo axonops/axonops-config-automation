@@ -39,7 +39,7 @@ Refer to `export_tokens.sh` for more information on configuring the Ansible Play
 
 The playbooks have been tested on Ansible 2.10 but it should work on most versions.
 
-> *NOTE:* We prefer using the GNU Make to run these playbooks as it's flexibility but you can
+> *NOTE:* We prefer using the GNU Make to run these playbooks but you can
 >         use the `make.sh` script instead if you prefer.
 
 #### RedHat and RockyLinux

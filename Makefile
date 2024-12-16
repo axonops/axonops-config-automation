@@ -35,10 +35,10 @@ endpoints: check-env ## Create alert endpoints and integrations
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_alert_endpoints.yml --diff ${EXTRA}
 
 routes: check-env ## Create alert routes
-	@${PIPENVCMD} ansible-playbook -vvv -i localhost, setup_alert_routes.yml --diff ${EXTRA}
+	@${PIPENVCMD} ansible-playbook -v -i localhost, setup_alert_routes.yml --diff ${EXTRA}
 
 metrics-alerts: check-env ## Create alerts based on metrics
-	@${PIPENVCMD} ansible-playbook -vvv -i localhost, setup_metrics_alerts.yml --diff ${EXTRA}
+	@${PIPENVCMD} ansible-playbook -v -i localhost, setup_metrics_alerts.yml --diff ${EXTRA}
 
 log-alerts: check-env ## Create alerts based on logs
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_log_alerts.yml --diff ${EXTRA}
