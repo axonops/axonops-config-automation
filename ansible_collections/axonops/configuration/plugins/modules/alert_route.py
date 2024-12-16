@@ -109,11 +109,11 @@ types_map = {
     'global': 'Global',
     'metrics': 'Metrics',
     'backups': 'Backups',
-    'servicechecks': 'Service Checks',
+    'servicechecks': 'Service%20Checks',
     'nodes': 'Nodes',
     'commands': 'Commands',
     'repairs': 'Repairs',
-    'rollingrestart': 'Rolling Restart'
+    'rollingrestart': 'Rolling%20Restart'
 }
 
 
