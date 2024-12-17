@@ -66,13 +66,14 @@
         s3_acl: "{{ item.s3_acl|default('private') }}"
         s3_encryption: "{{ item.s3_encryption|default('AES256') }}"
         s3_no_check_bucket: "{{ item.s3_no_check_bucket|default('False') }}"
-        s3_disable_checksum: "{{ item.s3_disable_checksum|default('False') }}"   
+        s3_disable_checksum: "{{ item.s3_disable_checksum|default('False') }}"
         host: "{{ item.host |default('')}}"
         ssh_user: "{{ item.ssh_user |default(omit)}}"
         ssh_pass: "{{ item.ssh_pass |default(omit)}}"
-        key_file: "{{ item.key_file |default(omit)}}"             
+        key_file: "{{ item.key_file |default(omit)}}"
       with_items:
         "{{ axonops_backups }}"
+      no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
       tags:
       - backups
 # code: language=ansible

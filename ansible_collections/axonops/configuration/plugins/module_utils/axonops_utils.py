@@ -82,13 +82,13 @@ def normalize_numbers(d):
 # Function to get the ID by name
 def get_integration_id_by_name(data, target_name):
     definitions = data.get("Definitions", [])
-    
+
     for definition in definitions:
         params = definition.get("Params", {})
         name = params.get("name")
         if name == target_name:
             return definition.get("ID")
-    
+
     return None
 
 

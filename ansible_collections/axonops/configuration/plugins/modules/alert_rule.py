@@ -271,7 +271,7 @@ def run_module():
         #             # Add the integration name to the list for the specific severity
         #             # old_data['routing'][routing['Severity']].append(integration_name)
         #             old_data['routing'][routing['Severity']].append(routing['ID'])
-                    
+
         #     # If routing ends up being empty after processing, remove it from old_data
         #     if not old_data['routing']:
         #         del old_data['routing']
@@ -423,7 +423,7 @@ def run_module():
     if module.params['host_id']:
         host_id_list = ",".join(module.params['host_id'])
         host_id_filter = f",host_id='{host_id_list}'"
-    
+
     new_filters = consistency_filter + percentile_filter + keyspace_filter + scope_filter + dc_filter + rack_filter + host_id_filter
 
     pattern = re.compile(r'\{([^}]*)\}')
