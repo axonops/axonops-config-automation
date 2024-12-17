@@ -82,5 +82,3 @@ axonops_alert_routes:
   type: repairs
   severity: info
   enable_override: true
-
-

@@ -64,6 +64,7 @@
         host_id: "{{ item.host_id|default([]) }}"
       with_items:
         "{{ axonops_log_alert_rule }}"
+      no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
       tags:
       - axonops_log_alert_rule
       - log_alert_rule

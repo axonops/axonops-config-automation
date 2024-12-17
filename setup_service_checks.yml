@@ -91,6 +91,7 @@
         script: "{{ item.script }}"
       with_items:
         "{{ axonops_shell_check }}"
+      no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
       tags:
       - axonops_shell_check
       - shell_check

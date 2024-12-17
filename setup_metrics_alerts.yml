@@ -67,6 +67,7 @@
         rack: "{{ item.rack|default([]) }}"
         host_id: "{{ item.host_id|default([]) }}"
       loop: "{{ axonops_alert_rules }}"
+      no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
       tags:
       - axonops_alert_rule
       - alert_rule

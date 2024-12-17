@@ -2,13 +2,10 @@
 # This is an example set of alert rules for Cassandra performance metrics.
 # These rules are some examples of how alerts can be configured for
 # your Apache Cassandra cluster. The rules defined here will be applied
-# only to a specific cluster, and will override the rules defined in 
+# only to a specific cluster, and will override the rules defined in
 # all/metric_alert_rules.yml.
 
 axonops_alert_rules:
-
-
-
 ######## TABLE ISSUES ########
 # These are examples for creating alerts for keyspaces and tables. Replace the keyspaces and tables with your application specific tables
 - name: Tombstones Scanned per Table - 99thPercentile - system.peers table
@@ -105,4 +102,3 @@ axonops_alert_rules:
   - system
   scope:
   - peers
-

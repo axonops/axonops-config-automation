@@ -313,7 +313,7 @@ def run_module():
         new_data['integrations']['Routing'] = []
 
     new_data_normalized = normalize_numbers(new_data)
-    
+
     changed = dicts_are_different(new_data_normalized, old_data_normalized)
     result['changed'] = changed
     result['diff'] = {'before': old_data, 'after': new_data}

@@ -2,7 +2,7 @@
 # This is an example set of log alert rules for Cassandra system.log.
 # These rules are some examples of how alerts can be configured for
 # your Apache Cassandra cluster. The rules defined here will be applied
-# only to a specific cluster, and will override the rules defined in 
+# only to a specific cluster, and will override the rules defined in
 # all/log_alert_rules.yml.
 backup:
 
@@ -18,8 +18,8 @@ backup:
   remote_retention: 60d
   tag: "scheduled backup"
   timeout: 10h
-  remote: True
-  schedule: True
+  remote: true
+  schedule: true
   schedule_expr: 0 1 * * *
   s3_region: eu-west-2
   s3_acl: private
@@ -33,9 +33,9 @@ backup:
   remote_retention: 30d
   tag: "Snapshot appTable"
   timeout: 10h
-  remote: True
+  remote: true
   tables: ['appKeyspace.appTable']
   keyspaces: ['appKeyspace']
-  schedule: False
+  schedule: false
   azure_account: azure_storage_account_name
-  azure_use_msi: True
+  azure_use_msi: true

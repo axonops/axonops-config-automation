@@ -16,8 +16,6 @@ axonops_alert_rules:
   duration: 15m
   description: Detected DOWN nodes
 
-
-
 ######## SYSTEM ALERTS ########
 - name: CPU usage per host
   dashboard: System
@@ -111,7 +109,7 @@ axonops_alert_rules:
     warning:
     - example_pagerduty_integration_developer
     - example_pagerduty_integration_ops
-    
+
 - name: Coordinator Read Latency - LOCAL_ONE 99thPercentile
   dashboard: Coordinator
   chart: Coordinator Read $consistency Latency - $percentile
@@ -310,8 +308,6 @@ axonops_alert_rules:
   duration: 10m
   description: Detected dropped Hints
 
-
-
 ######## THREADPOOL ISSUES ########
 - name: Total Blocked Tasks Rate
   dashboard: Thread Pools
@@ -444,4 +440,3 @@ axonops_alert_rules:
   duration: 20m
   present: false # DISABLED in non-prod
   description: KeyCache HitRate too low
-

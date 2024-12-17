@@ -305,7 +305,7 @@ def run_module():
                     'azure_msi_object_id': string_or_none(remote_config.get('msi_object_id')),
                     'azure_msi_client_id': string_or_none(remote_config.get('msi_client_id')),
                     'azure_msi_mi_res_id': string_or_none(remote_config.get('msi_mi_res_id')),
-                }                
+                }
         else:
             # for local only backups
             current_setting = {
@@ -430,7 +430,7 @@ def run_module():
                 'azure_msi_object_id': module.params['azure_msi_object_id'],
                 'azure_msi_client_id': module.params['azure_msi_client_id'],
                 'azure_msi_mi_res_id': module.params['azure_msi_mi_res_id'],
-            }            
+            }
     else:
         # for local only
         requested_setting = {

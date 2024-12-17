@@ -65,9 +65,9 @@
         integration_type: "{{ item.integration_type }}"
         integration_name: "{{ item.integration_name }}"
         enable_override: "{{ item.enable_override }}"
-
         present: "{{ item.present|default(true) }}"
       loop: "{{ axonops_alert_routes }}"
+      no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
       tags:
       - axonops_alert_route
       - alert_route
