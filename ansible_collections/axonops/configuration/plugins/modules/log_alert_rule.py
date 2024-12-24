@@ -227,21 +227,21 @@ def run_module():
         module.exit_json(**result)
         return
 
-
-    result['old_alert'] = old_alert
     # If it is an old alert, read it
     if old_alert:
-        pattern = r'events\{(.+)\}'
-        pattern_element = r'(.+?)="((?:[^"\\]|\\.)*?)"'
-        match = re.search(pattern, old_alert['expr'])
+        pattern_external = r'events\{(.+)\}'
+        pattern_split_elements = r'(\w+)="((?:[^"\\]|\\.)*?)"'
+
+        match = re.search(pattern_external, old_alert['expr'])
+
         old_alert_expr = {}
         if match:
-            for element in re.split(',', match.group(1)):
-                match_element = re.search(pattern_element, element)
-                if match_element:
-                    old_alert_expr[match_element.group(1)] = match_element.group(2).replace('|', ',')
-                else:
-                    module.fail_json(msg=r'pattern not found for expr element ' + element)
+            elements_matches = re.findall(pattern_split_elements, match.group(1))
+            elements = {key: value for key, value in elements_matches}
+
+            for key, value in elements.items():
+                old_alert_expr[key] = value.replace('|',',')
+
         else:
             module.fail_json(msg=r'pattern not found for expr ' + old_alert['expr'])
 
