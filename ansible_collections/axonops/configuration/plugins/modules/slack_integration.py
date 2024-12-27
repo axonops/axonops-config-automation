@@ -76,7 +76,7 @@ def run_module():
     module_args = make_module_args({
         'name': {'type': 'str', 'required': True},
         'webhook_url': {'type': 'str'},
-        'channel': {'type': 'str'},
+        'channel': {'type': 'str', 'required': False, 'default': ''},
         'present': {'type': 'bool', 'default': True},
         'axonops_url': {'type': 'str', 'required': False, 'default': ''},
     })

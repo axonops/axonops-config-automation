@@ -65,6 +65,7 @@
         name: "{{ item.name }}"
         webhook_url: "{{ item.webhook_url }}"
         channel: "{{ item.channel|default(omit) }}"
+        present: "{{ item.present|default(true) }}"
       when: axonops_slack_integration is defined
       no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
       with_items:
