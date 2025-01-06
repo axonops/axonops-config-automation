@@ -349,9 +349,6 @@ def run_module():
             })
     if routing:
         new_data['integrations']['Routing'] = routing
-        new_data['integrations']['OverrideError'] = True
-        new_data['integrations']['OverrideInfo'] = True
-        new_data['integrations']['OverrideWarning'] = True
     elif 'integrations' in new_data:
         new_data['integrations']['Routing'] = []
 
@@ -496,7 +493,6 @@ def run_module():
     _, error = axonops.do_request(rel_url=alerts_url, method='POST', json_data=payload)
     if error is not None:
         module.fail_json(msg="Failed to create alert rule: " + str(payload), **result)
-        module.f
         return
 
     module.exit_json(**result)
