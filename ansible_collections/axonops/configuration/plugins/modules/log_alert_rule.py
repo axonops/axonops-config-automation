@@ -245,6 +245,15 @@ def run_module():
         else:
             module.fail_json(msg=r'pattern not found for expr ' + old_alert['expr'])
 
+        old_integrations = old_alert.get('integrations', {})
+        if old_integrations:
+            del old_integrations['Type']
+            del old_integrations['OverrideError']
+            del old_integrations['OverrideInfo']
+            del old_integrations['OverrideWarning']
+            for route_item in old_integrations['Routing']:
+                del route_item['Params']
+
         old_data = {
             'name': old_alert['alert'],
             'description': old_alert['annotations']['description'],
@@ -301,14 +310,11 @@ def run_module():
                     module.fail_json(msg=error)
                     return
                 routing.append({
-                    'ID': integration_id,
+                    'ID': integration_id if integration_id else "",
                     'Severity': severity,
                 })
     if routing:
         new_data['integrations']['Routing'] = routing
-        new_data['integrations']['OverrideError'] = True
-        new_data['integrations']['OverrideInfo'] = True
-        new_data['integrations']['OverrideWarning'] = True
     elif 'integrations' in new_data:
         new_data['integrations']['Routing'] = []
 
