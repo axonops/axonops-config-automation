@@ -20,16 +20,15 @@ else
 PIPENVCMD=
 endif
 
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
 check-env:
 	@echo $(ANSIBLE_COLLECTIONS_PATH)
 	@if [ ! "$(AXONOPS_ORG)" ]; then echo "$(BOLD)$(RED)AXONOPS_ORG is not set$(RESET)"; exit 1;fi
 
-
 check: ## run pre-commit tests
 	@${PIPENVCMD} pre-commit run --all-files
-
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 endpoints: check-env ## Create alert endpoints and integrations
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_alert_endpoints.yml --diff ${EXTRA}
