@@ -253,52 +253,6 @@ def run_module():
         }
         result['old_data'] = old_data
 
-        # Check if 'integrations' and 'Routing' exist before adding routing to old_data
-        # if 'integrations' in old_alert and 'Routing' in old_alert['integrations']:
-        #     old_data['integrations']['routing'] = {}  # Initialize routing as an empty dictionary
-        #     for routing in old_alert['integrations']['Routing'] or []:
-        #         if routing['Severity']:
-        #             # If this is the first time encountering the severity, create the list
-        #             if routing['Severity'] not in old_data['routing']:
-        #                 old_data['routing'][routing['Severity']] = []
-
-        #             # Find the integration name for that ID
-        #             integration_name, error = axonops.find_integration_name_by_id(cluster, routing['ID'])
-        #             if error is not None:
-        #                 module.fail_json(msg=error)
-        #                 return
-
-        #             # Add the integration name to the list for the specific severity
-        #             # old_data['routing'][routing['Severity']].append(integration_name)
-        #             old_data['routing'][routing['Severity']].append(routing['ID'])
-
-        #     # If routing ends up being empty after processing, remove it from old_data
-        #     if not old_data['routing']:
-        #         del old_data['routing']
-        # else:
-        #     # Explicitly ensure no empty routing key remains in old_data
-        #     old_data.pop('routing', None)
-
-
-
-
-
-                            # # add the integration overrides if present
-                            # if 'integrations' in old_alert and old_alert['integrations']['Routing']:
-                            #     for routing in old_alert['integrations']['Routing'] or []:
-                            #         # if it is the first time that we meet that severity, create the list
-                            #         if routing['Severity']:
-                            #             old_data['Routing'][routing['Severity']] = []
-
-                            #         # search the integration relative to that IP
-                            #         integration_name, error = axonops.find_integration_name_by_id(cluster, routing['ID'])
-                            #         if error is not None:
-                            #             module.fail_json(msg=error)
-                            #             return
-
-                            #         # add the integration name to the list relative to the specif severity
-                            #         old_data['routing'][routing['Severity']].append(integration_name)
-
     else:
         old_data = {'present': False}
 
@@ -344,7 +298,7 @@ def run_module():
                 module.fail_json(msg=error)
                 return
             routing.append({
-                'ID': integration_id,
+                'ID': integration_id if integration_id else "",
                 'Severity': severity,
             })
     if routing:
@@ -384,7 +338,7 @@ def run_module():
     cleaned_expr = pattern.sub('{' + reconstructed_filters + '}', orig_query)
 
     group_by_expr = ""
-    if (len(group_by) > 0) :
+    if len(group_by) > 0 :
         group_by_list = ",".join(group_by)
         group_by_expr = f"{group_by_list}"
 
