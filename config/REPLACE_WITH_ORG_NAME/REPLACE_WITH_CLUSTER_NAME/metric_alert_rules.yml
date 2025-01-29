@@ -49,8 +49,8 @@ axonops_alert_rules:
   dashboard: Table
   chart: Bloom Filter False Positive Ratio
   operator: '>='
-  critical_value: '0.05'
-  warning_value: '0.03'
+  critical_value: 0.05
+  warning_value: 0.03
   duration: 3h
   description: Detected high Bloom Filter False Positive Ratio
   keyspace:

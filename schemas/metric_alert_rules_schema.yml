@@ -1,0 +1,24 @@
+axonops_alert_rules: list(include('alert_schema'))
+---
+routing_schema:
+  error: list(str(), required=False)
+  warning: list(str(), required=False)
+  info: list(str(), required=False)
+
+alert_schema:
+  present: bool(required=False)
+  name: str()
+  dashboard: str()
+  chart: str()
+  operator: str()
+  critical_value: num()
+  warning_value: num()
+  duration: str()
+  description: str()
+  consistency: list(str(), required=False)
+  percentile: list(str(), required=False)
+  scope: list(str(), required=False)
+  keyspace: list(str(), required=False)
+  group_by: list(str(), required=False)
+  metric: str(required=False)
+  routing: include('routing_schema', required=False)

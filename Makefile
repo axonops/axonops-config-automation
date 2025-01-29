@@ -47,3 +47,6 @@ service-checks: check-env ## Create alerts for TCP and shell connections
 
 backups: check-env ## Create backup
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_backups.yml --diff ${EXTRA}
+
+validate: ## Validate YAML config
+	@${PIPENVCMD} python validate_yaml.py
