@@ -1,0 +1,7 @@
+axonops_log_alert_rule: list(include('axonops_log_alert_rule_schema'))
+
+---
+
+axonops_log_alert_rule_schema:
+  present: bool(required=False)
+  name: str()

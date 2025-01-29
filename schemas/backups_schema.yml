@@ -1,0 +1,23 @@
+backup: list(include('backups_schema'))
+
+---
+backups_schema:
+  present: bool(required=False)
+  name: str()
+  remote_type: str(required=False)
+  cluster: str()
+  datacenters: any(list(str()), str())
+  remote_path: str(required=False)
+  local_retention: str(required=False)
+  remote_retention: str(required=False)
+  tag: str(required=False)
+  timeout: str(required=False)
+  remote: bool(required=False)
+  schedule: bool(required=False)
+  schedule_expr: str(required=False)
+  tables: any(list(str()), str(), required=False)
+  keyspaces: any(list(str()), str(), required=False)
+  s3_region: str(required=False)
+  s3_acl: str(required=False)
+  azure_use_msi: bool(required=False)
+  azure_account: str(required=False)
