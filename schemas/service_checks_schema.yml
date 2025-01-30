@@ -4,7 +4,14 @@ axonops_tcp_check: list(include('axonops_tcp_check_schema'),required=False)
 axonops_shell_check_schema:
   present: bool(required=False)
   name: str()
+  interval: str()
+  timeout: str()
+  script: str()
+  shell: str(required=False)
 
 axonops_tcp_check_schema:
   present: bool(required=False)
   name: str()
+  interval: str()
+  timeout: str()
+  tcp: str()
