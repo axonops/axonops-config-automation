@@ -4,13 +4,13 @@ routing_schema:
   error: list(str(), required=False)
   warning: list(str(), required=False)
   info: list(str(), required=False)
-
+---
 alert_schema:
   present: bool(required=False)
   name: str()
   dashboard: str()
   chart: str()
-  operator: enum('>', '>=', '==', '!=', '<=', '<')
+  operator: enum('>', '>=', '=', '!=', '<=', '<', required=False)
   critical_value: num()
   warning_value: num()
   duration: str()

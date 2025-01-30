@@ -1,0 +1,33 @@
+axonops_slack_integration: list(include('axonops_slack_integration_schema'),required=False)
+axonops_pagerduty_integration: list(include('axonops_pagerduty_integration_schema'),required=False)
+axonops_opsgenie_integration: list(include('axonops_opsgenie_integration_schema'),required=False)
+axonops_servicenow_integration: list(include('axonops_servicenow_integration_schema'),required=False)
+axonops_teams_integration: list(include('axonops_teams_integration_schema'),required=False)
+---
+axonops_slack_integration_schema:
+  present: bool(required=False)
+  name: str()
+  webhook_url: str()
+  channel: str(required=False)
+---
+axonops_pagerduty_integration_schema:
+  present: bool(required=False)
+  name: str()
+  integration_key: str()
+---
+axonops_opsgenie_integration_schema:
+  present: bool(required=False)
+  name: str()
+  opsgenie_key: str()
+---
+axonops_servicenow_integration_schema:
+  present: bool(required=False)
+  name: str()
+  instance_name: str()
+  user: str()
+  password: str()
+---
+axonops_teams_integration_schema:
+  present: bool(required=False)
+  name: str()
+  webhook_url: str()

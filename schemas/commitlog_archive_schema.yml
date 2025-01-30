@@ -1,0 +1,13 @@
+axonops_commitlog_archive:  list(include('axonops_commitlog_archive_schema'))
+---
+axonops_commitlog_archive_schema:
+  present: bool(required=False)
+  remote_type: str(required=False)
+  cluster_type: str(required=False)
+  cluster: str()
+  datacenters: any(list(str()), str())
+  remote_path: str(required=False)
+  remote_retention: str(required=False)
+  timeout: str(required=False)
+  transfers: int(required=False)
+  bw_limit: str(required=False)

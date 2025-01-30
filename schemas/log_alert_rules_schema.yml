@@ -1,7 +1,24 @@
 axonops_log_alert_rule: list(include('axonops_log_alert_rule_schema'))
 
 ---
-
+routing_schema:
+  error: list(str(), required=False)
+  warning: list(str(), required=False)
+  info: list(str(), required=False)
+---
 axonops_log_alert_rule_schema:
   present: bool(required=False)
   name: str()
+  operator: enum('>', '>=', '=', '!=', '<=', '<', required=False)
+  critical_value: num()
+  warning_value: num()
+  content: str(required=False)
+  description: str(required=False)
+  duration: str()
+  level: str(required=False)
+  type: str(required=False)
+  source: str(required=False)
+  dc: any(list(str()), str(), required=False)
+  rack: any(list(str()), str(), required=False)
+  host_id: any(list(str()), str(), required=False)
+  routing: include('routing_schema', required=False)
