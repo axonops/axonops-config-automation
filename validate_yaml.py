@@ -40,7 +40,7 @@ def get_schema_file(yaml_file: str, schema_dir: str) -> str:
     """
     base_name = os.path.basename(yaml_file)
     if base_name.endswith(("yaml", "yml")):
-        name, ext = base_name.rsplit(".", 1)
+        name, _ = base_name.rsplit(".", 1)
         filename = name + "_schema.yml"
     else:
         raise NotImplementedError("Only .yaml and .yml files supported")
