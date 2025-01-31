@@ -24,7 +24,9 @@ def find_yaml_files(base_dir: str) -> list[str]:
 
 def get_schema_file(yaml_file: str, schema_dir: str) -> str:
     """
-    Example: 'config/bus1/file_a.yaml' → 'schemas/file_a_schema.yaml'
+    Given a YAML file path, find the corresponding schema file in the schemas directory.
+
+    Example: 'config/demo/file_a.yaml' → 'schemas/file_a_schema.yml'
 
     Args:
         yaml_file (str): Path to the YAML file.
@@ -39,7 +41,7 @@ def get_schema_file(yaml_file: str, schema_dir: str) -> str:
     base_name = os.path.basename(yaml_file)
     if base_name.endswith(("yaml", "yml")):
         name, ext = base_name.rsplit(".", 1)
-        filename = name + "_schema." + ext
+        filename = name + "_schema.yml"
     else:
         raise NotImplementedError("Only .yaml and .yml files supported")
     return os.path.join(schema_dir, filename)
