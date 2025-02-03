@@ -373,5 +373,26 @@ To validate the format of the configurations files, first, ensure you installed 
 make validate
 ```
 
+The validation will output a report for each file, for example in case of error:
+```aiignore
+Validating config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml against schemas/metric_alert_rules_schema.yml...
+✖ config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml failed validation:
+Error validating data 'config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml' with schema 'schemas/metric_alert_rules_schema.yml'
+	axonops_alert_rules.23.operator: '>=!!' not in ('>', '>=', '=', '!=', '<=', '<')
+```
+Example of validation successful:
+```aiignore
+Validating config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml against schemas/service_checks_schema.yml...
+✔ config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml is valid.
+```
+
+The script will also print a final report of the validations, example:
+```aiignore
+OK: 39
+ERRORS: 1
+MISSING: 0
+```
+
+
 ### Other
 The provided playbooks are only examples. Adapt the rules and configurations to suit your enterprise requirements.
