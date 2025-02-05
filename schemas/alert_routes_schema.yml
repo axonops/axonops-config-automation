@@ -2,8 +2,8 @@ axonops_alert_routes: list(include('axonops_alert_routes_schema'))
 ---
 axonops_alert_routes_schema:
   present: bool(required=False)
-  integration_name: str()
-  integration_type: str()
+  integration_name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
+  integration_type: enum('email', 'smtp', 'pagerduty', 'slack', 'teams', 'servicenow', 'webhook', 'opsgenie')
   type: enum('global','metrics','backups','servicechecks','nodes','commands','commands','repairs','rollingrestart')
   severity: enum('info', 'warning', 'error' )
   enable_override: bool(required=False)

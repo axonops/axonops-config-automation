@@ -3,7 +3,7 @@ backup: list(include('backups_schema'))
 ---
 backups_schema:
   present: bool(required=False)
-  name: str()
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
   remote_type: str(required=False)
   cluster: str()
   datacenters: any(list(str()), str())

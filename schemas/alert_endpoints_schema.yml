@@ -6,28 +6,28 @@ axonops_teams_integration: list(include('axonops_teams_integration_schema'),requ
 ---
 axonops_slack_integration_schema:
   present: bool(required=False)
-  name: str()
-  webhook_url: str()
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
+  webhook_url: str(matches="^https://hooks\.slack\.com/services/[A-Za-z0-9]+/[A-Za-z0-9]+/[A-Za-z0-9]+$")
   channel: str(required=False)
 ---
 axonops_pagerduty_integration_schema:
   present: bool(required=False)
-  name: str()
-  integration_key: str()
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
+  integration_key: str(matches="^[a-z0-9]+$")
 ---
 axonops_opsgenie_integration_schema:
   present: bool(required=False)
-  name: str()
-  opsgenie_key: str()
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
+  opsgenie_key: str(matches="^https://api\.opsgenie\.com/.+$")
 ---
 axonops_servicenow_integration_schema:
   present: bool(required=False)
-  name: str()
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
   instance_name: str()
   user: str()
   password: str()
 ---
 axonops_teams_integration_schema:
   present: bool(required=False)
-  name: str()
-  webhook_url: str()
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
+  webhook_url: str(matches="^https://[A-Za-z0-9]+\.webhook\.office\.com/[A-Za-z0-9]+$")

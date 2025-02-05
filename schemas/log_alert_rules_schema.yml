@@ -8,7 +8,7 @@ routing_schema:
 ---
 axonops_log_alert_rule_schema:
   present: bool(required=False)
-  name: str()
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
   operator: enum('>', '>=', '=', '!=', '<=', '<', required=False)
   critical_value: num()
   warning_value: num()
