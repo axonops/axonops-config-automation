@@ -1,0 +1,17 @@
+axonops_shell_check: list(include('axonops_shell_check_schema'),required=False)
+axonops_tcp_check: list(include('axonops_tcp_check_schema'),required=False)
+---
+axonops_shell_check_schema:
+  present: bool(required=False)
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
+  interval: str()
+  timeout: str()
+  script: str()
+  shell: str(required=False)
+
+axonops_tcp_check_schema:
+  present: bool(required=False)
+  name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
+  interval: str()
+  timeout: str()
+  tcp: str()

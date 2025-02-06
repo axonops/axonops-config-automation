@@ -62,7 +62,7 @@ sudo apt -y install ansible make
 
 #### Virtualenv
 
-If you're using virtualenv, simply createa a python 3 environment and install Ansible to it:
+If you're using virtualenv, simply create a python 3 environment and install Ansible to it:
 
 ```sh
 virtualenv ~/py-axonops
@@ -70,7 +70,7 @@ source ~/py-axonops/bin/activate
 pip3 install -r requirements.txt
 ```
 
-#### pipenv
+#### Pipenv
 
 We recommend using `pipenv` to manage the environment. After installing `pipenv`, simply run:
 
@@ -106,7 +106,7 @@ in this folder will append and override the settings provided in the org folder.
 
 ## Alert Endpoints
 Alert endpoints such as Slack, Teams, PagerDuty, OpsGenie can be configured using this Ansible playbook.
-Since alert enpoints configurations are AxonOps org-level setting, the configuration file is placed at `./config/<org_name>/alert_endpoints.yml`.
+Since alert endpoints configurations are AxonOps org-level setting, the configuration file is placed at `./config/<org_name>/alert_endpoints.yml`.
 
 
 ## Metric Alert Rules
@@ -349,9 +349,10 @@ log-alerts                     Create alerts based on logs
 routes                         Create alert routes
 service-checks                 Create alerts for TCP and shell connections
 backups                        Create backup schedules
+validate                       Validate YAML config
 ```
 
-You can dedide to either configure all the parameters as explained above using the [export_tokens.sh](./export_tokens.sh) file
+You can decide to either configure all the parameters as explained above using the [export_tokens.sh](./export_tokens.sh) file,
 or you can set them in the command line overriding the environment configuration:
 
 ```shell
@@ -361,6 +362,35 @@ make metrics-alerts AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make log-alerts AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make service-checks AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make backups AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
+make validate
+```
+
+### Validating the YAML configurations 
+
+To validate the format of the configurations files, first, ensure you installed [Virtualenv](#Virtualenv) or [Pipenv](#Pipenv), then run:
+
+```shell
+make validate
+```
+
+The validation will output a report for each file, for example in case of error:
+```aiignore
+Validating config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml against schemas/metric_alert_rules_schema.yml...
+✖ config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml failed validation:
+Error validating data 'config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml' with schema 'schemas/metric_alert_rules_schema.yml'
+	axonops_alert_rules.23.operator: '>=!!' not in ('>', '>=', '=', '!=', '<=', '<')
+```
+Example of validation successful:
+```aiignore
+Validating config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml against schemas/service_checks_schema.yml...
+✔ config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml is valid.
+```
+
+The script will also print a final report of the validations, example:
+```aiignore
+OK: 39
+ERRORS: 1
+MISSING: 0
 ```
 
 
