@@ -1,14 +1,10 @@
 ---
-- name: Print debug info if in debug mode
-  ansible.builtin.debug:
-    var: cluster
-
-- name: Initialize axonops_alert_routes
+- name: Initialize axonops_alert_routes for {{ org }}/{{ cluster }}
   tags: always
   ansible.builtin.set_fact:
-    axonops_alert_routes: "{{ axonops_alert_routes | default([]) }}"
+    axonops_alert_routes: []
 
-- name: Load organization-wide alert rules
+- name: Load organization-wide alert rules from {{ org }}
   tags: always
   ansible.builtin.set_fact:
     axonops_alert_routes: "{{ axonops_alert_routes + (lookup('file', item) | from_yaml).axonops_alert_routes }}"
@@ -38,15 +34,18 @@
   axonops.configuration.alert_route:
     org: "{{ org }}"
     cluster: "{{ cluster }}"
-    cluster_type: "{{ item.cluster_type|default(omit) }}"
-    type: "{{ item.type }}"
-    severity: "{{ item.severity }}"
-    integration_type: "{{ item.integration_type }}"
-    integration_name: "{{ item.integration_name }}"
-    enable_override: "{{ item.enable_override }}"
-    present: "{{ item.present|default(true) }}"
+    cluster_type: "{{ alert_item.cluster_type|default(omit) }}"
+    type: "{{ alert_item.type }}"
+    severity: "{{ alert_item.severity }}"
+    integration_type: "{{ alert_item.integration_type }}"
+    integration_name: "{{ alert_item.integration_name }}"
+    enable_override: "{{ alert_item.enable_override }}"
+    present: "{{ alert_item.present|default(true) }}"
   loop: "{{ axonops_alert_routes }}"
-  no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
+  #no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
+  loop_control:
+    loop_var: alert_item
+
   tags:
   - axonops_alert_route
   - alert_route

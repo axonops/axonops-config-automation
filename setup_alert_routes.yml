@@ -29,5 +29,20 @@
         cluster: "{{ cl }}"
       when: cl is defined and cl != ''
 
+    - name: List clusters in the org
+      axonops.configuration.get_clusters:
+        org: "{{ org }}"
+      register: clusters
+      tags: always
 
+    - name: Print debug info if in debug mode
+      ansible.builtin.debug:
+        var: clusters
+
+    - name: Execute tasks for each cluster in the org
+      include_tasks: tasks/alert_routes.yml
+      vars:
+        cluster: "{{ item }}"
+      with_flattened: "{{ clusters['clusters'] | dict2items | map(attribute='value') | flatten }}"
+      when: clusters is defined
 # code: language=ansible
