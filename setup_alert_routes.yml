@@ -15,14 +15,14 @@
       tags: always
       ansible.builtin.set_fact:
         cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
-      when: cluster is not defined
+      when: cluster is not defined and lookup('env', 'AXONOPS_CLUSTER') != ''
+
 
     - name: Fail if no org
       ansible.builtin.assert:
         that:
           - org is defined
           - org | length > 1
-          - cluster is defined
 
     - name: Initialize axonops_alert_routes
       tags: always
@@ -60,6 +60,7 @@
       axonops.configuration.alert_route:
         org: "{{ org }}"
         cluster: "{{ cluster }}"
+        cluster_type: "{{ item.cluster_type|default(omit) }}"
         type: "{{ item.type }}"
         severity: "{{ item.severity }}"
         integration_type: "{{ item.integration_type }}"
