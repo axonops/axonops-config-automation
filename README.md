@@ -365,7 +365,7 @@ make backups AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make validate
 ```
 
-### Validating the YAML configurations 
+### Validating the YAML configurations
 
 To validate the format of the configurations files, first, ensure you installed [Virtualenv](#Virtualenv) or [Pipenv](#Pipenv), then run:
 
