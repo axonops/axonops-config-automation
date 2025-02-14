@@ -365,6 +365,9 @@ make backups AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
 make validate
 ```
 
+> *NOTE:* the environment variable AXONOPS_CLUSTER is optional. 
+> If the variable is missing, all clusters in the ORG will be selected.
+
 ### Validating the YAML configurations
 
 To validate the format of the configurations files, first, ensure you installed [Virtualenv](#Virtualenv) or [Pipenv](#Pipenv), then run:
