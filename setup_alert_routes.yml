@@ -14,65 +14,32 @@
     - name: Get the cluster name
       tags: always
       ansible.builtin.set_fact:
-        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
-      when: cluster is not defined
+        cl: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cl is not defined and lookup('env', 'AXONOPS_CLUSTER') != ''
 
     - name: Fail if no org
       ansible.builtin.assert:
         that:
           - org is defined
           - org | length > 1
-          - cluster is defined
 
-    - name: Initialize axonops_alert_routes
-      tags: always
-      ansible.builtin.set_fact:
-        axonops_alert_routes: "{{ axonops_alert_routes | default([]) }}"
+    - name: Execute tasks for a single cluster
+      include_tasks: tasks/alert_routes.yml
+      vars:
+        cluster: "{{ cl }}"
+      when: cl is defined and cl != ''
 
-    - name: Load organization-wide alert rules
-      tags: always
-      ansible.builtin.set_fact:
-        axonops_alert_routes: "{{ axonops_alert_routes + (lookup('file', item) | from_yaml).axonops_alert_routes }}"
-      with_fileglob:
-        - "config/{{ org }}/alert_routes.yml"
-
-    - name: Load cluster-specific alert rules
-      tags: always
-      ansible.builtin.set_fact:
-        axonops_alert_routes: "{{ axonops_alert_routes + (lookup('file', item) | from_yaml).axonops_alert_routes }}"
-      with_fileglob:
-        - "config/{{ org }}/{{ cluster }}/alert_routes.yml"
-
-
-    - name: Include the org configs
-      tags: always
-      ansible.builtin.include_vars: "{{ item }}"
-      with_fileglob:
-        - "config/{{ org }}/alert_routes.yml"
-
-    - name: Include the default configs
-      tags: always
-      ansible.builtin.include_vars: "{{ item }}"
-      with_fileglob:
-        - "config/{{ org }}/{{ cluster }}/alert_routes.yml"
-
-    - name: Install alerts on {{ org }}/{{ cluster }}
-      axonops.configuration.alert_route:
+    - name: List clusters in the org
+      axonops.configuration.get_clusters:
         org: "{{ org }}"
-        cluster: "{{ cluster }}"
-        type: "{{ item.type }}"
-        severity: "{{ item.severity }}"
-        integration_type: "{{ item.integration_type }}"
-        integration_name: "{{ item.integration_name }}"
-        enable_override: "{{ item.enable_override }}"
-        present: "{{ item.present|default(true) }}"
-      loop: "{{ axonops_alert_routes }}"
-      no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
-      tags:
-      - axonops_alert_route
-      - alert_route
-      - alert
-      - route
+      register: clusters
+      tags: always
+      when: cl is not defined
 
-
+    - name: Execute tasks for each cluster in the org
+      include_tasks: tasks/alert_routes.yml
+      vars:
+        cluster: "{{ item }}"
+      with_flattened: "{{ clusters['clusters'] | dict2items | map(attribute='value') | flatten }}"
+      when: cl is not defined
 # code: language=ansible
