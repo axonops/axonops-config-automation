@@ -1,6 +1,6 @@
-# axonops-config-automation
+# AxonOps Configuration Automation
 
-Tool to manage AxonOps settings
+Tool to manage AxonOps settings via Ansible
 
 ## Installation
 
