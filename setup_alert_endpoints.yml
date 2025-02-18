@@ -44,7 +44,7 @@
     - name: Install pagerduty integrations
       axonops.configuration.pagerduty_integration:
         org: "{{ org }}"
-        cluster: "{{ cluster}}"
+        cluster: "{{ cluster }}"
         name: "{{ item.name }}"
         integration_key: "{{ item.integration_key }}"
         present: "{{ item.present|default(true) }}"

@@ -14,66 +14,32 @@
     - name: Get the cluster name
       tags: always
       ansible.builtin.set_fact:
-        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
-      when: cluster is not defined
+        cl: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cl is not defined and lookup('env', 'AXONOPS_CLUSTER') != ''
 
     - name: Fail if no org
       ansible.builtin.assert:
         that:
           - org is defined
           - org | length > 1
-          - cluster is defined
 
-    - name: Include the default configs
-      tags: always
-      ansible.builtin.include_vars: "{{ item }}"
-      with_fileglob:
-        - "config/{{ org }}/{{ cluster }}/backups.yml"
+    - name: Execute tasks for a single cluster
+      include_tasks: tasks/backups.yml
+      vars:
+        cluster: "{{ cl }}"
+      when: cl is defined and cl != ''
 
-    - name: Apply Backup on {{ org }}/{{ cluster }}
-      axonops.configuration.backup:
+    - name: List clusters in the org
+      axonops.configuration.get_clusters:
         org: "{{ org }}"
-        cluster: "{{ item.cluster }}"
-        present: "{{ item.present|default(true) }}"
-        local_retention: "{{ item.local_retention|default('10d') }}"
-        remote_path: "{{ item.remote_path }}"
-        remote_retention: "{{ item.remote_retention|default('60d') }}"
-        remote_type: "{{ item.remote_type }}"
-        timeout: "{{ item.timeout|default('10h') }}"
-        transfers: "{{ item.transfers|default('1') }}"
-        remote: "{{ item.remote|default(True) }}"
-        tps_limit: "{{ item.tps_limit|default('50') }}"
-        bw_limit: "{{ item.bw_limit|default('') }}"
-        tag: "{{ item.tag|default('') }}"
-        datacenters: "{{ item.datacenters }}"
-        # nodes: {'type': 'list', 'default': []},
-        # tables_keyspace': {'type': 'list'},
-        # tables: {'type': 'list'},
-        keyspaces: "{{ item.keyspaces|default([]) }}"
-        schedule: "{{ item.schedule|default(True) }}"
-        schedule_expr: "{{ item.schedule_expr|default('0 1 * * *') }}"
-        azure_account: "{{ item.azure_account | default(omit) }}"
-        azure_endpoint: "{{ item.azure_endpoint | default(omit)}}"
-        azure_key: "{{ item.azure_key | default(omit)}}"
-        azure_use_msi: "{{ item.azure_use_msi | default(omit)}}"
-        azure_msi_object_id: "{{ item.azure_msi_object_id | default(omit)}}"
-        azure_msi_client_id: "{{ item.azure_msi_client_id | default(omit)}}"
-        azure_msi_mi_res_id: "{{ item.azure_msi_mi_res_id | default(omit)}}"
-        s3_region: "{{ item.s3_region |default('')}}"
-        s3_access_key_id: "{{ item.s3_access_key_id|default(none) }}"
-        s3_secret_access_key: "{{ item.s3_secret_access_key|default(none) }}"
-        s3_storage_class: "{{ item.s3_storage_class|default('STANDARD') }}"
-        s3_acl: "{{ item.s3_acl|default('private') }}"
-        s3_encryption: "{{ item.s3_encryption|default('AES256') }}"
-        s3_no_check_bucket: "{{ item.s3_no_check_bucket|default('False') }}"
-        s3_disable_checksum: "{{ item.s3_disable_checksum|default('False') }}"
-        host: "{{ item.host |default('')}}"
-        ssh_user: "{{ item.ssh_user |default(omit)}}"
-        ssh_pass: "{{ item.ssh_pass |default(omit)}}"
-        key_file: "{{ item.key_file |default(omit)}}"
-      with_items:
-        "{{ axonops_backups }}"
-      no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
-      tags:
-      - backups
+      register: clusters
+      tags: always
+      when: cl is not defined
+
+    - name: Execute tasks for each cluster in the org
+      include_tasks: tasks/backups.yml
+      vars:
+        cluster: "{{ item }}"
+      with_flattened: "{{ clusters['clusters'] | dict2items | map(attribute='value') | flatten }}"
+      when: cl is not defined
 # code: language=ansible
