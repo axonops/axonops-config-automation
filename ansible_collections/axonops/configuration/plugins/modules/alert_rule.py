@@ -135,14 +135,14 @@ def run_module():
 
     # Get existing alerts and dashboard templates
     existing_alerts, error = axonops.do_request(alerts_url)
-    error_message = "Error occured accessing alert URL: " + alerts_url + str(error)
+    error_message = "Error occurred accessing alert URL: " + alerts_url + str(error)
     if error is not None:
         module.fail_json(msg=error_message)
         return
 
     dash_templates, error = axonops.do_request(
         f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}")
-    error_message = "Error occured fetching AxonOps dashboard template: " + f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}" + str(error)
+    error_message = "Error occurred fetching AxonOps dashboard template: " + f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}" + str(error)
     if error is not None:
         module.fail_json(msg=error_message)
         return
@@ -154,13 +154,36 @@ def run_module():
         return
 
     # Find the referenced chart in the dashboard
-    new_chart = find_by_field(new_dash.get('panels'), 'title', module.params['chart'])
-    if not new_chart:
+    new_charts = find_by_field(new_dash.get('panels'), 'title', module.params['chart'])
+    new_chart = None
+    if new_charts is None:
         module.fail_json(msg=f"Could not find chart '{module.params['chart']}' in AxonOps")
         return
+    # if new_charts is a list of elements, we have more than one charts and we need to choose the correct one
+    elif isinstance(new_charts, list):
+        result['response'] = new_charts
 
-    # Get the chart query if not specified in the params
-    if not module.params['metric']:
+        for chart in new_charts:
+            # if the chart has a query, use it
+            if chart['details']['queries']:
+                new_chart = chart
+                break
+            # if we find type == 'events_timeline', use it
+            if chart.get('type') == 'events_timeline':
+                new_chart = chart
+                break
+    else:
+        # if it is not a list, we have a single element, we can use it directly
+        new_chart = new_charts
+
+    # check if it is an event base alert rather than metrics
+    new_chart_filters = None
+    if new_chart.get('type') == 'events_timeline':
+        metric = ''
+        new_chart_filters = new_chart['details']['filters']
+
+    # if it is not, get the chart query if not specified in the params
+    elif not module.params['metric']:
         try:
             raw_query = new_chart['details']['queries'][0]['query']
         except (TypeError, IndexError):
@@ -225,6 +248,7 @@ def run_module():
         # This should leave just the metric
         metric = re.sub(' [^ ]+ [^ ]+$', '', old_alert['expr'])
 
+        # set the routing and clean the old integration
         old_integrations = old_alert.get('integrations', {})
         if old_integrations:
             del old_integrations['Type']
@@ -313,7 +337,6 @@ def run_module():
 
     new_data_normalized = normalize_numbers(new_data)
 
-
     changed = dicts_are_different(new_data_normalized, old_data_normalized)
     result['changed'] = changed
     result['diff'] = {'before': old_data_normalized, 'after': new_data_normalized}
@@ -333,66 +356,84 @@ def run_module():
         return
 
     # Set up alert expression
-    orig_query = new_chart['details']['queries'][0]['query']
-    pattern = re.compile(r"\{([^}]*)\}")
-    match = pattern.search(orig_query)
-    label_filters_str = match.group(1)
-    labels = [label.strip() for label in label_filters_str.split(",")]
-    filtered_labels = [lbl for lbl in labels if '$' not in lbl]
-    reconstructed_filters = ",".join(filtered_labels)
-    cleaned_expr = pattern.sub('{' + reconstructed_filters + '}', orig_query)
+    if new_chart['details']['queries']:
+        orig_query = new_chart['details']['queries'][0]['query']
+        pattern = re.compile(r"\{([^}]*)\}")
+        match = pattern.search(orig_query)
+        label_filters_str = match.group(1)
+        labels = [label.strip() for label in label_filters_str.split(",")]
+        filtered_labels = [lbl for lbl in labels if '$' not in lbl]
+        reconstructed_filters = ",".join(filtered_labels)
+        cleaned_expr = pattern.sub('{' + reconstructed_filters + '}', orig_query)
 
-    group_by_expr = ""
-    if len(group_by) > 0 :
-        group_by_list = ",".join(group_by)
-        group_by_expr = f"{group_by_list}"
+        group_by_expr = ""
+        if len(group_by) > 0 :
+            group_by_list = ",".join(group_by)
+            group_by_expr = f"{group_by_list}"
 
-    pattern = re.compile(r'by \([^\)]*\)')
-    expression_updated_groupby = pattern.sub('by (' + group_by_expr + ')', cleaned_expr)
+        pattern = re.compile(r'by \([^\)]*\)')
+        expression_updated_groupby = pattern.sub('by (' + group_by_expr + ')', cleaned_expr)
 
-    consistency_filter = ""
-    percentile_filter = ""
-    keyspace_filter = ""
-    scope_filter = ""
-    dc_filter = ""
-    rack_filter = ""
-    host_id_filter = ""
+        consistency_filter = ""
+        percentile_filter = ""
+        keyspace_filter = ""
+        scope_filter = ""
+        dc_filter = ""
+        rack_filter = ""
+        host_id_filter = ""
 
-    if module.params['consistency']:
-        consistecy_list = ",".join(module.params['consistency'])
-        consistency_filter = f",consistency='{consistecy_list}'"
-    if module.params['percentile']:
-        percentile_list = ",".join(module.params['percentile'])
-        percentile_filter = f",percentile='{percentile_list}'"
-    if module.params['keyspace']:
-        keyspace_list = ",".join(module.params['keyspace'])
-        keyspace_filter = f",keyspace='{keyspace_list}'"
-    if module.params['scope']:
-        scope_list = ",".join(module.params['scope'])
-        scope_filter = f",scope='{scope_list}'"
-    if module.params['dc']:
-        dc_list = ",".join(module.params['dc'])
-        dc_filter = f",dc='{dc_list}'"
-    if module.params['rack']:
-        rack_list = ",".join(module.params['rack'])
-        rack_filter = f",rack='{rack_list}'"
-    if module.params['host_id']:
-        host_id_list = ",".join(module.params['host_id'])
-        host_id_filter = f",host_id='{host_id_list}'"
+        if module.params['consistency']:
+            consistecy_list = ",".join(module.params['consistency'])
+            consistency_filter = f",consistency='{consistecy_list}'"
+        if module.params['percentile']:
+            percentile_list = ",".join(module.params['percentile'])
+            percentile_filter = f",percentile='{percentile_list}'"
+        if module.params['keyspace']:
+            keyspace_list = ",".join(module.params['keyspace'])
+            keyspace_filter = f",keyspace='{keyspace_list}'"
+        if module.params['scope']:
+            scope_list = ",".join(module.params['scope'])
+            scope_filter = f",scope='{scope_list}'"
+        if module.params['dc']:
+            dc_list = ",".join(module.params['dc'])
+            dc_filter = f",dc='{dc_list}'"
+        if module.params['rack']:
+            rack_list = ",".join(module.params['rack'])
+            rack_filter = f",rack='{rack_list}'"
+        if module.params['host_id']:
+            host_id_list = ",".join(module.params['host_id'])
+            host_id_filter = f",host_id='{host_id_list}'"
 
-    new_filters = consistency_filter + percentile_filter + keyspace_filter + scope_filter + dc_filter + rack_filter + host_id_filter
+        new_filters = consistency_filter + percentile_filter + keyspace_filter + scope_filter + dc_filter + rack_filter + host_id_filter
 
-    pattern = re.compile(r'\{([^}]*)\}')
-    match = pattern.search(expression_updated_groupby)
+        pattern = re.compile(r'\{([^}]*)\}')
+        match = pattern.search(expression_updated_groupby)
 
-    existing_filters = match.group(1).strip()
-    result['existing_filters'] = existing_filters
-    to_apply_filters = existing_filters + new_filters
-    result['to_apply_filters'] = to_apply_filters
-    new_expression = pattern.sub('{' + to_apply_filters + '}', expression_updated_groupby)
-    result['new_expression'] = new_expression
-    result['new_data'] = new_data
-
+        existing_filters = match.group(1).strip()
+        result['existing_filters'] = existing_filters
+        to_apply_filters = existing_filters + new_filters
+        result['to_apply_filters'] = to_apply_filters
+        new_expression = pattern.sub('{' + to_apply_filters + '}', expression_updated_groupby)
+        result['new_expression'] = new_expression
+        result['new_data'] = new_data
+    elif new_chart.get('type') == 'events_timeline':
+        filters = []
+        if module.params['host_id']:
+            host_id_list = ",".join(module.params['host_id'])
+            filters.append(f"host_id='{host_id_list}'")
+        else:
+            filters.append("host_id=''")
+        if new_chart_filters.get('level'):
+            filters.append(f"level='{new_chart_filters['level']}'")
+        if new_chart_filters['type']:
+            filters.append(f"type='{new_chart_filters['type']}'")
+        expression = ','.join(filters)
+        new_expression = ("events{" + expression + "} "
+                          + module.params['operator'] + " "
+                          + str(module.params['critical_value']))
+    else:
+        module.fail_json(msg="The alert is not looking as metric or event either. Not implemented", **result)
+        return
     # Create or update the alert rule
     payload = {
         'alert': alert_name,
@@ -451,7 +492,7 @@ def run_module():
     result['payload'] = {'payload': payload }
     _, error = axonops.do_request(rel_url=alerts_url, method='POST', json_data=payload)
     if error is not None:
-        module.fail_json(msg="Failed to create alert rule: " + str(payload), **result)
+        module.fail_json(msg="Failed to create alert rule: " + str(error), **result)
         return
 
     module.exit_json(**result)
