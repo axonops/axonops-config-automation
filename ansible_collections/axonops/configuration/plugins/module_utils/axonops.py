@@ -8,9 +8,10 @@ from ansible.module_utils.urls import open_url
 class AxonOps:
 
     def __init__(self, org_name: str, auth_token: str = '', base_url: str = '', username: str = '', password: str = '',
-                 cluster_type: str = 'cassandra'):
+                 cluster_type: str = 'cassandra', api_token: str = ''):
         self.org_name = org_name
         self.auth_token = auth_token
+        self.api_token = api_token
         self.username = username
         self.password = password
         self.cluster_type = cluster_type
@@ -26,7 +27,9 @@ class AxonOps:
         if not base_url:
             self.base_url = f'https://dash.axonops.cloud/{org_name}'
         else:
-            self.base_url = f'{base_url.rstrip("/")}/{org_name}'
+            # If base_url is defined then its most likely a standalone axonserver instance which doesn't need /{org_name}
+            # for axonsaas dev environment can still set the org_name in the base_url env var
+            self.base_url = f'{base_url.rstrip("/")}'
 
         # if you have username and password, it will be used as login
         if self.username and self.password:
@@ -71,9 +74,16 @@ class AxonOps:
         # bearer empty is for anonymous
         bearer = ''
 
+        # 
+        api_token = ''
+
         # if we have auth_token, use it
         if self.auth_token:
             bearer = self.auth_token
+
+        # if we have an api token for on prem axonserver instances
+        if self.api_token:
+            api_token = self.api_token            
 
         # if we have jwt, use it
         if self.jwt:
@@ -86,11 +96,13 @@ class AxonOps:
 
         headers = {
             'Accept': 'application/json',
-            'User-agent': 'AxonOps Ansible Module'
+            'User-agent': 'AxonOps Ansible Module',
         }
 
         if bearer:
             headers['Authorization'] = f'Bearer {bearer}'
+        if api_token:
+            headers['Authorization'] = f'AxonApi {api_token}'
         if form_field != "":
             headers['Content-type'] = 'application/x-www-form-urlencoded'
             data = form_field + "=" + urllib.parse.quote_plus(data)
