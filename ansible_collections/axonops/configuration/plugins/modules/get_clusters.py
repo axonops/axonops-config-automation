@@ -35,7 +35,7 @@ options:
         description:
             - api-token to authenticate with AxonOps Server
         required: false
-        type: str          
+        type: str
     username:
         description:
             - Username for authenticate.
@@ -80,7 +80,7 @@ def run_module():
 
     axonops = AxonOps(module.params['org'], auth_token=module.params['auth_token'], base_url=module.params['base_url'],
                       username=module.params['username'], password=module.params['password'],
-                      api_token=module.params['api_token'])    
+                      api_token=module.params['api_token'])
 
     if axonops.errors:
         module.fail_json(msg=' '.join(axonops.errors), **result)

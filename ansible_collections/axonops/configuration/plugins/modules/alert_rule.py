@@ -40,7 +40,7 @@ options:
         description:
             - api-token to authenticate with AxonOps Server
         required: false
-        type: str        
+        type: str
     username:
         description:
             - Username for authenticate.
