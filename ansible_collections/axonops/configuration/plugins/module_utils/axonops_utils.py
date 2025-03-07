@@ -15,6 +15,7 @@ def base_module_args() -> dict:
         "password": {"type": 'str', "required": False, "fallback": (env_fallback, ['AXONOPS_PASSWORD'])},
         "cluster_type": {"type": 'str', "required": False, "fallback": (env_fallback, ['AXONOPS_CLUSTER_TYPE']),
                          'default': 'cassandra'},
+        "api_token": {"type": 'str', "required": False, "fallback": (env_fallback, ['AXONOPS_API_TOKEN'])},
 
     }
 
