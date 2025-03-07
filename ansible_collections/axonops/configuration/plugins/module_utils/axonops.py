@@ -74,7 +74,7 @@ class AxonOps:
         # bearer empty is for anonymous
         bearer = ''
 
-        # 
+        #
         api_token = ''
 
         # if we have auth_token, use it
@@ -83,7 +83,7 @@ class AxonOps:
 
         # if we have an api token for on prem axonserver instances
         if self.api_token:
-            api_token = self.api_token            
+            api_token = self.api_token
 
         # if we have jwt, use it
         if self.jwt:

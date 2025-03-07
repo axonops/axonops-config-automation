@@ -1,12 +1,12 @@
-backup: list(include('backups_schema'))
+backups: list(include('backups_schema'))
 
 ---
 backups_schema:
   present: bool(required=False)
   name: str(matches="^[a-zA-Z0-9 \-_/.,!@#$%^&*()+=|~`:;<>?]+$")
   remote_type: str(required=False)
-  cluster: str()
-  datacenters: any(list(str()), str())
+  cluster: str(required=False)
+  datacenters: any(list(str()), str(), required=False)
   remote_path: str(required=False)
   local_retention: str(required=False)
   remote_retention: str(required=False)

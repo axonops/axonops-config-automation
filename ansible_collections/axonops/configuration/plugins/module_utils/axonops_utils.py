@@ -39,12 +39,19 @@ def dicts_are_different(a: dict, b: dict) -> bool:
 
 def find_by_field(dicts, field, value):
     """
-    Find an item in a list of dicts by searching a particular field for a value
+    Find items in a list of dicts by searching a particular field for a value.
+    - Returns None if no matching items are found.
+    - Returns a single item if only one match is found.
+    - Returns a list of items if multiple matches are found.
     """
-    for d in dicts or []:
-        if d.get(field) == value:
-            return d
-    return None
+    matches = [d for d in dicts or [] if d.get(field) == value]
+
+    if not matches:
+        return None
+    elif len(matches) == 1:
+        return matches[0]
+    else:
+        return matches
 
 
 def string_to_bool(value):
@@ -59,6 +66,7 @@ def string_or_none(value):
     if value is None or value.lower() in ('none', 'null'):
         return None
     return value
+
 
 def normalize_numbers(d):
     """
@@ -79,6 +87,7 @@ def normalize_numbers(d):
     elif isinstance(d, str):
         return d.strip()  # Handle strings by stripping whitespace
     return d
+
 
 # Function to get the ID by name
 def get_integration_id_by_name(data, target_name):

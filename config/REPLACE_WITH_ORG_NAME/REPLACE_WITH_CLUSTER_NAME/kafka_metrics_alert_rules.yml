@@ -158,5 +158,3 @@ axonops_alert_rules:
   warning_value: 20
   duration: 1w
   description: Node memory has been very low for 1 week. Consider reducing memory space
-
-
