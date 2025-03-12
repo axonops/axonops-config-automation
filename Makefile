@@ -10,7 +10,6 @@ CURRENT_FOLDER=$(shell basename "$$(pwd)")
 OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 UNAME=$(shell uname -s)
 ANSIBLE_COLLECTIONS_PATH=./
-AXONOPS_URL ?= https://dash.axonops.cloud
 
 # Default to use pipenv unless disabled
 PIPENV ?= false
