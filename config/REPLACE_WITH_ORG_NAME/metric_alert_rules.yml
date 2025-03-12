@@ -438,5 +438,60 @@ axonops_alert_rules:
   warning_value: 0.03
   critical_value: 0.01
   duration: 20m
-  present: false # DISABLED in non-prod
+  present: true
   description: KeyCache HitRate too low
+
+######## Security ########
+- name: Failed Authentications
+  dashboard: Security
+  chart: Failed Authentications
+  operator: '>='
+  critical_value: 20
+  warning_value: 1
+  duration: 3m
+  description: 'Failed authentication in Cassandra'
+
+- name: JMX
+  dashboard: Security
+  chart: JMX
+  operator: '>='
+  critical_value: 100
+  warning_value: 10
+  duration: 3m
+  description: 'JMX connections in Cassandra'
+
+- name: Failed Authorizations
+  dashboard: Security
+  chart: Failed Authorizations
+  operator: '>='
+  critical_value: 20
+  warning_value: 5
+  duration: 3m
+  description: 'Failed authorizations in Cassandra'
+
+- name: DDL queries
+  dashboard: Security
+  chart: DDL queries
+  operator: '>='
+  critical_value: 100
+  warning_value: 5
+  duration: 3m
+  description: 'DDL queries run in Cassandra'
+
+- name: DCL queries
+  dashboard: Security
+  chart: DCL queries
+  operator: '>='
+  critical_value: 100
+  warning_value: 5
+  duration: 3m
+  description: 'DCL queries run in Cassandra'
+
+- name: DML queries
+  dashboard: Security
+  chart: DML queries
+  operator: '>='
+  critical_value: 100
+  warning_value: 5
+  duration: 3m
+  description: 'DML queries in Cassandra'
