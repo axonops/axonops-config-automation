@@ -3,7 +3,6 @@
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 export UNAME=$(uname -s)
 export ANSIBLE_COLLECTIONS_PATH=./
-export AXONOPS_URL=${AXONOPS_URL:-https://dash.axonops.cloud}
 
 # Default to use pipenv unless disabled
 if [[ "${PIPENV}" == "true" ]]; then
