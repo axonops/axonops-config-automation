@@ -154,9 +154,9 @@ def run_module():
         's3_disable_checksum': {'type': 'bool', 'default': False},
         # SSH/SFTP remote only
         'host': {'type': 'str'},
-        'ssh_user': {'type': 'str'},
-        'ssh_pass': {'type': 'str'},
-        'key_file': {'type': 'str'},
+        'ssh_user': {'type': 'str', 'required': False, 'default': ''},
+        'ssh_pass': {'type': 'str', 'required': False, 'default': ''},
+        'key_file': {'type': 'str', 'required': False, 'default': ''},
         # Azure Blob only
         'azure_account': {'type': 'str'},
         'azure_endpoint': {'type': 'str', 'required': False},
@@ -278,10 +278,10 @@ def run_module():
                     'keyspaces': existing_backup_details['keyspaces'] if 'keyspaces' in existing_backup_details else [],
                     'schedule': existing_backup_details['schedule'],
                     'schedule_expr': existing_backup_details['scheduleExpr'],
-                    'host': string_or_none(remote_config.get('host')),
-                    'ssh_user': string_or_none(remote_config.get('user')),
-                    'ssh_pass': string_or_none(remote_config.get('password')),
-                    'key_file': string_or_none(remote_config.get('key_file')),
+                    'host': remote_config['host'] if 'host' in remote_config else '',
+                    'ssh_user': remote_config['user'] if 'user' in remote_config else '',
+                    'ssh_pass': remote_config['pass'] if 'pass' in remote_config else '',
+                    'key_file': remote_config['key_file'] if 'key_file' in remote_config else ''
                 }
             elif existing_backup_details['remoteType'] == 'azure':
                 current_setting = {
@@ -479,8 +479,9 @@ def run_module():
             remote_config_dict = {
                 'type': requested_setting['remote_type'],
                 'host': requested_setting['host'],
-                'ssh_user': requested_setting['ssh_user'],
-                'ssh_pass': requested_setting['ssh_pass'] if 'ssh_pass' in requested_setting else '',
+                'user': requested_setting['ssh_user'],
+                'pass': requested_setting['ssh_pass'] if 'ssh_pass' in requested_setting else '',
+                'port': requested_setting['port'] if 'port' in requested_setting else '',
                 'key_file': requested_setting['key_file'] if 'key_file' in requested_setting else '',
             }
 
