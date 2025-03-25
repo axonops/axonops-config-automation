@@ -1,6 +1,6 @@
 # AxonOps Configuration Automation
 
-Tool to manage AxonOps settings via Ansible
+This repository contains Ansible playbooks designed to automate the configuration of AxonOps, a comprehensive management platform for Apache Cassandra® and Apache Kafka®. AxonOps simplifies monitoring, maintenance, backups, and development by providing unified operations and customizable dashboards. With these playbooks, you can easily set up alerts, dashboards, and other configurations for your AxonOps installation. For more information about AxonOps and its features, visit the [AxonOps website](https://axonops.com) or explore the [AxonOps documentation](https://axonops.com/docs/).
 
 ## Installation
 
@@ -400,5 +400,6 @@ MISSING: 0
 ### Other
 The provided playbooks are only examples. Adapt the rules and configurations to suit your enterprise requirements.
 
----
+***
+
 *This project may contain trademarks or logos for projects, products, or services. Any use of third-party trademarks or logos are subject to those third-party's policies. AxonOps is a registered trademark of AxonOps Limited. Apache, Apache Cassandra, Cassandra, Apache Spark, Spark, Apache TinkerPop, TinkerPop, Apache Kafka and Kafka are either registered trademarks or trademarks of the Apache Software Foundation or its subsidiaries in Canada, the United States and/or other countries. Elasticsearch is a trademark of Elasticsearch B.V., registered in the U.S. and in other countries. Docker is a trademark or registered trademark of Docker, Inc. in the United States and/or other countries.*
