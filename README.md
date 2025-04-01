@@ -1,6 +1,6 @@
 # AxonOps Configuration Automation
 
-This repository contains Ansible playbooks designed to automate the configuration of AxonOps after connecting your cluster to AxonOps.
+This repository contains Ansible playbooks designed to automate the configuration of AxonOps for your connected cluster.
 
 AxonOps is a comprehensive management platform for Apache Cassandra® and Apache Kafka®. It simplifies monitoring, maintenance, backups, and development by providing unified operations and customizable dashboards. 
 
