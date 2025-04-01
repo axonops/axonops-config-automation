@@ -2,6 +2,12 @@
 
 This repository contains Ansible playbooks designed to automate the configuration of AxonOps, a comprehensive management platform for Apache Cassandra® and Apache Kafka®. AxonOps simplifies monitoring, maintenance, backups, and development by providing unified operations and customizable dashboards. With these playbooks, you can easily set up alerts, dashboards, and other configurations for your AxonOps installation. For more information about AxonOps and its features, visit the [AxonOps website](https://axonops.com) or explore the [AxonOps documentation](https://axonops.com/docs/).
 
+This project is intended to configure your AxonOps settings on our SaaS or self-hosted installations of AxonOps. AxonOps can be self-installed in a variety of ways. See: 
+- https://github.com/axonops/helm-axonops
+- https://github.com/axonops/axonops-ansible-collection
+- https://github.com/axonops/axonops-server-compose
+- https://github.com/axonops/axonops-installer-packages-downloader
+
 ## Installation
 
 ### What You Will Need Before Start
