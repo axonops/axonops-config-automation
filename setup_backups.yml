@@ -42,4 +42,5 @@
         cluster: "{{ item }}"
       with_flattened: "{{ clusters['clusters'] | dict2items | map(attribute='value') | flatten }}"
       when: cl is not defined
+
 # code: language=ansible
