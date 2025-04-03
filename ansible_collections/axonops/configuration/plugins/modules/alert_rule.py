@@ -413,7 +413,8 @@ def run_module():
         result['existing_filters'] = existing_filters
         to_apply_filters = existing_filters + new_filters
         result['to_apply_filters'] = to_apply_filters
-        new_expression = pattern.sub('{' + to_apply_filters + '}', expression_updated_groupby)
+        new_expression = (pattern.sub('{' + to_apply_filters + '}', expression_updated_groupby)
+                          + " " + module.params['operator'] + " " + str(module.params['warning_value']))
         result['new_expression'] = new_expression
         result['new_data'] = new_data
     elif new_chart.get('type') == 'events_timeline':
@@ -430,7 +431,7 @@ def run_module():
         expression = ','.join(filters)
         new_expression = ("events{" + expression + "} "
                           + module.params['operator'] + " "
-                          + str(module.params['critical_value']))
+                          + str(module.params['warning_value']))
     else:
         module.fail_json(msg="The alert is not looking as metric or event either. Not implemented", **result)
         return
