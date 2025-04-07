@@ -10,3 +10,4 @@ repos:
     hooks:
       - id: yamllint
         args: [-c=.yamllint]
+exclude: ^schemas/
