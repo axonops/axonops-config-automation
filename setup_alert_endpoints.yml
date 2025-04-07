@@ -29,16 +29,24 @@
       with_fileglob:
         - "config/{{ org }}/alert_endpoints.yml"
 
-    - name: List clusters in the org
-      axonops.configuration.get_clusters:
-        org: "{{ org }}"
-      register: _clusters
-      tags: always
-
-    - name: Define primary cluster
+    - name: Get the cluster name
       tags: always
       ansible.builtin.set_fact:
-        cluster: "{{ _clusters['clusters']['cassandra'][0] }}"
+        cluster: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+
+    - name: Discover the cluster name
+      when: cluster is not defined or cluster == ''
+      block:
+        - name: List clusters in the org
+          axonops.configuration.get_clusters:
+            org: "{{ org }}"
+          register: _clusters
+          tags: always
+
+        - name: Define primary cluster
+          tags: always
+          ansible.builtin.set_fact:
+            cluster: "{{ _clusters['clusters']['cassandra'][0] }}"
 
   tasks:
     - name: Install pagerduty integrations

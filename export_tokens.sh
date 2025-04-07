@@ -6,6 +6,9 @@
 # This is the only mandatory variable value
 export AXONOPS_ORG='example'
 
+# Configure the cluster to be configured
+# export AXONOPS_CLUSTER='my-cluster'
+
 # export your token
 # token is used to authenticate in AxonOps SaaS
 # export AXONOPS_TOKEN='aaaabbbbccccddddeeee'
