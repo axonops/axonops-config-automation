@@ -3,17 +3,14 @@ import requests
 import urllib.parse
 from typing import List
 
-from ansible.module_utils.urls import open_url
-
 class HTTPCodeError(Exception):
     pass
 
 class AxonOps:
 
-    def __init__(self, org_name: str, auth_token: str = '', base_url: str = '', username: str = '', password: str = '',
+    def __init__(self, org_name: str, base_url: str = '', username: str = '', password: str = '',
                  cluster_type: str = 'cassandra', api_token: str = ''):
         self.org_name = org_name
-        self.auth_token = auth_token
         self.api_token = api_token
         self.username = username
         self.password = password
@@ -67,8 +64,13 @@ class AxonOps:
     def dash_url(self):
         return self.base_url
 
-    def do_request(self, url: str, method: str = "GET", json_data: any = None, data: any = None,
-                   form_field: str = "", ok_codes: List[int] = [200, 201, 204]) -> dict:
+    def do_request(self, url: str,
+                   method: str = "GET",
+                   json_data: any = None,
+                   data: any = None,
+                   form_field: str = "",
+                   ok_codes: List[int] = [200, 201, 204]
+                   ) -> dict:
         """
         Do HTTP(S) requests for the other methods.
 
