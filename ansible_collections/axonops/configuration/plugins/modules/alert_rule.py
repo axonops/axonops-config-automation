@@ -74,10 +74,11 @@ TODO
 
 import re
 import uuid
-
 from ansible.module_utils.basic import AnsibleModule
+
 from ansible_collections.axonops.configuration.plugins.module_utils.axonops import AxonOps
-from ansible_collections.axonops.configuration.plugins.module_utils.axonops_utils import make_module_args, find_by_field, dicts_are_different, get_value_by_name, normalize_numbers, get_integration_id_by_name
+from ansible_collections.axonops.configuration.plugins.module_utils.axonops_utils import dicts_are_different, \
+    find_by_field, get_integration_id_by_name, get_value_by_name, make_module_args, normalize_numbers
 
 
 def run_module():
@@ -99,8 +100,12 @@ def run_module():
         'group_by': {'type': 'list', 'default': [], 'choices': ['dc', 'host_id', 'rack', 'scope', []]},
         'routing': {'type': 'dict', 'default': {}},
         'present': {'type': 'bool', 'default': True},
-        'percentile': {'type': 'list', 'default': [], 'choices': ['','75thPercentile','95thPercentile','98thPercentile','99thPercentile','999thPercentile']},
-        'consistency': {'type': 'list', 'default': [], 'choices': ['','ALL','ANY','ONE','TWO','THREE','SERIAL','QUORUM','EACH_QUORUM','LOCAL_ONE','LOCAL_QUORUM','LOCAL_SERIAL']},
+        'percentile': {'type': 'list', 'default': [],
+                       'choices': ['', '75thPercentile', '95thPercentile', '98thPercentile', '99thPercentile',
+                                   '999thPercentile']},
+        'consistency': {'type': 'list', 'default': [],
+                        'choices': ['', 'ALL', 'ANY', 'ONE', 'TWO', 'THREE', 'SERIAL', 'QUORUM', 'EACH_QUORUM',
+                                    'LOCAL_ONE', 'LOCAL_QUORUM', 'LOCAL_SERIAL']},
         'keyspace': {'type': 'list', 'default': []}
     })
 
@@ -115,8 +120,8 @@ def run_module():
         'changed': False,
     }
 
-    consistency =  module.params["consistency"]
-    percentile =  module.params["percentile"]
+    consistency = module.params["consistency"]
+    percentile = module.params["percentile"]
     group_by = module.params["group_by"]
     org = module.params['org']
     cluster_type = module.params['cluster_type']
@@ -142,7 +147,9 @@ def run_module():
 
     dash_templates, error = axonops.do_request(
         f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}")
-    error_message = "Error occurred fetching AxonOps dashboard template: " + f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}" + str(error)
+    error_message = ("Error occurred fetching AxonOps dashboard template: "
+                     + f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}"
+                     + str(error))
     if error is not None:
         module.fail_json(msg=error_message)
         return
@@ -315,6 +322,7 @@ def run_module():
             'name': alert_name,
             'dashboard': module.params['dashboard'],
             'chart': module.params['chart'],
+            'integrations': {},
             'present': False,
         }
 
@@ -367,7 +375,7 @@ def run_module():
         cleaned_expr = pattern.sub('{' + reconstructed_filters + '}', orig_query)
 
         group_by_expr = ""
-        if len(group_by) > 0 :
+        if len(group_by) > 0:
             group_by_list = ",".join(group_by)
             group_by_expr = f"{group_by_list}"
 
@@ -490,7 +498,7 @@ def run_module():
         ]
     }
 
-    result['payload'] = {'payload': payload }
+    result['payload'] = {'payload': payload}
     _, error = axonops.do_request(rel_url=alerts_url, method='POST', json_data=payload)
     if error is not None:
         module.fail_json(msg="Failed to create alert rule: " + str(error), **result)
