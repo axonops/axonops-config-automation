@@ -140,17 +140,17 @@ def run_module():
 
     # Get existing alerts and dashboard templates
     existing_alerts, error = axonops.do_request(alerts_url)
-    error_message = "Error occurred accessing alert URL: " + alerts_url + str(error)
     if error is not None:
+        error_message = "Error occurred accessing alert URL: " + alerts_url + str(error)
         module.fail_json(msg=error_message)
         return
 
     dash_templates, error = axonops.do_request(
         f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}")
-    error_message = ("Error occurred fetching AxonOps dashboard template: "
-                     + f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}"
-                     + str(error))
     if error is not None:
+        error_message = ("Error occurred fetching AxonOps dashboard template: "
+                         + f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}"
+                         + str(error))
         module.fail_json(msg=error_message)
         return
 
@@ -183,6 +183,7 @@ def run_module():
         # if it is not a list, we have a single element, we can use it directly
         new_chart = new_charts
 
+    raw_query = None
     # check if it is an event base alert rather than metrics
     new_chart_filters = None
     if new_chart.get('type') == 'events_timeline':
@@ -220,6 +221,7 @@ def run_module():
         module.exit_json(**result)
         return
 
+    old_alert_exp = None
     if old_alert:
         # Find the current dashboard and widget by parsing the widget url
         widget_parts = old_alert['annotations']['widget_url'].split('/')
@@ -253,7 +255,8 @@ def run_module():
 
         # Trim the last 2 space-separated sections from the string because they will be the operator and value.
         # This should leave just the metric
-        metric = re.sub(' [^ ]+ [^ ]+$', '', old_alert['expr'])
+        old_alert_exp = old_alert['expr']
+        metric = re.sub(' [^ ]+ [^ ]+$', '', old_alert_exp)
 
         # set the routing and clean the old integration
         old_integrations = old_alert.get('integrations', {})
@@ -344,25 +347,6 @@ def run_module():
         new_data['integrations']['Routing'] = []
 
     new_data_normalized = normalize_numbers(new_data)
-
-    changed = dicts_are_different(new_data_normalized, old_data_normalized)
-    result['changed'] = changed
-    result['diff'] = {'before': old_data_normalized, 'after': new_data_normalized}
-
-    # Exit if in check mode or no changes
-    if module.check_mode or not changed:
-        module.exit_json(**result)
-        return
-
-    # Delete the alert rule and exit if present is False
-    if not module.params['present']:
-        if old_alert:
-            _, error = axonops.do_request(rel_url=alerts_url + '/' + old_alert["id"], method='DELETE')
-            if error is not None:
-                module.fail_json(msg=error)
-        module.exit_json(msg='Failed to delete the existing alert rule', **result)
-        return
-
     # Set up alert expression
     if new_chart['details']['queries']:
         orig_query = new_chart['details']['queries'][0]['query']
@@ -443,6 +427,30 @@ def run_module():
     else:
         module.fail_json(msg="The alert is not looking as metric or event either. Not implemented", **result)
         return
+
+    changed = dicts_are_different(new_data_normalized, old_data_normalized)
+
+    # if the 2 queries are present and different sign it as changed
+    if new_expression and old_alert_exp and new_expression != old_alert_exp:
+        changed = True
+
+    result['changed'] = changed
+    result['diff'] = {'before': old_data_normalized, 'after': new_data_normalized}
+
+    # Exit if in check mode or no changes
+    if module.check_mode or not changed:
+        module.exit_json(**result)
+        return
+
+    # Delete the alert rule and exit if present is False
+    if not module.params['present']:
+        if old_alert:
+            _, error = axonops.do_request(rel_url=alerts_url + '/' + old_alert["id"], method='DELETE')
+            if error is not None:
+                module.fail_json(msg=error)
+        module.exit_json(msg='Failed to delete the existing alert rule', **result)
+        return
+
     # Create or update the alert rule
     payload = {
         'alert': alert_name,
