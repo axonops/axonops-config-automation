@@ -165,11 +165,22 @@ axonops_log_alert_rule:
 
 # Example error:
 # WARN  [AntiEntropyStage:1] 2024-02-07 14:46:51,256 NoSpamLogger.java:95 - x.63.94.y:10700->x.68.75.z:10700-LARGE_MESSAGES-adbea270 overloaded; dropping 14.097MiB message (queue: 131.855MiB local, 127.855MiB endpoint, 127.855MiB global)
-- name: Dropped messages due to overloaded node during repairs"
+- name: Dropped messages due to overloaded node during repairs
   warning_value: 1
   critical_value: 500
   duration: 15m
   content: "LARGE_MESSAGES-[a-zA-Z0-9]+ overloaded; dropping"
   source: "/var/log/cassandra/system.log"
   description: "Cassandra had to drop messages due to repairs overloading the node."
+  present: true
+
+# Example error:
+# [main] 2025-05-22 16:39:56,210 StartupChecks.java:199 - jemalloc shared library could not be preloaded to speed up memory allocations
+- name: Jemalloc shared library could not be preloaded
+  warning_value: 1
+  critical_value: 500
+  duration: 15m
+  content: \"jemalloc shared library could not be preloaded to speed up memory allocations\"
+  source: "/var/log/cassandra/system.log"
+  description: "Jemalloc shared library could not be preloaded. This can affect performance."
   present: true
