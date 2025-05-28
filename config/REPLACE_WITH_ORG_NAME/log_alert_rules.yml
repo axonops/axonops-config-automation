@@ -151,3 +151,25 @@ axonops_log_alert_rule:
   source: "/var/log/cassandra/system.log"
   description: "Obsolete version of JNA present; unable to read errno. Upgrade to JNA 3.2.7 or later"
   present: true
+
+# Example error:
+# WARN  [CompactionExecutor:6] 2025-05-22 18:10:45,396 BigTableWriter.java:265 - Writing large partition coordinates_hot/coordinates_2025_01:8263852 (1.941GiB) to sstable /opt/cassandra/data/coordinates_hot/coordinates_2025_01-e61183a01f6911f0817c2f3ce1de0fcc/nb-3024-big-Data.db
+- name: Writing large partition
+  warning_value: 1
+  critical_value: 500
+  duration: 15m
+  content: \"Writing large partition\"
+  source: "/var/log/cassandra/system.log"
+  description: "Cassandra is writing a large partition on disk. This can create issue with reads and repairs. It is suggested to review the schema"
+  present: true
+
+# Example error:
+# WARN  [AntiEntropyStage:1] 2024-02-07 14:46:51,256 NoSpamLogger.java:95 - x.63.94.y:10700->x.68.75.z:10700-LARGE_MESSAGES-adbea270 overloaded; dropping 14.097MiB message (queue: 131.855MiB local, 127.855MiB endpoint, 127.855MiB global)
+- name: Dropped messages due to overloaded node during repairs"
+  warning_value: 1
+  critical_value: 500
+  duration: 15m
+  content: "LARGE_MESSAGES-[a-zA-Z0-9]+ overloaded; dropping"
+  source: "/var/log/cassandra/system.log"
+  description: "Cassandra had to drop messages due to repairs overloading the node."
+  present: true
