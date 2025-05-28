@@ -1,14 +1,14 @@
 import json
 import urllib.parse
-from typing import List
-
 from ansible.module_utils.urls import open_url
+from typing import List
 
 
 class AxonOps:
+    cloud_url: str = "https://dash.axonops.cloud"
 
     def __init__(self, org_name: str, auth_token: str = '', base_url: str = '', username: str = '', password: str = '',
-                 cluster_type: str = 'cassandra', api_token: str = ''):
+                 cluster_type: str = 'cassandra', api_token: str = '', override_saas: bool = False):
         self.org_name = org_name
         self.auth_token = auth_token
         self.api_token = api_token
@@ -23,15 +23,20 @@ class AxonOps:
         # collect the errors, will check it on every module
         self.errors = []
 
-        # clean the base url or use the default
-        if not base_url:
-            self.base_url = f'https://dash.axonops.cloud/{org_name}'
-        else:
-            # If base_url is defined then its most likely a standalone axonserver instance which doesn't need /{org_name}
-            # for axonsaas dev environment can still set the org_name in the base_url env var
-            self.base_url = f'{base_url.rstrip("/")}'
+        # set the base url
+        if base_url:
+            # if saas is overridden, the url will always be treated as saas
+            if override_saas:
+                self.base_url = base_url.rstrip("/") + "/" + org_name
+            else:
+                # if saas is not overridden, it is treated as on-prem
+                self.base_url = base_url.rstrip("/")
 
-        # if you have username and password, it will be used as login
+        else:
+            # if nothing is specified, it is AxonOps Cloud
+            self.base_url = AxonOps.cloud_url + "/" + org_name
+
+        # if you have a username and password, it will be used for the login
         if self.username and self.password:
             self.jwt = self.get_jwt()
 
@@ -41,7 +46,7 @@ class AxonOps:
         """
         return self.cluster_type
 
-    def get_jwt(self) -> str:
+    def get_jwt(self) -> str | None:
         """
         Get the JWT from the login endpoint
         """
@@ -58,6 +63,9 @@ class AxonOps:
 
             if return_error:
                 self.errors.append(return_error)
+            if not result or 'token' not in result:
+                self.errors.append(f"{self.base_url}/api/login returned an invalid result {result} {return_error}")
+                return None
             self.jwt = result['token']
             return self.jwt
 
