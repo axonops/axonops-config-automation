@@ -1,0 +1,3255 @@
+---
+axonops_dashboard_templates:
+- name: System1
+  filters:
+  - label: data center
+    multi: true
+    name: dc
+    query: host_CPU_Percent_Merge
+    regex: dc=([^:]+)
+    type: query
+  - multi: true
+    name: rack
+    query: host_CPU_Percent_Merge{dc=~'$dc'}
+    regex: rack=([^:]+)
+    type: query
+  - label: node
+    multi: true
+    name: host_id
+    query: host_CPU_Percent_Merge{dc=~'$dc',rack=~'$rack'}
+    regex: host_id=([^:]+)
+    type: query
+  - label: mount point
+    multi: true
+    name: mountpoint
+    query: host_Disk_UsedPercent{dc=~'$dc',rack=~'$rack',host_id=~'$host_id',mountpoint!='/etc*'}
+    regex: mountpoint=([^:]+)
+    type: query
+  - multi: true
+    name: partition
+    query: host_Disk_SectorsRead{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+    regex: partition=([^:]+)
+    type: query
+  - label: interface
+    multi: true
+    name: Interface
+    query: host_netIOCounters_BytesRecv{dc=~'$dc',rack=~'$rack',host_id=~'$host_id',Interface!='lo'}
+    regex: Interface=([^:]+)
+    type: query
+  panels:
+  - details:
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries: []
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      useCache: true
+      y: {}
+    layout:
+      h: 1
+      i: 5aa063d1-a658-45f6-a474-fec88088516f
+      w: 18
+      x: 0
+      y: 0
+    title: __EMPTY_ROW__
+    type: row
+    uuid: 5aa063d1-a658-45f6-a474-fec88088516f
+  - details:
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries: []
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      useCache: true
+      y: {}
+    layout:
+      h: 1
+      i: 4a8b877b-c558-41f9-b11f-85586ac1f44b
+      w: 18
+      x: 0
+      y: 10
+    title: CPU And LOAD
+    type: row
+    uuid: 4a8b877b-c558-41f9-b11f-85586ac1f44b
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: host_load15{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 4a8b877b-c558-41f9-b11f-85586ac1f44b
+    layout:
+      h: 4
+      i: b3b54153-5fa5-402d-b661-f2dc8bc13c8b
+      w: 6
+      x: 12
+      y: 11
+    title: Load Average (15m)
+    type: line-chart
+    uuid: b3b54153-5fa5-402d-b661-f2dc8bc13c8b
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: host_CPU_Percent_Merge{time='real',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        min: 0
+        unit: percent
+        yText: percent (0-100)
+    group: 4a8b877b-c558-41f9-b11f-85586ac1f44b
+    layout:
+      h: 4
+      i: ad6b5022-eaa4-4403-9306-d4d2c026c7c6
+      w: 6
+      x: 6
+      y: 11
+    title: CPU usage per host
+    type: line-chart
+    uuid: ad6b5022-eaa4-4403-9306-d4d2c026c7c6
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc
+        query: avg(host_CPU_Percent_Merge{time='real',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+          by (dc)
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        min: 0
+        unit: percent
+        yText: percent (0-100)
+    group: 4a8b877b-c558-41f9-b11f-85586ac1f44b
+    layout:
+      h: 4
+      i: 52540cd5-fe23-4018-8f2d-9b0951e8c7da
+      w: 6
+      x: 0
+      y: 11
+    title: Average CPU Usage per DC
+    type: line-chart
+    uuid: 52540cd5-fe23-4018-8f2d-9b0951e8c7da
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $host_id
+        query: avg(host_CPU{axonfunction='rate',mode='iowait',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+          by (host_id) * 100
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        min: 0
+        unit: percent
+        yText: percent (0-100)
+    group: 4a8b877b-c558-41f9-b11f-85586ac1f44b
+    layout:
+      h: 5
+      i: eca87da7-34a6-4c16-9b7c-866fdfcfea04
+      w: 6
+      x: 0
+      y: 15
+    title: Avg IO wait CPU per Host
+    type: line-chart
+    uuid: eca87da7-34a6-4c16-9b7c-866fdfcfea04
+  - details:
+      eventsFilters:
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters:
+        hostname: ''
+        level: ''
+        message: ''
+        source: ''
+        type: ''
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 1
+      nullAsZero: false
+      queries: []
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      useCache: true
+      y: {}
+    layout:
+      h: 1
+      i: ed18bf6f-6651-4fce-ae52-db2ea42537c6
+      w: 18
+      x: 0
+      y: 20
+    title: CPU Usage Detail
+    type: row
+    uuid: ed18bf6f-6651-4fce-ae52-db2ea42537c6
+  - details:
+      desc: CPU used by kernel processes
+      eventsFilters:
+        level: []
+        message: ''
+        source: []
+        type: []
+      extrapolate: 'false'
+      filters:
+        hostname: ''
+        level: ''
+        message: ''
+        source: ''
+        type: ''
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 1
+      nullAsZero: false
+      queries:
+      - color: '#dd6b66'
+        isAutoColors: true
+        legend: $dc - $host_id
+        operation: diff
+        query: 100 * host_CPU{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',mode='system'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        unit: percent
+    group: ed18bf6f-6651-4fce-ae52-db2ea42537c6
+    layout:
+      h: 4
+      i: dbe8fb34-d8f3-4abb-b906-d4804cffff51
+      w: 6
+      x: 6
+      y: 21
+    title: System
+    type: line-chart
+    uuid: dbe8fb34-d8f3-4abb-b906-d4804cffff51
+  - details:
+      desc: CPU used by low-priority processes
+      eventsFilters:
+        level: []
+        message: ''
+        source: []
+        type: []
+      extrapolate: 'false'
+      filters:
+        hostname: ''
+        level: ''
+        message: ''
+        source: ''
+        type: ''
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 1
+      nullAsZero: false
+      queries:
+      - color: '#dd6b66'
+        isAutoColors: true
+        legend: $dc - $host_id
+        operation: diff
+        query: 100 * host_CPU{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',mode='nice'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        unit: percent
+    group: ed18bf6f-6651-4fce-ae52-db2ea42537c6
+    layout:
+      h: 4
+      i: e7b8c55a-1e0e-49c5-acef-5cf8fd1d1a93
+      w: 6
+      x: 12
+      y: 21
+    title: Nice
+    type: line-chart
+    uuid: e7b8c55a-1e0e-49c5-acef-5cf8fd1d1a93
+  - details:
+      desc: CPU used by user space processes
+      eventsFilters:
+        level: []
+        message: ''
+        source: []
+        type: []
+      extrapolate: 'false'
+      filters:
+        hostname: ''
+        level: ''
+        message: ''
+        source: ''
+        type: ''
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 1
+      nullAsZero: false
+      queries:
+      - color: '#dd6b66'
+        isAutoColors: true
+        legend: $dc - $host_id
+        operation: diff
+        query: 100 * host_CPU{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',mode='user'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        unit: percent
+    group: ed18bf6f-6651-4fce-ae52-db2ea42537c6
+    layout:
+      h: 4
+      i: 5a331b0c-9501-4358-95fc-d0e8494c2144
+      w: 6
+      x: 0
+      y: 21
+    title: User
+    type: line-chart
+    uuid: 5a331b0c-9501-4358-95fc-d0e8494c2144
+  - details:
+      desc: CPU time spent waiting for I/O operations
+      eventsFilters:
+        level: []
+        message: ''
+        source: []
+        type: []
+      extrapolate: 'false'
+      filters:
+        hostname: ''
+        level: ''
+        message: ''
+        source: ''
+        type: ''
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 1
+      nullAsZero: false
+      queries:
+      - color: '#dd6b66'
+        isAutoColors: true
+        legend: $dc - $host_id
+        operation: diff
+        query: 100 * host_CPU{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',mode='iowait'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        unit: percent
+    group: ed18bf6f-6651-4fce-ae52-db2ea42537c6
+    layout:
+      h: 4
+      i: c4a44b0a-5cd1-4765-8f2e-875e2e2bf5a4
+      w: 6
+      x: 6
+      y: 25
+    title: I/O Wait
+    type: line-chart
+    uuid: c4a44b0a-5cd1-4765-8f2e-875e2e2bf5a4
+  - details:
+      desc: CPU time spent servicing interrupts
+      eventsFilters:
+        level: []
+        message: ''
+        source: []
+        type: []
+      extrapolate: 'false'
+      filters:
+        hostname: ''
+        level: ''
+        message: ''
+        source: ''
+        type: ''
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 1
+      nullAsZero: false
+      queries:
+      - color: '#dd6b66'
+        isAutoColors: true
+        legend: IRQ - $dc - $host_id
+        operation: diff
+        query: 100 * host_CPU{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',mode='irq'}
+      - color: '#759aa0'
+        isAutoColors: true
+        legend: Sort IRQ - $dc - $host_id
+        operation: diff
+        query: 100 * host_CPU{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',mode='softirq'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        unit: percent
+    group: ed18bf6f-6651-4fce-ae52-db2ea42537c6
+    layout:
+      h: 4
+      i: 73b09df0-c6ef-4163-8365-8409cd208311
+      w: 6
+      x: 0
+      y: 25
+    title: Interrupt
+    type: line-chart
+    uuid: 73b09df0-c6ef-4163-8365-8409cd208311
+  - details:
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries: []
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      useCache: true
+      y: {}
+    layout:
+      h: 1
+      i: 72b182b0-1a83-4a01-9934-9d1a9951c137
+      w: 18
+      x: 0
+      y: 0
+    title: Disk Statistics
+    type: row
+    uuid: 72b182b0-1a83-4a01-9934-9d1a9951c137
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $mountpoint
+        query: host_Disk_UsedPercent{mountpoint=~'$mountpoint',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        min: 0
+        unit: percent
+        yText: percent (0-100)
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: a0e8ee7e-7f27-4074-89d7-d6dde3019df1
+      w: 6
+      x: 0
+      y: 1
+    title: Disk % Usage $mountpoint
+    type: line-chart
+    uuid: a0e8ee7e-7f27-4074-89d7-d6dde3019df1
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $mountpoint
+        query: host_Disk_Used{mountpoint=~'$mountpoint',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        si: true
+        unit: bytes
+        yText: bytes
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: da6dd328-87c0-43fd-a4a1-a248ed06584d
+      w: 6
+      x: 6
+      y: 1
+    title: Used Disk Space Per Node
+    type: line-chart
+    uuid: da6dd328-87c0-43fd-a4a1-a248ed06584d
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $partition
+        query: host_Disk_SectorsRead{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',partition=~'$partition'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        si: true
+        unit: bytes
+        yText: bytes/s
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: edc9c2f1-a4f7-4020-bc63-7e8bc3439bd7
+      w: 6
+      x: 12
+      y: 1
+    title: Bytes Read Per Second
+    type: line-chart
+    uuid: edc9c2f1-a4f7-4020-bc63-7e8bc3439bd7
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $partition
+        query: host_Disk_SectorsWrite{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',partition=~'$partition'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        si: true
+        unit: bytes
+        yText: bytes/s
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: 57fc7a62-5033-4262-899a-967b14b1659e
+      w: 6
+      x: 0
+      y: 5
+    title: Bytes Write Per Second
+    type: line-chart
+    uuid: 57fc7a62-5033-4262-899a-967b14b1659e
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $partition
+        query: host_Disk_IOCount{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',partition=~'$partition'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: c3c6c7a2-81ad-4410-a207-99e0c86ba0c0
+      w: 6
+      x: 6
+      y: 5
+    title: IOPS
+    type: line-chart
+    uuid: c3c6c7a2-81ad-4410-a207-99e0c86ba0c0
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $partition
+        query: host_Disk_avgqsz{dc=~'$dc',rack=~'$rack',host_id=~'$host_id',partition=~'$partition'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: 3da08961-37d3-4afc-b1af-577d096d9b53
+      w: 6
+      x: 12
+      y: 5
+    title: Disk avgqsz
+    type: line-chart
+    uuid: 3da08961-37d3-4afc-b1af-577d096d9b53
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $partition
+        query: host_Disk_WeightedIO{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',partition=~'$partition'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: milliseconds
+        yText: milliseconds
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: e330548d-7d05-4578-a857-ec83de2fde0f
+      w: 6
+      x: 0
+      y: 9
+    title: Disk WeightedIO time
+    type: line-chart
+    uuid: e330548d-7d05-4578-a857-ec83de2fde0f
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: (host_filefd_allocated{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+          / host_filefd_max{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})*100
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        min: 0
+        unit: percent
+        yText: percent (0-100)
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: c2f80476-ba9a-40be-b898-087c8b23e539
+      w: 6
+      x: 6
+      y: 9
+    title: '% File Descriptors Allocated'
+    type: line-chart
+    uuid: c2f80476-ba9a-40be-b898-087c8b23e539
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id  - $partition
+        query: host_Disk_IoTime{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',partition=~'$partition'}
+          / 10
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        min: 0
+        unit: percent
+        yText: percent (0-100)
+    group: 72b182b0-1a83-4a01-9934-9d1a9951c137
+    layout:
+      h: 4
+      i: daf37145-169b-4402-bf22-7ccbe22c229a
+      w: 6
+      x: 12
+      y: 9
+    title: Time Spent on Disk IO
+    type: line-chart
+    uuid: daf37145-169b-4402-bf22-7ccbe22c229a
+  - details:
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries: []
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      useCache: true
+      y: {}
+    layout:
+      h: 1
+      i: 1daf62e4-fb57-40d2-a485-95af673043df
+      w: 18
+      x: 0
+      y: 21
+    title: Memory Statistics
+    type: row
+    uuid: 1daf62e4-fb57-40d2-a485-95af673043df
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: host_Memory_UsedPercent{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        max: 100
+        min: 0
+        unit: percent
+        yText: percent (0-100)
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: ef286697-8d81-4ca3-8443-0d11ea5a83dd
+      w: 6
+      x: 0
+      y: 22
+    title: Used Memory Percentage
+    type: line-chart
+    uuid: ef286697-8d81-4ca3-8443-0d11ea5a83dd
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - used
+        query: avg_over_time(host_Memory_Used{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}[3m])
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        si: true
+        unit: bytes
+        yText: bytes/s
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: c11b97f0-6b2e-40cd-abc6-b721e38778b9
+      w: 6
+      x: 12
+      y: 22
+    title: Used memory
+    type: line-chart
+    uuid: c11b97f0-6b2e-40cd-abc6-b721e38778b9
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - cache
+        query: avg_over_time(host_Memory_Cached{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}[3m])
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        si: true
+        unit: bytes
+        yText: bytes/s
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: 951e2371-7235-40e3-a4b2-3402f9259426
+      w: 6
+      x: 6
+      y: 22
+    title: Cached memory
+    type: line-chart
+    uuid: 951e2371-7235-40e3-a4b2-3402f9259426
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: jvm_Memory_{function='used',scope='HeapMemoryUsage',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: bytes
+        yText: bytes
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: be7ac24e-b95f-466b-a263-c2844ff55fa1
+      w: 6
+      x: 6
+      y: 26
+    title: JVM Heap Utilization
+    type: line-chart
+    uuid: be7ac24e-b95f-466b-a263-c2844ff55fa1
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: jvm_Threading_{function='ThreadCount',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: 7e7d3cae-fdff-416c-b081-b48d2a5fa2ab
+      w: 6
+      x: 0
+      y: 26
+    title: JVM Thread Count
+    type: line-chart
+    uuid: 7e7d3cae-fdff-416c-b081-b48d2a5fa2ab
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $scope
+        operation: last
+        query: avg(jvm_Memory_{function='used',scope='HeapMemoryUsage',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+          by (scope)
+      - legend: $scope
+        operation: last
+        query: avg(jvm_Memory_{function='used',scope='NonHeapMemoryUsage',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+          by (scope)
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      useCache: true
+      y: {}
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: be7ac24e-b92f-466b-a263-c2844ff55fa1
+      w: 6
+      x: 12
+      y: 26
+    title: JVM Utilization
+    type: pie_chart
+    uuid: be7ac24e-b92f-466b-a263-c2844ff55fa1
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: '$dc - $host_id '
+        query: jvm_GarbageCollector_ZGC{axonfunction='rate',function='CollectionTime',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: milliseconds
+        yText: short
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: d893c987-e96e-4ec1-8722-3ee574ad9bc2
+      w: 6
+      x: 0
+      y: 30
+    title: GC duration - ZGC
+    type: line-chart
+    uuid: d893c987-e96e-4ec1-8722-3ee574ad9bc2
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: jvm_GarbageCollector_G1_Young_Generation{axonfunction='rate',function='CollectionTime',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: milliseconds
+        yText: milliseconds
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: f950bdab-65b6-4eea-847d-893ab883f716
+      w: 6
+      x: 12
+      y: 30
+    title: GC duration - G1_Young
+    type: line-chart
+    uuid: f950bdab-65b6-4eea-847d-893ab883f716
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: jvm_GarbageCollector_Shenandoah_Cycles{axonfunction='rate',function='CollectionTime',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: 699b87b4-81c7-4c5c-a0a4-b261f427732c
+      w: 6
+      x: 6
+      y: 30
+    title: GC duration - Shenandoah
+    type: line-chart
+    uuid: 699b87b4-81c7-4c5c-a0a4-b261f427732c
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - Shenandoah Cycles
+        query: jvm_GarbageCollector_Shenandoah_Cycles{axonfunction='rate',function='CollectionCount',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: 89b84938-d3a9-4b02-aede-768ed8226f37
+      w: 6
+      x: 6
+      y: 34
+    title: GC Count per sec - Shenandoah
+    type: line-chart
+    uuid: 89b84938-d3a9-4b02-aede-768ed8226f37
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: '$dc - $host_id '
+        query: jvm_GarbageCollector_ZGC{axonfunction='rate',function='CollectionCount',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: 8f00c77d-a20c-4539-888c-85e7fefb2c6d
+      w: 6
+      x: 0
+      y: 34
+    title: GC count per sec - ZGC
+    type: line-chart
+    uuid: 8f00c77d-a20c-4539-888c-85e7fefb2c6d
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: jvm_GarbageCollector_G1_Young_Generation{axonfunction='rate',function='CollectionCount',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: short
+        yText: short
+    group: 1daf62e4-fb57-40d2-a485-95af673043df
+    layout:
+      h: 4
+      i: b85b7a21-27ca-4cc2-b42a-e4e7dae80481
+      w: 6
+      x: 12
+      y: 34
+    title: GC Count per sec - G1_Young
+    type: line-chart
+    uuid: b85b7a21-27ca-4cc2-b42a-e4e7dae80481
+  - details:
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: false
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries: []
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      useCache: true
+      y: {}
+    layout:
+      h: 1
+      i: 04c2b3b0-ec02-4408-8b23-a8d4e08669dd
+      w: 18
+      x: 0
+      y: 50
+    title: Network Statistics
+    type: row
+    uuid: 04c2b3b0-ec02-4408-8b23-a8d4e08669dd
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $Interface
+        query: host_netIOCounters_BytesRecv{axonfunction='rate',Interface=~'$Interface',Interface!='lo',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        si: false
+        unit: bytes
+        yText: bytes
+    group: 04c2b3b0-ec02-4408-8b23-a8d4e08669dd
+    layout:
+      h: 4
+      i: 59403c36-9a5a-4976-9c02-b254c9be9385
+      w: 6
+      x: 0
+      y: 51
+    title: Network Received (bytes)
+    type: line-chart
+    uuid: 59403c36-9a5a-4976-9c02-b254c9be9385
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id
+        query: abs(host_ntp_offset_seconds{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+          * 1000
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        unit: milliseconds
+        yText: milliseconds
+    group: 04c2b3b0-ec02-4408-8b23-a8d4e08669dd
+    layout:
+      h: 4
+      i: 9a700c35-83ca-4c67-b958-3e275913690a
+      w: 6
+      x: 12
+      y: 51
+    title: NTP offset (milliseconds)
+    type: line-chart
+    uuid: 9a700c35-83ca-4c67-b958-3e275913690a
+  - details:
+      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+      eventsFilters:
+        f1: []
+        f2: []
+        host_id: []
+        level: []
+        message: ''
+        source: []
+        type: []
+      filters: {}
+      isHideNullValue: false
+      isSmoothLines: true
+      lineThickness: 1
+      max: 100
+      nullAsZero: false
+      queries:
+      - legend: $dc - $host_id - $Interface
+        query: host_netIOCounters_BytesSent{axonfunction='rate',Interface=~'$Interface',Interface!='lo',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+      resolution: low
+      sortOrderPIE: asc
+      thresholds:
+      - color: '#4caf50'
+        name: default
+        value: 0
+      - color: '#fe9800'
+        name: warning
+        value: 0
+      - color: '#f44336'
+        name: critical
+        value: 0
+      topK: 999
+      useCache: true
+      y:
+        si: false
+        unit: bytes
+        yText: bytes
+    group: 04c2b3b0-ec02-4408-8b23-a8d4e08669dd
+    layout:
+      h: 4
+      i: b241bf5d-0756-43b6-85fc-893322090a0d
+      w: 6
+      x: 6
+      y: 51
+    title: Network Transmitted (bytes)
+    type: line-chart
+    uuid: b241bf5d-0756-43b6-85fc-893322090a0d
+#- name: Overview
+#  filters:
+#  - label: data center
+#    multi: true
+#    name: dc
+#    query: host_CPU_Percent_Merge
+#    regex: dc=([^:]+)
+#    type: query
+#  - multi: true
+#    name: rack
+#    query: host_CPU_Percent_Merge{dc=~'$dc'}
+#    regex: rack=([^:]+)
+#    type: query
+#  - label: node
+#    multi: true
+#    name: host_id
+#    query: host_CPU_Percent_Merge{dc=~'$dc',rack=~'$rack'}
+#    regex: host_id=([^:]+)
+#    type: query
+#  - multi: false
+#    name: groupBy
+#    type: custom
+#    values: dc,rack,host_id,keyspace
+#  - multi: false
+#    name: percentile
+#    query: cas_ClientRequest_Latency{scope='Write',function!='Min|Max|Count|FifteenMinuteRate|FiveMinuteRate|Mean|MeanRate|OneMinuteRate|StdDev'}
+#    regex: function=([^:]+)
+#    type: query
+#  - multi: true
+#    name: keyspace
+#    query: axon_cassandraKeyspaces
+#    regex: keyspace=([^:]+)
+#    type: query
+#  - label: table
+#    multi: true
+#    name: scope
+#    query: axon_cassandraTables{keyspace=~'$keyspace'}
+#    regex: table=([^:]+)
+#    type: query
+#  panels:
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: 4b2277b9-3580-42ed-9495-20416ca1b7ca
+#      w: 18
+#      x: 0
+#      y: 0
+#    title: __EMPTY_ROW__
+#    type: row
+#    uuid: 4b2277b9-3580-42ed-9495-20416ca1b7ca
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
+#      w: 18
+#      x: 0
+#      y: 10
+#    title: Availability & connections statistics
+#    type: row
+#    uuid: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $dc - $host_id
+#        query: ceil(cas_Client_connectedNativeClients{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
+#    layout:
+#      h: 4
+#      i: 7ed8ceb3-51dc-40d2-80de-b856c0f974a3
+#      w: 6
+#      x: 6
+#      y: 11
+#    title: Native connections
+#    type: line-chart
+#    uuid: 7ed8ceb3-51dc-40d2-80de-b856c0f974a3
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $dc - $host_id
+#        query: cas_downendpoint_count{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
+#    layout:
+#      h: 4
+#      i: 1c455aac-8b9f-48a0-a310-6e8e44a5f5e1
+#      w: 6
+#      x: 12
+#      y: 11
+#    title: Number of Endpoints Down Per Node Point Of View
+#    type: line-chart
+#    uuid: 1c455aac-8b9f-48a0-a310-6e8e44a5f5e1
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: DOWN
+#        source: []
+#        type: []
+#      extrapolate: 'false'
+#      filters:
+#        hostname: ''
+#        level: ''
+#        message: ''
+#        source: ''
+#        type: ''
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 1
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
+#    layout:
+#      h: 4
+#      i: a744545d-4b89-4415-8ffd-394d1b037fa4
+#      w: 6
+#      x: 0
+#      y: 11
+#    title: DOWN in logs
+#    type: events_bar_chart
+#    uuid: a744545d-4b89-4415-8ffd-394d1b037fa4
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      extrapolate: 'false'
+#      filters: {}
+#      isHideNullValue: true
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - color: '#66dd84'
+#        isAutoColors: false
+#        legend: up
+#        operation: last
+#        prevValue: 1
+#        query: min(cas_FailureDetector_{function='UpEndpointCount',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#      - color: '#ff4040'
+#        isAutoColors: false
+#        legend: down
+#        operation: last
+#        prevValue: 0
+#        query: max(cas_downendpoint_count{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
+#    layout:
+#      h: 4
+#      i: 2ef8d2ac-044b-414d-b097-deb1c2591a32
+#      w: 6
+#      x: 0
+#      y: 15
+#    title: UP vs Down endpoints
+#    type: pie_chart
+#    uuid: 2ef8d2ac-044b-414d-b097-deb1c2591a32
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters:
+#        hostname: ''
+#        level: ''
+#        message: ''
+#        source: ''
+#        type: ''
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 0
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: 1727b49c-d189-4255-81d3-69b7da32a32c
+#      w: 18
+#      x: 0
+#      y: 15
+#    title: Table Count
+#    type: row
+#    uuid: 1727b49c-d189-4255-81d3-69b7da32a32c
+#  - details:
+#      desc: ''
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      extrapolate: 'false'
+#      filters:
+#        hostname: ''
+#        level: ''
+#        message: ''
+#        source: ''
+#        type: ''
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 0
+#      nullAsZero: false
+#      queries:
+#      - color: ''
+#        legend: Legend 1
+#        operation: last
+#        query: 'count(count(cas_Table_LiveDiskSpaceUsed{scope=~".*"}) by (scope, keyspace)) '
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    group: 1727b49c-d189-4255-81d3-69b7da32a32c
+#    layout:
+#      h: 4
+#      i: 3f161f51-8329-48d2-b4a9-7a63e065c9cf
+#      w: 9
+#      x: 0
+#      y: 16
+#    title: Total Table Count
+#    type: metrics_counter
+#    uuid: 3f161f51-8329-48d2-b4a9-7a63e065c9cf
+#  - details:
+#      desc: ''
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      extrapolate: 'false'
+#      filters:
+#        hostname: ''
+#        level: ''
+#        message: ''
+#        source: ''
+#        type: ''
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 0
+#      nullAsZero: false
+#      queries:
+#      - color: ''
+#        legend: Legend 1
+#        query: 'count(count(cas_Table_LiveDiskSpaceUsed{scope=~".*"}) by (scope, keyspace)) '
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y: {}
+#    group: 1727b49c-d189-4255-81d3-69b7da32a32c
+#    layout:
+#      h: 4
+#      i: 2883d77b-87b9-416d-85f1-e80f963850bd
+#      w: 9
+#      x: 9
+#      y: 16
+#    title: Total Table Count
+#    type: line-chart
+#    uuid: 2883d77b-87b9-416d-85f1-e80f963850bd
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: a1d912ff-122b-4ce5-8752-d03956de07ff
+#      w: 18
+#      x: 0
+#      y: 24
+#    title: Latency Statistics Per Node
+#    type: row
+#    uuid: a1d912ff-122b-4ce5-8752-d03956de07ff
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $host_id
+#        query: sum(cas_Table_CoordinatorReadLatency{function='$percentile',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',keyspace=~'$keyspace',scope=~'$scope'})
+#          by (host_id)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: microseconds
+#        yText: microseconds
+#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
+#    layout:
+#      h: 4
+#      i: 22da4321-1caf-4226-a3e1-d3d444510597
+#      w: 6
+#      x: 0
+#      y: 25
+#    title: Coordinator Read Latency - $percentile
+#    type: line-chart
+#    uuid: 22da4321-1caf-4226-a3e1-d3d444510597
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: true
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $host_id
+#        query: sum(cas_Table_CoordinatorScanLatency{function='$percentile',function!='Count|Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',keyspace=~'$keyspace',scope=~'$scope'})
+#          by (host_id)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: microseconds
+#        yText: microseconds
+#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
+#    layout:
+#      h: 4
+#      i: eb95a77b-8904-40d3-8e23-8e6c38bbe397
+#      w: 6
+#      x: 6
+#      y: 25
+#    title: Coordinator Scan Latency - $percentile
+#    type: line-chart
+#    uuid: eb95a77b-8904-40d3-8e23-8e6c38bbe397
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: true
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $host_id
+#        query: sum(cas_ClientRequest_Latency{scope='Write',function='$percentile',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#          by (host_id)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: microseconds
+#        yText: microseconds
+#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
+#    layout:
+#      h: 4
+#      i: c9c6e8db-83f2-4204-b882-84bb29e65279
+#      w: 6
+#      x: 12
+#      y: 25
+#    title: Coordinator Write Latency - $percentile
+#    type: line-chart
+#    uuid: c9c6e8db-83f2-4204-b882-84bb29e65279
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: large partition
+#        source: []
+#        type: []
+#      extrapolate: 'false'
+#      filters:
+#        hostname: ''
+#        level: ''
+#        message: ''
+#        source: ''
+#        type: ''
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 1
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
+#    layout:
+#      h: 4
+#      i: d756a1b0-759b-4906-b709-fbf47e399bac
+#      w: 6
+#      x: 6
+#      y: 29
+#    title: Large Partition Warnings
+#    type: events_bar_chart
+#    uuid: d756a1b0-759b-4906-b709-fbf47e399bac
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $dc - $host_id - $keyspace
+#        query: cas_Keyspace_ReadLatency{keyspace=~'$keyspace',function='$percentile',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: microseconds
+#        yText: microseconds
+#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
+#    layout:
+#      h: 4
+#      i: 6b659629-c0a8-4a40-8774-a46c9501fa62
+#      w: 6
+#      x: 0
+#      y: 29
+#    title: Read Latency Per Keyspace Per Node - $percentile
+#    type: line-chart
+#    uuid: 6b659629-c0a8-4a40-8774-a46c9501fa62
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: true
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $dc - $host_id - $keyspace
+#        query: cas_Keyspace_WriteLatency{keyspace=~'$keyspace',function='$percentile',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: microseconds
+#        yText: microseconds
+#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
+#    layout:
+#      h: 4
+#      i: 77345d0d-8438-48e8-8cf1-2cc74fc635fc
+#      w: 6
+#      x: 12
+#      y: 29
+#    title: Write Latency Per Keyspace Per Node - $percentile
+#    type: line-chart
+#    uuid: 77345d0d-8438-48e8-8cf1-2cc74fc635fc
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: 870fbbef-8be0-473b-bcce-93ae2e96a943
+#      w: 18
+#      x: 0
+#      y: 19
+#    title: Throughput Statistics
+#    type: row
+#    uuid: 870fbbef-8be0-473b-bcce-93ae2e96a943
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      extrapolate: 'true'
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $groupBy
+#        query: avg(cas_Keyspace_WriteLatency{axonfunction='rate',keyspace=~'$keyspace',function='Count',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#          by ($groupBy)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: microseconds
+#    group: 870fbbef-8be0-473b-bcce-93ae2e96a943
+#    layout:
+#      h: 4
+#      i: 0d5cc7b1-9cac-4db4-ae5b-2a5953b6849d
+#      w: 6
+#      x: 12
+#      y: 20
+#    title: Avg Writes per $groupBy
+#    type: line-chart
+#    uuid: 0d5cc7b1-9cac-4db4-ae5b-2a5953b6849d
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: true
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $groupBy
+#        query: sum(cas_Keyspace_RangeLatency{axonfunction='rate',keyspace=~'$keyspace',function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#          by ($groupBy)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: microseconds
+#        yText: microseconds
+#    group: 870fbbef-8be0-473b-bcce-93ae2e96a943
+#    layout:
+#      h: 4
+#      i: 2fb4cf83-929b-4356-b97a-947370fd673e
+#      w: 6
+#      x: 6
+#      y: 20
+#    title: Range Read Count Per $groupBy
+#    type: line-chart
+#    uuid: 2fb4cf83-929b-4356-b97a-947370fd673e
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      extrapolate: 'true'
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: true
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $groupBy
+#        query: avg(cas_Keyspace_ReadLatency{axonfunction='rate',keyspace=~'$keyspace',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#          by ($groupBy)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: microseconds
+#    group: 870fbbef-8be0-473b-bcce-93ae2e96a943
+#    layout:
+#      h: 4
+#      i: a61c2cdd-5712-4dcd-aa45-94b4a3b5a929
+#      w: 6
+#      x: 0
+#      y: 20
+#    title: Avg Reads per $groupBy
+#    type: line-chart
+#    uuid: a61c2cdd-5712-4dcd-aa45-94b4a3b5a929
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: e33a938e-7996-4792-ab6c-6217d0a1a255
+#      w: 18
+#      x: 0
+#      y: 348
+#    title: Error Statistics
+#    type: row
+#    uuid: e33a938e-7996-4792-ab6c-6217d0a1a255
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $groupBy
+#        query: sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='Read', function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#          by ($groupBy)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
+#    layout:
+#      h: 4
+#      i: fc42737a-defa-4598-a110-ad84f672c65f
+#      w: 6
+#      x: 0
+#      y: 1
+#    title: Client Read Timeouts Per Second
+#    type: line-chart
+#    uuid: fc42737a-defa-4598-a110-ad84f672c65f
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $groupBy
+#        query: sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='Write', function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#          by ($groupBy)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
+#    layout:
+#      h: 4
+#      i: d19d5d96-3bb6-464f-be42-a814d53d87db
+#      w: 6
+#      x: 6
+#      y: 1
+#    title: Client Write Timeouts Per Second
+#    type: line-chart
+#    uuid: d19d5d96-3bb6-464f-be42-a814d53d87db
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $groupBy
+#        query: sum(cas_ClientRequest_Unavailables{axonfunction='rate',scope='Read',
+#          function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}) by ($groupBy)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
+#    layout:
+#      h: 4
+#      i: 9ad039ad-11b3-4a77-8fd3-7f0615bba0b1
+#      w: 6
+#      x: 12
+#      y: 1
+#    title: Client Read Unavailables Per Second
+#    type: line-chart
+#    uuid: 9ad039ad-11b3-4a77-8fd3-7f0615bba0b1
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $groupBy
+#        query: sum(cas_ClientRequest_Unavailables{axonfunction='rate',scope='Write',
+#          function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}) by ($groupBy)
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
+#    layout:
+#      h: 4
+#      i: da5ec040-ceeb-43f6-9bfb-bfb979aa3cdc
+#      w: 6
+#      x: 0
+#      y: 5
+#    title: Client Write Unavailables Per Second
+#    type: line-chart
+#    uuid: da5ec040-ceeb-43f6-9bfb-bfb979aa3cdc
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: 7884be00-4f7c-4bb1-91b1-b396b58469f9
+#      w: 18
+#      x: 0
+#      y: 661
+#    title: Compactions Per Node
+#    type: row
+#    uuid: 7884be00-4f7c-4bb1-91b1-b396b58469f9
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $dc - $host_id
+#        query: cas_Compaction_PendingTasks{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: 7884be00-4f7c-4bb1-91b1-b396b58469f9
+#    layout:
+#      h: 4
+#      i: c1fd6a5a-9207-4742-b7b5-779d6cab83d6
+#      w: 6
+#      x: 0
+#      y: 663
+#    title: Pending Compaction Tasks
+#    type: line-chart
+#    uuid: c1fd6a5a-9207-4742-b7b5-779d6cab83d6
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: true
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $dc - $host_id
+#        query: cas_Compaction_CompletedTasks{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: 7884be00-4f7c-4bb1-91b1-b396b58469f9
+#    layout:
+#      h: 4
+#      i: 5f2ed41c-ba89-48a9-b73f-995941ae966e
+#      w: 6
+#      x: 6
+#      y: 663
+#    title: Completed Compaction Tasks per sec
+#    type: line-chart
+#    uuid: 5f2ed41c-ba89-48a9-b73f-995941ae966e
+#  - details:
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: false
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries: []
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      useCache: true
+#      y: {}
+#    layout:
+#      h: 1
+#      i: a74c6794-a68d-4671-bf8f-a12429e3661a
+#      w: 18
+#      x: 0
+#      y: 38
+#    title: Connected Clients Per Node
+#    type: row
+#    uuid: a74c6794-a68d-4671-bf8f-a12429e3661a
+#  - details:
+#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
+#      eventsFilters:
+#        f1: []
+#        f2: []
+#        host_id: []
+#        level: []
+#        message: ''
+#        source: []
+#        type: []
+#      filters: {}
+#      isHideNullValue: false
+#      isSmoothLines: true
+#      lineThickness: 1
+#      max: 100
+#      nullAsZero: false
+#      queries:
+#      - legend: $host_id
+#        query: ceil(cas_Client_connectedNativeClients{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
+#      resolution: low
+#      sortOrderPIE: asc
+#      thresholds:
+#      - color: '#4caf50'
+#        name: default
+#        value: 0
+#      - color: '#fe9800'
+#        name: warning
+#        value: 0
+#      - color: '#f44336'
+#        name: critical
+#        value: 0
+#      topK: 999
+#      useCache: true
+#      y:
+#        unit: short
+#        yText: short
+#    group: a74c6794-a68d-4671-bf8f-a12429e3661a
+#    layout:
+#      h: 4
+#      i: dd3fbf8b-a263-4a7e-a722-1b9869b80348
+#      w: 6
+#      x: 0
+#      y: 39
+#    title: Number Of Connections (Native)
+#    type: line-chart
+#    uuid: dd3fbf8b-a263-4a7e-a722-1b9869b80348
