@@ -1,415 +1,592 @@
 # AxonOps Configuration Automation
 
-This repository contains Ansible playbooks designed to automate the configuration of AxonOps for your connected cluster.
+<p align="center">
+  <strong>🚀 Enterprise-grade Ansible automation for AxonOps monitoring and management platform</strong>
+</p>
 
-AxonOps is a comprehensive management platform for Apache Cassandra® and Apache Kafka®. It simplifies monitoring, maintenance, backups, and development by providing unified operations and customizable dashboards. 
+<p align="center">
+  <a href="#overview">Overview</a> •
+  <a href="#features">Features</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#configuration">Configuration</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#examples">Examples</a>
+</p>
 
-With these playbooks, you can easily set up alerts, dashboards, and other configurations for your AxonOps installation. For more information about AxonOps and its features, visit the [AxonOps website](https://axonops.com) or explore the [AxonOps documentation](https://axonops.com/docs/).
+---
 
-This project is intended to configure your AxonOps settings on our SaaS or self-hosted installations of AxonOps. AxonOps can be self-installed in a variety of ways. See: 
-- https://github.com/axonops/helm-axonops
-- https://github.com/axonops/axonops-ansible-collection
-- https://github.com/axonops/axonops-server-compose
-- https://github.com/axonops/axonops-installer-packages-downloader
+## Overview
+
+This repository provides production-ready Ansible playbooks to automate the configuration of [AxonOps](https://axonops.com) - a comprehensive management platform for Apache Cassandra® and Apache Kafka®. With these playbooks, you can programmatically configure alerts, dashboards, backups, and monitoring rules without manual GUI interaction.
+
+> **Note**: This project configures AxonOps settings on SaaS or self-hosted installations. For installing AxonOps itself, see:
+> - [Helm Charts](https://github.com/axonops/helm-axonops)
+> - [Ansible Collection](https://github.com/axonops/axonops-ansible-collection)
+> - [Docker Compose](https://github.com/axonops/axonops-server-compose)
+> - [Installer Packages](https://github.com/axonops/axonops-installer-packages-downloader)
+
+### What Gets Configured?
+
+This automation framework configures:
+
+- **📊 100+ Pre-defined Metric Alerts** - CPU, memory, disk, latency, timeouts, and Cassandra/Kafka-specific metrics
+- **📝 20+ Log Alert Rules** - Node failures, SSL issues, repairs, disk space, and error patterns
+- **🔔 Multi-Channel Alert Routing** - Slack, PagerDuty, OpsGenie, ServiceNow, Microsoft Teams
+- **💾 Automated Backup Schedules** - S3, Azure Blob, SFTP with retention policies
+- **🏥 Service Health Checks** - TCP ports, shell scripts, SSL certificates, system maintenance
+- **🔧 Advanced Features** - Adaptive repair, commit log archiving, agent tolerance settings
+
+## Features
+
+### 🎯 Key Capabilities
+
+- **Multi-Cluster Support** - Configure all clusters in your organization or target specific ones
+- **Hierarchical Configuration** - Organization-wide defaults with cluster-specific overrides
+- **Idempotent Operations** - Safe to run multiple times
+- **YAML Validation** - Built-in schema validation for all configurations
+- **Enterprise Integrations** - Native support for major alerting and incident management platforms
+- **Cross-Platform** - Support for both Apache Cassandra and Apache Kafka
+
+### 📋 Pre-Configured Monitoring
+
+<details>
+<summary><b>Metric Alerts (Click to expand)</b></summary>
+
+#### System & Performance
+- CPU usage (warning: 90%, critical: 99%)
+- Memory utilization (warning: 85%, critical: 95%)
+- Disk usage per mount point (warning: 75%, critical: 90%)
+- IO wait times (warning: 20%, critical: 50%)
+- Garbage collection duration (warning: 5s, critical: 10s)
+- NTP time drift monitoring
+
+#### Cassandra-Specific
+- Coordinator read/write latencies (per consistency level)
+- Read/write timeouts and unavailables
+- Dropped messages (mutations, reads, hints)
+- Thread pool congestion (blocked tasks, pending requests)
+- Compaction backlogs
+- Tombstone scanning thresholds
+- SSTable counts and bloom filter efficiency
+- Hint creation rates
+- Cache hit rates
+
+#### Kafka-Specific
+- Broker availability
+- Controller status
+- Network processor utilization
+- Request queue sizes
+- Offline/under-replicated partitions
+- Authentication failures
+- Metadata errors
+
+</details>
+
+<details>
+<summary><b>Log Alerts (Click to expand)</b></summary>
+
+- Node DOWN events
+- TLS/SSL handshake failures
+- Gossip message drops
+- Stream session failures
+- SSTable corruption
+- Disk space issues
+- JVM memory problems
+- Large partition warnings
+- Repair monitoring
+- Jemalloc loading issues
+
+</details>
+
+<details>
+<summary><b>Service Checks (Click to expand)</b></summary>
+
+- Schema agreement validation
+- Node status monitoring
+- SSL certificate expiration
+- System reboot requirements
+- AWS maintenance events
+- CQL connectivity tests
+- Custom shell script checks
+
+</details>
+
+## Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/axonops/axonops-config-automation.git
+cd axonops-config-automation
+
+# 2. Set your environment variables
+export AXONOPS_ORG='your-organization'
+export AXONOPS_TOKEN='your-api-token'
+
+# 3. Run the playbooks
+make endpoints          # Configure alert integrations
+make routes            # Set up alert routing
+make metrics-alerts    # Create metric-based alerts
+make log-alerts        # Create log-based alerts
+make service-checks    # Configure health checks
+make backups          # Set up backup schedules
+```
 
 ## Installation
 
-### What You Will Need Before Start
+### Prerequisites
 
-To run the Ansible AxonOps Playbook you will need:
+- **Ansible** >= 2.10
+- **Python** >= 3.8
+- **make** (or use the provided `make.sh` script)
 
-- Anisble >= 2.10
-- Python3.8 or above
-- make
+### System-Specific Installation
 
-### Export Environment Variables
+<details>
+<summary><b>RedHat/RockyLinux (8+)</b></summary>
 
-The Ansible Playbook takes as input environment variables, the standard for a SaaS connections are:
-
-```shell
-# export your org
-# This is the only mandatory variable value
-export AXONOPS_ORG='example'
-
-# Create you API token within your AxonOps console. You will need DBA level access or above to the clusters
-# you will be configuring.
-export AXONOPS_TOKEN='aaaabbbbccccddddeeee'
-```
-
-To simplify the process, the `export_tokens.sh` file has been created with all the accepted variables. Modify this file with your specific details, and then export the variables.
-
-```commandline
-source ./export_tokens.sh
-```
-
-The `AXONOPS_TOKEN` parameter is used only for AxonOps SaaS. For AxonOps on-premises, you can use a username and password or configure it to allow anonymous login.
-Refer to `export_tokens.sh` for more information on configuring the Ansible Playbook for AxonOps on-premises and on the accepted environment variables.
-
-### Ansible preparation
-
-The playbooks have been tested on Ansible 2.10 but it should work on most versions.
-
-> *NOTE:* We prefer using the GNU Make to run these playbooks but you can
->         use the `make.sh` script instead if you prefer.
-
-#### RedHat and RockyLinux
-
-The system `ansible` package should work fine for RedHat and RockyLinux >=8
-
-```sh
+```bash
 sudo dnf -y install epel-release
 sudo dnf -y install ansible make
 ```
+</details>
 
-#### Debian and Ubuntu
+<details>
+<summary><b>Debian/Ubuntu</b></summary>
 
-It has been tested for Ubuntu 22.04 and Debian Bookworm:
-
-```sh
+```bash
 sudo apt update
 sudo apt -y install ansible make
 ```
+</details>
 
-#### Virtualenv
+<details>
+<summary><b>Using Virtualenv</b></summary>
 
-If you're using virtualenv, simply create a python 3 environment and install Ansible to it:
-
-```sh
+```bash
 virtualenv ~/py-axonops
 source ~/py-axonops/bin/activate
 pip3 install -r requirements.txt
 ```
+</details>
 
-#### Pipenv
+<details>
+<summary><b>Using Pipenv (Recommended)</b></summary>
 
-We recommend using `pipenv` to manage the environment. After installing `pipenv`, simply run:
-
-```shell
+```bash
 pipenv install
+export PIPENV=true
+```
+</details>
+
+### Environment Configuration
+
+Configure your environment using the provided template:
+
+```bash
+# Copy and edit the environment template
+cp export_tokens.sh export_tokens.sh.local
+vim export_tokens.sh.local
+
+# Source your configuration
+source ./export_tokens.sh.local
 ```
 
-and the export the variable:
+#### Required Variables
 
-```sh
-export PIPENV=true
+```bash
+# Organization name (mandatory)
+export AXONOPS_ORG='example'
+
+# For AxonOps SaaS
+export AXONOPS_TOKEN='your-api-token'
+
+# For AxonOps On-Premise
+export AXONOPS_URL='https://your-axonops-instance.com'
+export AXONOPS_USERNAME='your-username'
+export AXONOPS_PASSWORD='your-password'
+# OR for anonymous access
+export AXONOPS_ANONYMOUS='true'
 ```
 
 ## Configuration
 
-The configuration is structured in folders following the format within the directory `config`:
-
-The `config/REPLACE_WITH_ORG_NAME` folder contains `alert_endpoints.yml` which defines alert endpoints at the org level,
-since the alert endpoints are defined for the entire org and shared across all your clusters. All other
-configurations are defined per cluster. This folder also contains the following files:
-
- - metric_alert_rules.yml
- - log_alert_rules.yml
- - service_checks.yml
-
-These configurations defined in this folder will be applied to all of your clusters. You should define
-common alert rules and service checks in this folder.
-
-To define cluster specific configurations, overiding the rules and configurations defined at the org level, example
-files are provided under `config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME`. The rules and configurations
-in this folder will append and override the settings provided in the org folder.
-
-
-## Alert Endpoints
-Alert endpoints such as Slack, Teams, PagerDuty, OpsGenie can be configured using this Ansible playbook.
-Since alert endpoints configurations are AxonOps org-level setting, the configuration file is placed at `./config/<org_name>/alert_endpoints.yml`.
-
-
-## Metric Alert Rules
-The metric alert rules are configured against the charts that exists for the AxonOps dashboard in each cluster.
-Multiple alert rules can be configured against each chart.
-
-An example configuration for a metric alert is shown below.
+### Directory Structure
 
 ```
-- name: CPU usage per host
-  dashboard: System
-  chart: CPU usage per host
-  operator: '>='
-  critical_value: 99
-  warning_value: 90
-  duration: 1h
-  description: Detected High CPU usage
-  present: true
-```
-`name:` is the name of the alert
-
-`dashboard:` must correspond to the dashboard name in the AxonOps right-hand menu.
-
-![Dashboard -> System](./assets/axonops-dashboard-system.png)
-
-`chart:` must correspond to the name of the chart within the above dashboard. In this case `CPU usage per host`. The metric query is
-automatically detected by specifying the chart name.
-
-![Chart - CPU usage per host](./assets/axonops-chart-cpu-usage.png)
-
-`operator:` options are: `==`, `>=`, `>`, `<=`, `<`, `!=`.
-
-![Alert Rule Operators](./assets/axonops-alert-rule-operators.png)
-
-`critical_value:` is the critical value threshold.
-
-`warning_value:` is the warning value threshold.
-
-`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered.
-
-`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
-
-`present:` `true|false` - by setting it to `false` it will remove the alert.
-
-## Log Alert Rules
-Log alerts can be defined using this Ansible playbook.
-
-An example configuration for a log alert is shown below.
-```
-- name: TLS failed to handshake with peer
-  warning_value: 50
-  critical_value: 100
-  duration: 5m
-  content: \"Failed to handshake with peer\"
-  source: "/var/log/cassandra/system.log"
-  description: "Detected TLS handshake error with peer"
-  level: warning,error,info
-  present: true
-```
-`name:` is the name of the alert.
-
-`warning_value:` is the warning value threshold based on the count of matched logs.
-
-`critical_value:` is the critical value threshold based on the count of matched logs.
-
-`duration:` is the duration the warning or critical values must violate the operator rule before the alert is triggered.
-
-`content`: is the text search. Double quotes must be escaped.
-Currently the following matching syntax is supported:
-* `hello` - matches `hello`
-* `hello world` - matches `hello` or `world`
-* `"hello world"` - matches exact `hello world`
-* `+-hello` - matches excluding `hello`
-* `+-"hello world"` - matches excluding `hello world`
-* `+-hello +-world` - matches excluding `hello` or `world`
-
-`source`: specifies the log source. This must match with one of the options available in the `Source` filter found in the Logs&Events view.
-
-![Event Source](./assets/axonops-event-source.png)
-
-`description:` sets the description of the alert. You may want to add a description of an action to take when this alert is raised.
-
-`level:` sets the event level filter - a comma separated list with the following values: `debug`, `error`, `warning`, `info`
-
-`present:` `true|false` - by setting it to `false` it will remove the alert.
-
-## Service Checks
-Service checks in AxonOps can be configured using this playbook. Example service check configurations can be found
-in:
-`./config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml`
-
-
-## Backups
-Backup Schedules can be create and Backup snapshots taken
-
-Supported backup locations are:
-* local
-* s3
-* sftp
-* azure
-
-Remote Backup paths take the form of
-```$remote_path/cassandra/$cluster_name/$node_id```
-
-### General options
-These following options apply to all backup configurations
-
-
-| Option | Required | Type | Description |
-| ------ | ------ | ------ | ------ |
-| present | No | Bool | Whether a backup schedule should exist.  Setting to False will remove an existing schedule. Defaults to True |
-| local_retention | No | Str | How long to keep a snapshot on the local node.  Defaults to 10d (10 Days) |
-| remote | No | Bool | Whether backup is to a remote.  Defaults to False |
-| remote_retention | No | Str | How long to keep a snapshot on the remote location.  Defaults to 60d (60 Days) |
-| remote_type | Only if remote is True | Str |  Where to send backups.  One of 'local', 's3', 'sftp', 'azure'. Defaults to local.  |
-| timeout | No | Str | Time before backup times out.  Defaults to 10h (10 Hours) |
-| transfers | No | Int | File Transfers Parallelism |
-| tps_limit | No | Int | Throttle transfer amount |
-| bw_limit | No | Str | Apply bandwith throttling. Use a suffix b|k|M|G. The default is 0 which means no limit. 10M corresponds to 10 MBytes/s |
-| tag | No | Str | Tag to apply to the backup |
-| datacenters | Yes | List(Str) | Datacenters to include in backup |
-| nodes | No | List(str) | Nodes to include in backup |
-| tables_keyspace | No | List(str) | Mutually exclusive with tables |
-| tables | No | List(str) | Tables to include in backup. Mutually exclusive with tables_keyspace |
-| keyspaces | No | List(str) | Keyspaces to include in backup |
-| schedule | No | Bool | Whether to schedule a future backup.  If False then an immediate snapshot will be taken |
-| schedule_expre | No | Str | Crontab expression of backup schedule. Defaults to '0 1 * * *' |
-
-
-### Local Options
-Backs up to the local filesystem of the node.
-
-
-### S3
-Sends backups to an S3 bucket
-
-#### S3 Options
-
-| Option | Required | Type | Description |
-| ------ | ------ | ------ | ------ |
-| remote_path | Yes | Str | Path to store the backups, Needs to include the bucketname. eg mybucket/path/to/backups |
-| s3_region | Yes | Bool | S3 region that bucket is in |
-| s3_access_key_id | No | Str | S3 Access key ID if not using IAM authentication |
-| s3_secret_access_key | No | Str | S3 Access key if not using IAM authentication |
-| s3_storage_class | No | Str | Storage class of bucket.  Defaults to STANDARD. One of 'default', 'STANDARD', 'reduced_redundancy', 'standard_ia', 'onezone_ia', 'glacier', 'deep_archive', 'intelligent_tiering' |
-| s3_acl | No | Str | ACL type of bucket. Defaults to private.  One of 'private', 'public-read', 'public-read-write','authenticated-read', 'bucket-owner-read' |
-| s3_encryption | No | Str | Encryption to apply. Defaults to AES256.  One of 'none', 'AES256' |
-| s3_no_check_bucket | No | Bool | |
-| s3_disable_checksum | No | Bool | |
-
-
-### SFTP
-Sends backups to and SFTP/SSH server
-
-#### sftp options
-| Option | Required | Type | Description |
-| ------ | ------ | ------ | ------ |
-| remote_path | Yes | Str | Path to store the backups on the remote server |
-| host | Yes | Str | Host to connect to |
-| ssh_user | Yes | Str | Username to connect as |
-| ssh_pass | No | Str | Password to connect with. Either ssh_pass or key_file needs to be set |
-| key_file | No | Str | Location of key file on the host. Either ssh_pass or key_file needs to be set |
-
-
-### Azure
-Sends backups to an Azure Storage Blob container
-
-#### Azure options
-| Option | Required | Type | Description |
-| ------ | ------ | ------ | ------ |
-| remote_path | Yes | Str | Path to store the backups, Needs to include the container name. eg mycontainer/path/to/backups |
-| azure_account | Yes | Str | The name of the Azure storage account |
-| azure_endpoint | No | Str | To override the endpoint destination for the Azure storage account.  Generally not required |
-| azure_key | No | Str | Storage account key.  Only required if not using Azure MSI authentication |
-| azure_msi | No | Bool | Whether to use Azure MSI authentication to connect to the storage account |
-| azure_msi_object_id | No | Only required if there are multiple user assigned identities.  Mutually exlusive with azure_msi_client_id and azure_msi_mi_res_id |
-| azure_msi_client_id | No | Only required if there are multiple user assigned identities.  Mutually exlusive with azure_msi_object_id and azure_msi_mi_res_id |
-| azure_msi_mi_res_id | No | Only required if there are multiple user assigned identities.  Mutually exlusive with azure_msi_object_id and azure_msi_client_id |
-
-
-### Backup Examples
-```
-- name: Schedule a backup to S3 bucket
-  remote_type: s3
-  cluster: testcluster
-  datacenters: dc1
-  remote_path: bucketname/path
-  local_retention: 10d
-  remote_retention: 60d
-  tag: "scheduled backup"
-  timeout: 10h
-  remote: True
-  schedule: True
-  schedule_expr: 0 1 * * *
-  s3_region: eu-west-2
-  s3_acl: private
+config/
+├── YOUR_ORG_NAME/                      # Organization-level configs
+│   ├── alert_endpoints.yml             # Alert integrations (Slack, PagerDuty, etc.)
+│   ├── metric_alert_rules.yml          # Default metric alerts for all clusters
+│   ├── log_alert_rules.yml             # Default log alerts for all clusters
+│   └── service_checks.yml              # Default service checks for all clusters
+│   │
+│   └── YOUR_CLUSTER_NAME/              # Cluster-specific overrides
+│       ├── metric_alert_rules.yml      # Additional/override metric alerts
+│       ├── log_alert_rules.yml         # Additional/override log alerts
+│       ├── service_checks.yml          # Additional/override service checks
+│       ├── backups.yml                 # Backup configurations
+│       └── kafka_metrics_alert_rules.yml  # Kafka-specific alerts
 ```
 
+### Configuration Hierarchy
 
+1. **Organization Level**: Configurations in `config/ORG_NAME/` apply to all clusters
+2. **Cluster Level**: Configurations in `config/ORG_NAME/CLUSTER_NAME/` override or extend organization settings
 
-```
-- name: Snapshot a table to an Azure Blob
-  remote_type: azure
-  cluster: testcluster
-  datacenters: dc1
-  remote_path: foo
-  local_retention: 10d
-  remote_retention: 30d
-  tag: "Snapshot appTable"
-  timeout: 10h
-  remote: True
-  tables: ['appKeyspace.appTable']
-  keyspaces: ['appKeyspace']
-  schedule: False
-  azure_account: azure_storage_account_name
-  azure_use_msi: True
-```
+## Usage
 
+### Available Commands
 
-## Playbooks
-The playbooks are designed to run in a predefined order as some of them depend on the others. For example,
-you'll need to create the alert endpoints before you can set up alert routing.
-
-1. Set up alert endpoints
-2. Set up routes
-3. Set up metrics alerts
-4. Set up log alerts
-5. Set up Service checks
-6. Set up backup schedules
-
-### Running
-The provided [Makefile](./Makefile) is the easiest way to run the playbooks:
-
-```
-❯ make help
-metrics-alerts                 Create alerts based on metrics
-check                          run pre-commit tests
-endpoints                      Create alert endpoints and integrations
-log-alerts                     Create alerts based on logs
-routes                         Create alert routes
-service-checks                 Create alerts for TCP and shell connections
-backups                        Create backup schedules
-validate                       Validate YAML config
+```bash
+make help              # Show all available commands
+make validate          # Validate YAML configurations
+make endpoints         # Configure alert integrations
+make routes           # Set up alert routing rules
+make metrics-alerts   # Create metric-based alerts
+make log-alerts       # Create log-based alerts  
+make service-checks   # Configure service health checks
+make backups          # Set up backup schedules
+make check            # Run pre-commit tests
 ```
 
-You can decide to either configure all the parameters as explained above using the [export_tokens.sh](./export_tokens.sh) file,
-or you can set them in the command line overriding the environment configuration:
+### Running Playbooks
 
-```shell
-make endpoints AXONOPS_ORG=ORG_NAME
-make routes AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
-make metrics-alerts AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
-make log-alerts AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
-make service-checks AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
-make backups AXONOPS_ORG=ORG_NAME AXONOPS_CLUSTER=CLUSTER_NAME
+You can run playbooks using either environment variables or command-line overrides:
+
+```bash
+# Using environment variables (after sourcing export_tokens.sh)
+make metrics-alerts
+
+# Using command-line overrides
+make metrics-alerts AXONOPS_ORG=myorg AXONOPS_CLUSTER=prod-cluster
+
+# Target all clusters (omit AXONOPS_CLUSTER)
+make metrics-alerts AXONOPS_ORG=myorg
+```
+
+### Validation
+
+Always validate your configurations before applying:
+
+```bash
 make validate
 ```
 
-> *NOTE:* the environment variable AXONOPS_CLUSTER is optional.
-> If the variable is missing, all clusters in the ORG will be selected.
+This will check all YAML files against their schemas and report any errors.
 
-### Validating the YAML configurations
+## Examples
 
-To validate the format of the configurations files, first, ensure you installed [Virtualenv](#Virtualenv) or [Pipenv](#Pipenv), then run:
+### Alert Endpoints
 
-```shell
-make validate
+<details>
+<summary><b>Slack Integration</b></summary>
+
+```yaml
+# config/YOUR_ORG/alert_endpoints.yml
+slack:
+  - name: ops-team-alerts
+    webhook_url: https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+    present: true
+  
+  - name: dev-team-alerts
+    webhook_url: https://hooks.slack.com/services/YOUR/OTHER/URL
+    present: true
+```
+</details>
+
+<details>
+<summary><b>PagerDuty Integration</b></summary>
+
+```yaml
+# config/YOUR_ORG/alert_endpoints.yml
+pagerduty:
+  - name: critical-incidents
+    integration_key: YOUR-PAGERDUTY-INTEGRATION-KEY
+    present: true
+```
+</details>
+
+### Metric Alerts
+
+<details>
+<summary><b>CPU Usage Alert</b></summary>
+
+```yaml
+# config/YOUR_ORG/metric_alert_rules.yml
+axonops_alert_rules:
+  - name: CPU usage per host
+    dashboard: System
+    chart: CPU usage per host
+    operator: '>='
+    critical_value: 99
+    warning_value: 90
+    duration: 1h
+    description: Detected High CPU usage
+    present: true
+```
+</details>
+
+<details>
+<summary><b>Cassandra Latency Alert</b></summary>
+
+```yaml
+# config/YOUR_ORG/metric_alert_rules.yml
+axonops_alert_rules:
+  - name: Read latency critical
+    dashboard: Coordinator
+    chart: Coordinator Read Latency - LOCAL_QUORUM 99thPercentile
+    operator: '>='
+    critical_value: 2000000  # 2 seconds in microseconds
+    warning_value: 1000000   # 1 second in microseconds
+    duration: 15m
+    description: High read latency detected
+    present: true
+```
+</details>
+
+### Log Alerts
+
+<details>
+<summary><b>Node Down Detection</b></summary>
+
+```yaml
+# config/YOUR_ORG/log_alert_rules.yml
+axonops_log_alert_rules:
+  - name: Node Down
+    content: "is now DOWN"
+    source: "/var/log/cassandra/system.log"
+    warning_value: 1
+    critical_value: 5
+    duration: 5m
+    description: "Cassandra node marked as DOWN"
+    level: error,warning
+    present: true
+```
+</details>
+
+### Service Checks
+
+<details>
+<summary><b>CQL Port Check</b></summary>
+
+```yaml
+# config/YOUR_ORG/service_checks.yml
+tcp_checks:
+  - name: cql_client_port
+    target: "{{.comp_listen_address}}:{{.comp_native_transport_port}}"
+    interval: 3m
+    timeout: 1m
+    present: true
+```
+</details>
+
+<details>
+<summary><b>Custom Shell Script</b></summary>
+
+```yaml
+# config/YOUR_ORG/service_checks.yml
+shell_checks:
+  - name: Check schema agreement
+    interval: 5m
+    timeout: 1m
+    present: true
+    command: |
+      #!/bin/bash
+      SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+      source $SCRIPT_PATH/common.sh
+      schemas=$(nodetool gossipinfo | grep -i schema | awk '{print $2}' | sort | uniq | wc -l)
+      if [[ $schemas -gt 1 ]]; then
+        echo "CRITICAL - Multiple schema versions detected: $schemas"
+        exit 2
+      fi
+      echo "OK - Schema agreement confirmed"
+      exit 0
+```
+</details>
+
+### Backups
+
+<details>
+<summary><b>S3 Backup Schedule</b></summary>
+
+```yaml
+# config/YOUR_ORG/YOUR_CLUSTER/backups.yml
+backups:
+  - name: Daily S3 backup
+    remote_type: s3
+    datacenters: 
+      - dc1
+    remote_path: my-backup-bucket/cassandra-backups
+    local_retention: 10d
+    remote_retention: 60d
+    tag: "daily-backup"
+    timeout: 10h
+    remote: true
+    schedule: true
+    schedule_expr: "0 1 * * *"  # 1 AM daily
+    s3_region: us-east-1
+    s3_storage_class: STANDARD_IA
+    present: true
+```
+</details>
+
+<details>
+<summary><b>Azure Blob Snapshot</b></summary>
+
+```yaml
+# config/YOUR_ORG/YOUR_CLUSTER/backups.yml
+backups:
+  - name: Critical table snapshot
+    remote_type: azure
+    datacenters:
+      - dc1
+    remote_path: backups-container/cassandra
+    tables:
+      - 'critical_keyspace.important_table'
+    local_retention: 7d
+    remote_retention: 30d
+    tag: "critical-data"
+    timeout: 2h
+    remote: true
+    schedule: false  # Immediate snapshot
+    azure_account: mystorageaccount
+    azure_use_msi: true
+    present: true
+```
+</details>
+
+### Alert Routing
+
+<details>
+<summary><b>Route Configuration</b></summary>
+
+```yaml
+# config/YOUR_ORG/alert_routes.yml
+axonops_alert_routes:
+  # Send all critical/error to PagerDuty
+  - name: critical-to-pagerduty
+    endpoint: critical-incidents
+    endpoint_type: pagerduty
+    severities:
+      - error
+      - critical
+    override: false
+    present: true
+  
+  # Send warnings to Slack
+  - name: warnings-to-slack
+    endpoint: ops-team-alerts
+    endpoint_type: slack
+    severities:
+      - warning
+    override: false
+    present: true
+  
+  # Route backup alerts to dedicated channel
+  - name: backup-alerts
+    endpoint: backup-notifications
+    endpoint_type: slack
+    tags:
+      - backup
+    severities:
+      - info
+      - warning
+      - error
+      - critical
+    override: true  # Override default routing
+    present: true
+```
+</details>
+
+## Advanced Configuration
+
+### Using the CLI Tool
+
+In addition to Ansible playbooks, a Python CLI is available for specific operations:
+
+```bash
+# Configure adaptive repair
+python cli/axonops.py adaptive-repair \
+  --cluster my-cluster \
+  --enabled true \
+  --percentage 20
+
+# View current settings
+python cli/axonops.py adaptive-repair \
+  --cluster my-cluster \
+  --show
 ```
 
-The validation will output a report for each file, for example in case of error:
-```aiignore
-Validating config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml against schemas/metric_alert_rules_schema.yml...
-✖ config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml failed validation:
-Error validating data 'config/REPLACE_WITH_ORG_NAME/metric_alert_rules.yml' with schema 'schemas/metric_alert_rules_schema.yml'
-	axonops_alert_rules.23.operator: '>=!!' not in ('>', '>=', '=', '!=', '<=', '<')
-```
-Example of validation successful:
-```aiignore
-Validating config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml against schemas/service_checks_schema.yml...
-✔ config/REPLACE_WITH_ORG_NAME/REPLACE_WITH_CLUSTER_NAME/service_checks.yml is valid.
-```
+### Custom Ansible Variables
 
-The script will also print a final report of the validations, example:
-```aiignore
-OK: 39
-ERRORS: 1
-MISSING: 0
+You can override any Ansible variable:
+
+```bash
+# Custom API timeout
+make metrics-alerts ANSIBLE_EXTRA_VARS="api_timeout=60"
+
+# Dry run mode
+make metrics-alerts ANSIBLE_EXTRA_VARS="check_mode=true"
 ```
 
+## Troubleshooting
 
-### Other
-The provided playbooks are only examples. Adapt the rules and configurations to suit your enterprise requirements.
+### Common Issues
 
-***
+<details>
+<summary><b>Authentication Errors</b></summary>
+
+- Verify your API token has DBA-level access or above
+- Check token expiration
+- For on-premise, ensure URL includes protocol (https://)
+</details>
+
+<details>
+<summary><b>Configuration Not Applied</b></summary>
+
+- Run `make validate` to check YAML syntax
+- Ensure `present: true` is set for items you want to create
+- Check that cluster names match exactly (case-sensitive)
+</details>
+
+<details>
+<summary><b>Module Import Errors</b></summary>
+
+- Ensure you're using Python 3.8+
+- Install dependencies: `pip install -r requirements.txt`
+- For pipenv users: ensure `PIPENV=true` is exported
+</details>
+
+## Best Practices
+
+1. **Start with Organization Defaults**: Define common alerts at the org level
+2. **Use Cluster Overrides Sparingly**: Only for cluster-specific requirements
+3. **Validate Before Applying**: Always run `make validate` first
+4. **Version Control**: Commit your `config/` directory to track changes
+5. **Test in Non-Production**: Apply to test clusters before production
+6. **Regular Reviews**: Periodically review and update alert thresholds
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+## Support
+
+- **Documentation**: [AxonOps Docs](https://axonops.com/docs/)
+- **Issues**: [GitHub Issues](https://github.com/axonops/axonops-config-automation/issues)
+- **Community**: [AxonOps Community](https://community.axonops.com)
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## Additional Resources
+
+- **📚 [Complete Alert Reference Guide](ALERT_REFERENCE.md)** - Detailed documentation of all pre-configured alerts, thresholds, and configurations
+- **🔧 [AxonOps Documentation](https://axonops.com/docs/)** - Official AxonOps platform documentation
+- **💬 [AxonOps Community](https://community.axonops.com)** - Community forums and discussions
+
+---
 
 *This project may contain trademarks or logos for projects, products, or services. Any use of third-party trademarks or logos are subject to those third-party's policies. AxonOps is a registered trademark of AxonOps Limited. Apache, Apache Cassandra, Cassandra, Apache Spark, Spark, Apache TinkerPop, TinkerPop, Apache Kafka and Kafka are either registered trademarks or trademarks of the Apache Software Foundation or its subsidiaries in Canada, the United States and/or other countries. Elasticsearch is a trademark of Elasticsearch B.V., registered in the U.S. and in other countries. Docker is a trademark or registered trademark of Docker, Inc. in the United States and/or other countries.*
