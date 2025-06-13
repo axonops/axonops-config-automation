@@ -205,8 +205,6 @@ export AXONOPS_TOKEN='your-api-token'
 export AXONOPS_URL='https://your-axonops-instance.com'
 export AXONOPS_USERNAME='your-username'
 export AXONOPS_PASSWORD='your-password'
-# OR for anonymous access
-export AXONOPS_ANONYMOUS='true'
 ```
 
 ## Configuration
