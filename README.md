@@ -567,15 +567,10 @@ make metrics-alerts ANSIBLE_EXTRA_VARS="check_mode=true"
 5. **Test in Non-Production**: Apply to test clusters before production
 6. **Regular Reviews**: Periodically review and update alert thresholds
 
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
 ## Support
 
 - **Documentation**: [AxonOps Docs](https://axonops.com/docs/)
 - **Issues**: [GitHub Issues](https://github.com/axonops/axonops-config-automation/issues)
-- **Community**: [AxonOps Community](https://community.axonops.com)
 
 ## License
 
