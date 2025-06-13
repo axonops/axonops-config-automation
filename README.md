@@ -580,7 +580,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 - **📚 [Complete Alert Reference Guide](ALERT_REFERENCE.md)** - Detailed documentation of all pre-configured alerts, thresholds, and configurations
 - **🔧 [AxonOps Documentation](https://axonops.com/docs/)** - Official AxonOps platform documentation
-- **💬 [AxonOps Community](https://community.axonops.com)** - Community forums and discussions
 
 ---
 
