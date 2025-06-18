@@ -1855,1401 +1855,1108 @@ axonops_dashboard_templates:
     title: Network Transmitted (bytes)
     type: line-chart
     uuid: b241bf5d-0756-43b6-85fc-893322090a0d
-#- name: Overview
-#  filters:
-#  - label: data center
-#    multi: true
-#    name: dc
-#    query: host_CPU_Percent_Merge
-#    regex: dc=([^:]+)
-#    type: query
-#  - multi: true
-#    name: rack
-#    query: host_CPU_Percent_Merge{dc=~'$dc'}
-#    regex: rack=([^:]+)
-#    type: query
-#  - label: node
-#    multi: true
-#    name: host_id
-#    query: host_CPU_Percent_Merge{dc=~'$dc',rack=~'$rack'}
-#    regex: host_id=([^:]+)
-#    type: query
-#  - multi: false
-#    name: groupBy
-#    type: custom
-#    values: dc,rack,host_id,keyspace
-#  - multi: false
-#    name: percentile
-#    query: cas_ClientRequest_Latency{scope='Write',function!='Min|Max|Count|FifteenMinuteRate|FiveMinuteRate|Mean|MeanRate|OneMinuteRate|StdDev'}
-#    regex: function=([^:]+)
-#    type: query
-#  - multi: true
-#    name: keyspace
-#    query: axon_cassandraKeyspaces
-#    regex: keyspace=([^:]+)
-#    type: query
-#  - label: table
-#    multi: true
-#    name: scope
-#    query: axon_cassandraTables{keyspace=~'$keyspace'}
-#    regex: table=([^:]+)
-#    type: query
-#  panels:
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: 4b2277b9-3580-42ed-9495-20416ca1b7ca
-#      w: 18
-#      x: 0
-#      y: 0
-#    title: __EMPTY_ROW__
-#    type: row
-#    uuid: 4b2277b9-3580-42ed-9495-20416ca1b7ca
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
-#      w: 18
-#      x: 0
-#      y: 10
-#    title: Availability & connections statistics
-#    type: row
-#    uuid: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $dc - $host_id
-#        query: ceil(cas_Client_connectedNativeClients{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
-#    layout:
-#      h: 4
-#      i: 7ed8ceb3-51dc-40d2-80de-b856c0f974a3
-#      w: 6
-#      x: 6
-#      y: 11
-#    title: Native connections
-#    type: line-chart
-#    uuid: 7ed8ceb3-51dc-40d2-80de-b856c0f974a3
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $dc - $host_id
-#        query: cas_downendpoint_count{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
-#    layout:
-#      h: 4
-#      i: 1c455aac-8b9f-48a0-a310-6e8e44a5f5e1
-#      w: 6
-#      x: 12
-#      y: 11
-#    title: Number of Endpoints Down Per Node Point Of View
-#    type: line-chart
-#    uuid: 1c455aac-8b9f-48a0-a310-6e8e44a5f5e1
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: DOWN
-#        source: []
-#        type: []
-#      extrapolate: 'false'
-#      filters:
-#        hostname: ''
-#        level: ''
-#        message: ''
-#        source: ''
-#        type: ''
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 1
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
-#    layout:
-#      h: 4
-#      i: a744545d-4b89-4415-8ffd-394d1b037fa4
-#      w: 6
-#      x: 0
-#      y: 11
-#    title: DOWN in logs
-#    type: events_bar_chart
-#    uuid: a744545d-4b89-4415-8ffd-394d1b037fa4
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      extrapolate: 'false'
-#      filters: {}
-#      isHideNullValue: true
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - color: '#66dd84'
-#        isAutoColors: false
-#        legend: up
-#        operation: last
-#        prevValue: 1
-#        query: min(cas_FailureDetector_{function='UpEndpointCount',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#      - color: '#ff4040'
-#        isAutoColors: false
-#        legend: down
-#        operation: last
-#        prevValue: 0
-#        query: max(cas_downendpoint_count{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    group: a1cc35bc-9fd1-44f0-b0be-efa95360e59a
-#    layout:
-#      h: 4
-#      i: 2ef8d2ac-044b-414d-b097-deb1c2591a32
-#      w: 6
-#      x: 0
-#      y: 15
-#    title: UP vs Down endpoints
-#    type: pie_chart
-#    uuid: 2ef8d2ac-044b-414d-b097-deb1c2591a32
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters:
-#        hostname: ''
-#        level: ''
-#        message: ''
-#        source: ''
-#        type: ''
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 0
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: 1727b49c-d189-4255-81d3-69b7da32a32c
-#      w: 18
-#      x: 0
-#      y: 15
-#    title: Table Count
-#    type: row
-#    uuid: 1727b49c-d189-4255-81d3-69b7da32a32c
-#  - details:
-#      desc: ''
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      extrapolate: 'false'
-#      filters:
-#        hostname: ''
-#        level: ''
-#        message: ''
-#        source: ''
-#        type: ''
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 0
-#      nullAsZero: false
-#      queries:
-#      - color: ''
-#        legend: Legend 1
-#        operation: last
-#        query: 'count(count(cas_Table_LiveDiskSpaceUsed{scope=~".*"}) by (scope, keyspace)) '
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    group: 1727b49c-d189-4255-81d3-69b7da32a32c
-#    layout:
-#      h: 4
-#      i: 3f161f51-8329-48d2-b4a9-7a63e065c9cf
-#      w: 9
-#      x: 0
-#      y: 16
-#    title: Total Table Count
-#    type: metrics_counter
-#    uuid: 3f161f51-8329-48d2-b4a9-7a63e065c9cf
-#  - details:
-#      desc: ''
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      extrapolate: 'false'
-#      filters:
-#        hostname: ''
-#        level: ''
-#        message: ''
-#        source: ''
-#        type: ''
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 0
-#      nullAsZero: false
-#      queries:
-#      - color: ''
-#        legend: Legend 1
-#        query: 'count(count(cas_Table_LiveDiskSpaceUsed{scope=~".*"}) by (scope, keyspace)) '
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y: {}
-#    group: 1727b49c-d189-4255-81d3-69b7da32a32c
-#    layout:
-#      h: 4
-#      i: 2883d77b-87b9-416d-85f1-e80f963850bd
-#      w: 9
-#      x: 9
-#      y: 16
-#    title: Total Table Count
-#    type: line-chart
-#    uuid: 2883d77b-87b9-416d-85f1-e80f963850bd
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: a1d912ff-122b-4ce5-8752-d03956de07ff
-#      w: 18
-#      x: 0
-#      y: 24
-#    title: Latency Statistics Per Node
-#    type: row
-#    uuid: a1d912ff-122b-4ce5-8752-d03956de07ff
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $host_id
-#        query: sum(cas_Table_CoordinatorReadLatency{function='$percentile',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',keyspace=~'$keyspace',scope=~'$scope'})
-#          by (host_id)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: microseconds
-#        yText: microseconds
-#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
-#    layout:
-#      h: 4
-#      i: 22da4321-1caf-4226-a3e1-d3d444510597
-#      w: 6
-#      x: 0
-#      y: 25
-#    title: Coordinator Read Latency - $percentile
-#    type: line-chart
-#    uuid: 22da4321-1caf-4226-a3e1-d3d444510597
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: true
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $host_id
-#        query: sum(cas_Table_CoordinatorScanLatency{function='$percentile',function!='Count|Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id',keyspace=~'$keyspace',scope=~'$scope'})
-#          by (host_id)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: microseconds
-#        yText: microseconds
-#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
-#    layout:
-#      h: 4
-#      i: eb95a77b-8904-40d3-8e23-8e6c38bbe397
-#      w: 6
-#      x: 6
-#      y: 25
-#    title: Coordinator Scan Latency - $percentile
-#    type: line-chart
-#    uuid: eb95a77b-8904-40d3-8e23-8e6c38bbe397
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: true
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $host_id
-#        query: sum(cas_ClientRequest_Latency{scope='Write',function='$percentile',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#          by (host_id)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: microseconds
-#        yText: microseconds
-#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
-#    layout:
-#      h: 4
-#      i: c9c6e8db-83f2-4204-b882-84bb29e65279
-#      w: 6
-#      x: 12
-#      y: 25
-#    title: Coordinator Write Latency - $percentile
-#    type: line-chart
-#    uuid: c9c6e8db-83f2-4204-b882-84bb29e65279
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: large partition
-#        source: []
-#        type: []
-#      extrapolate: 'false'
-#      filters:
-#        hostname: ''
-#        level: ''
-#        message: ''
-#        source: ''
-#        type: ''
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 1
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
-#    layout:
-#      h: 4
-#      i: d756a1b0-759b-4906-b709-fbf47e399bac
-#      w: 6
-#      x: 6
-#      y: 29
-#    title: Large Partition Warnings
-#    type: events_bar_chart
-#    uuid: d756a1b0-759b-4906-b709-fbf47e399bac
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $dc - $host_id - $keyspace
-#        query: cas_Keyspace_ReadLatency{keyspace=~'$keyspace',function='$percentile',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: microseconds
-#        yText: microseconds
-#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
-#    layout:
-#      h: 4
-#      i: 6b659629-c0a8-4a40-8774-a46c9501fa62
-#      w: 6
-#      x: 0
-#      y: 29
-#    title: Read Latency Per Keyspace Per Node - $percentile
-#    type: line-chart
-#    uuid: 6b659629-c0a8-4a40-8774-a46c9501fa62
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: true
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $dc - $host_id - $keyspace
-#        query: cas_Keyspace_WriteLatency{keyspace=~'$keyspace',function='$percentile',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: microseconds
-#        yText: microseconds
-#    group: a1d912ff-122b-4ce5-8752-d03956de07ff
-#    layout:
-#      h: 4
-#      i: 77345d0d-8438-48e8-8cf1-2cc74fc635fc
-#      w: 6
-#      x: 12
-#      y: 29
-#    title: Write Latency Per Keyspace Per Node - $percentile
-#    type: line-chart
-#    uuid: 77345d0d-8438-48e8-8cf1-2cc74fc635fc
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: 870fbbef-8be0-473b-bcce-93ae2e96a943
-#      w: 18
-#      x: 0
-#      y: 19
-#    title: Throughput Statistics
-#    type: row
-#    uuid: 870fbbef-8be0-473b-bcce-93ae2e96a943
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      extrapolate: 'true'
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $groupBy
-#        query: avg(cas_Keyspace_WriteLatency{axonfunction='rate',keyspace=~'$keyspace',function='Count',function!='Max|Min',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#          by ($groupBy)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: microseconds
-#    group: 870fbbef-8be0-473b-bcce-93ae2e96a943
-#    layout:
-#      h: 4
-#      i: 0d5cc7b1-9cac-4db4-ae5b-2a5953b6849d
-#      w: 6
-#      x: 12
-#      y: 20
-#    title: Avg Writes per $groupBy
-#    type: line-chart
-#    uuid: 0d5cc7b1-9cac-4db4-ae5b-2a5953b6849d
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: true
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $groupBy
-#        query: sum(cas_Keyspace_RangeLatency{axonfunction='rate',keyspace=~'$keyspace',function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#          by ($groupBy)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: microseconds
-#        yText: microseconds
-#    group: 870fbbef-8be0-473b-bcce-93ae2e96a943
-#    layout:
-#      h: 4
-#      i: 2fb4cf83-929b-4356-b97a-947370fd673e
-#      w: 6
-#      x: 6
-#      y: 20
-#    title: Range Read Count Per $groupBy
-#    type: line-chart
-#    uuid: 2fb4cf83-929b-4356-b97a-947370fd673e
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      extrapolate: 'true'
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: true
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $groupBy
-#        query: avg(cas_Keyspace_ReadLatency{axonfunction='rate',keyspace=~'$keyspace',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#          by ($groupBy)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: microseconds
-#    group: 870fbbef-8be0-473b-bcce-93ae2e96a943
-#    layout:
-#      h: 4
-#      i: a61c2cdd-5712-4dcd-aa45-94b4a3b5a929
-#      w: 6
-#      x: 0
-#      y: 20
-#    title: Avg Reads per $groupBy
-#    type: line-chart
-#    uuid: a61c2cdd-5712-4dcd-aa45-94b4a3b5a929
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: e33a938e-7996-4792-ab6c-6217d0a1a255
-#      w: 18
-#      x: 0
-#      y: 348
-#    title: Error Statistics
-#    type: row
-#    uuid: e33a938e-7996-4792-ab6c-6217d0a1a255
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $groupBy
-#        query: sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='Read', function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#          by ($groupBy)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
-#    layout:
-#      h: 4
-#      i: fc42737a-defa-4598-a110-ad84f672c65f
-#      w: 6
-#      x: 0
-#      y: 1
-#    title: Client Read Timeouts Per Second
-#    type: line-chart
-#    uuid: fc42737a-defa-4598-a110-ad84f672c65f
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $groupBy
-#        query: sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='Write', function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#          by ($groupBy)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
-#    layout:
-#      h: 4
-#      i: d19d5d96-3bb6-464f-be42-a814d53d87db
-#      w: 6
-#      x: 6
-#      y: 1
-#    title: Client Write Timeouts Per Second
-#    type: line-chart
-#    uuid: d19d5d96-3bb6-464f-be42-a814d53d87db
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $groupBy
-#        query: sum(cas_ClientRequest_Unavailables{axonfunction='rate',scope='Read',
-#          function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}) by ($groupBy)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
-#    layout:
-#      h: 4
-#      i: 9ad039ad-11b3-4a77-8fd3-7f0615bba0b1
-#      w: 6
-#      x: 12
-#      y: 1
-#    title: Client Read Unavailables Per Second
-#    type: line-chart
-#    uuid: 9ad039ad-11b3-4a77-8fd3-7f0615bba0b1
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $groupBy
-#        query: sum(cas_ClientRequest_Unavailables{axonfunction='rate',scope='Write',
-#          function='Count',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}) by ($groupBy)
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: e33a938e-7996-4792-ab6c-6217d0a1a255
-#    layout:
-#      h: 4
-#      i: da5ec040-ceeb-43f6-9bfb-bfb979aa3cdc
-#      w: 6
-#      x: 0
-#      y: 5
-#    title: Client Write Unavailables Per Second
-#    type: line-chart
-#    uuid: da5ec040-ceeb-43f6-9bfb-bfb979aa3cdc
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: 7884be00-4f7c-4bb1-91b1-b396b58469f9
-#      w: 18
-#      x: 0
-#      y: 661
-#    title: Compactions Per Node
-#    type: row
-#    uuid: 7884be00-4f7c-4bb1-91b1-b396b58469f9
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $dc - $host_id
-#        query: cas_Compaction_PendingTasks{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: 7884be00-4f7c-4bb1-91b1-b396b58469f9
-#    layout:
-#      h: 4
-#      i: c1fd6a5a-9207-4742-b7b5-779d6cab83d6
-#      w: 6
-#      x: 0
-#      y: 663
-#    title: Pending Compaction Tasks
-#    type: line-chart
-#    uuid: c1fd6a5a-9207-4742-b7b5-779d6cab83d6
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: true
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $dc - $host_id
-#        query: cas_Compaction_CompletedTasks{axonfunction='rate',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: 7884be00-4f7c-4bb1-91b1-b396b58469f9
-#    layout:
-#      h: 4
-#      i: 5f2ed41c-ba89-48a9-b73f-995941ae966e
-#      w: 6
-#      x: 6
-#      y: 663
-#    title: Completed Compaction Tasks per sec
-#    type: line-chart
-#    uuid: 5f2ed41c-ba89-48a9-b73f-995941ae966e
-#  - details:
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: false
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries: []
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      useCache: true
-#      y: {}
-#    layout:
-#      h: 1
-#      i: a74c6794-a68d-4671-bf8f-a12429e3661a
-#      w: 18
-#      x: 0
-#      y: 38
-#    title: Connected Clients Per Node
-#    type: row
-#    uuid: a74c6794-a68d-4671-bf8f-a12429e3661a
-#  - details:
-#      desc: https://docs.axonops.com/monitoring/metricsdashboards/cassandra/
-#      eventsFilters:
-#        f1: []
-#        f2: []
-#        host_id: []
-#        level: []
-#        message: ''
-#        source: []
-#        type: []
-#      filters: {}
-#      isHideNullValue: false
-#      isSmoothLines: true
-#      lineThickness: 1
-#      max: 100
-#      nullAsZero: false
-#      queries:
-#      - legend: $host_id
-#        query: ceil(cas_Client_connectedNativeClients{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})
-#      resolution: low
-#      sortOrderPIE: asc
-#      thresholds:
-#      - color: '#4caf50'
-#        name: default
-#        value: 0
-#      - color: '#fe9800'
-#        name: warning
-#        value: 0
-#      - color: '#f44336'
-#        name: critical
-#        value: 0
-#      topK: 999
-#      useCache: true
-#      y:
-#        unit: short
-#        yText: short
-#    group: a74c6794-a68d-4671-bf8f-a12429e3661a
-#    layout:
-#      h: 4
-#      i: dd3fbf8b-a263-4a7e-a722-1b9869b80348
-#      w: 6
-#      x: 0
-#      y: 39
-#    title: Number Of Connections (Native)
-#    type: line-chart
-#    uuid: dd3fbf8b-a263-4a7e-a722-1b9869b80348
+-         {
+            "uuid": "36b858ff-edef-4d5a-b692-0c1df1ac51ae",
+            "name": "Coordinator mode",
+            "filters": [
+                {
+                    "name": "dc",
+                    "label": "data center",
+                    "type": "query",
+                    "multi": true,
+                    "query": "host_CPU_Percent_Merge",
+                    "regex": "dc=([^:]+)"
+                },
+                {
+                    "name": "rack",
+                    "type": "query",
+                    "multi": true,
+                    "query": "host_CPU_Percent_Merge{dc=~'$dc'}",
+                    "regex": "rack=([^:]+)"
+                },
+                {
+                    "name": "host_id",
+                    "label": "node",
+                    "type": "query",
+                    "multi": true,
+                    "query": "host_CPU_Percent_Merge{dc=~'$dc',rack=~'$rack'}",
+                    "regex": "host_id=([^:]+)"
+                },
+                {
+                    "name": "groupBy",
+                    "type": "custom",
+                    "multi": false,
+                    "values": "dc,rack,host_id"
+                },
+                {
+                    "name": "percentile",
+                    "type": "query",
+                    "multi": false,
+                    "query": "cas_ClientRequest_Latency{scope='Write',function!='Min|Max|Count|FifteenMinuteRate|FiveMinuteRate|Mean|MeanRate|OneMinuteRate|StdDev'}",
+                    "regex": "function=([^:]+)"
+                },
+                {
+                    "name": "consistency",
+                    "type": "custom",
+                    "multi": false,
+                    "values": ",ALL,ANY,ONE,TWO,THREE,SERIAL,QUORUM,EACH_QUORUM,LOCAL_ONE,LOCAL_QUORUM,LOCAL_SERIAL"
+                }
+            ],
+            "panels": [
+                {
+                    "uuid": "6c05c269-9bb3-4e31-a2df-f85a1bda74b1",
+                    "type": "row",
+                    "title": "__EMPTY_ROW__",
+                    "details": {},
+                    "layout": {
+                        "w": 18,
+                        "h": 1,
+                        "x": 0,
+                        "y": 0,
+                        "i": "6c05c269-9bb3-4e31-a2df-f85a1bda74b1"
+                    }
+                },
+                {
+                    "uuid": "94ecde9a-d35e-436c-b688-25e1162fe627",
+                    "type": "row",
+                    "title": "Latency Statistics By NODE",
+                    "details": {},
+                    "layout": {
+                        "w": 18,
+                        "h": 1,
+                        "x": 0,
+                        "y": 1,
+                        "i": "94ecde9a-d35e-436c-b688-25e1162fe627"
+                    }
+                },
+                {
+                    "uuid": "25369514-b913-4126-be3e-6b5494670804",
+                    "type": "line-chart",
+                    "title": "Coordinator READ $consistency Latency - $percentile",
+                    "group": "94ecde9a-d35e-436c-b688-25e1162fe627",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_Latency{scope='Read.*$consistency',function='$percentile',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "microseconds"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 0,
+                        "y": 2,
+                        "i": "25369514-b913-4126-be3e-6b5494670804"
+                    }
+                },
+                {
+                    "uuid": "a57f0fdc-10e4-4b1d-8b1a-a00457fe94c5",
+                    "type": "line-chart",
+                    "title": "Coordinator Range Read Request Latency - $percentile",
+                    "group": "94ecde9a-d35e-436c-b688-25e1162fe627",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id",
+                                "query": "cas_ClientRequest_Latency{scope='RangeSlice',function='$percentile',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "microseconds"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 6,
+                        "y": 2,
+                        "i": "a57f0fdc-10e4-4b1d-8b1a-a00457fe94c5"
+                    }
+                },
+                {
+                    "uuid": "71e3bbc0-0b4a-430c-a932-983143079fd9",
+                    "type": "line-chart",
+                    "title": "Coordinator Write $consistency Latency - $percentile",
+                    "group": "94ecde9a-d35e-436c-b688-25e1162fe627",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id",
+                                "query": "cas_ClientRequest_Latency{scope='Write.*$consistency',function='$percentile',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "microseconds"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 12,
+                        "y": 2,
+                        "i": "71e3bbc0-0b4a-430c-a932-983143079fd9"
+                    }
+                },
+                {
+                    "uuid": "9a6ca03e-a546-40c7-b15b-275de6a45e1d",
+                    "type": "row",
+                    "title": "Throughput Statistics",
+                    "details": {},
+                    "layout": {
+                        "w": 18,
+                        "h": 1,
+                        "x": 0,
+                        "y": 0,
+                        "i": "9a6ca03e-a546-40c7-b15b-275de6a45e1d"
+                    }
+                },
+                {
+                    "uuid": "46fb630f-ff11-4ae1-882a-5fbb187fa05f",
+                    "type": "line-chart",
+                    "title": "Coordinator Read Throughput Per $groupBy ($consistency) - Count Per Second",
+                    "group": "9a6ca03e-a546-40c7-b15b-275de6a45e1d",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Latency{axonfunction='rate',scope='Read.*$consistency',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "rps"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 0,
+                        "y": 1,
+                        "i": "46fb630f-ff11-4ae1-882a-5fbb187fa05f"
+                    }
+                },
+                {
+                    "uuid": "f021b462-afb9-4b40-83bf-a0ec3c66bccf",
+                    "type": "line-chart",
+                    "title": "Coordinator Range Read Request Throughput - Count Per Second",
+                    "group": "9a6ca03e-a546-40c7-b15b-275de6a45e1d",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Latency{axonfunction='rate',scope='RangeSlice',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'}) by ($groupBy)"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "rps"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 6,
+                        "y": 1,
+                        "i": "f021b462-afb9-4b40-83bf-a0ec3c66bccf"
+                    }
+                },
+                {
+                    "uuid": "1c15d342-2e6a-4444-bdbe-4ce7ab11199c",
+                    "type": "line-chart",
+                    "title": "Coordinator Write Throughput Per $groupBy ($consistency) - Count Per Second",
+                    "group": "9a6ca03e-a546-40c7-b15b-275de6a45e1d",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Latency{axonfunction='rate',scope='Write.*$consistency',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "wps"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 12,
+                        "y": 1,
+                        "i": "1c15d342-2e6a-4444-bdbe-4ce7ab11199c"
+                    }
+                },
+                {
+                    "uuid": "1eb2879b-2699-49f8-9f9e-56a97d62a0cc",
+                    "type": "row",
+                    "title": "Connections",
+                    "details": {},
+                    "layout": {
+                        "w": 18,
+                        "h": 1,
+                        "x": 0,
+                        "y": 20,
+                        "i": "1eb2879b-2699-49f8-9f9e-56a97d62a0cc"
+                    }
+                },
+                {
+                    "uuid": "dc6dd2b7-6aef-4775-9635-2be1f41a5d57",
+                    "type": "line-chart",
+                    "title": "Number of Native Connections per host",
+                    "group": "1eb2879b-2699-49f8-9f9e-56a97d62a0cc",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id",
+                                "query": "ceil(cas_Client_connectedNativeClients{dc=~'$dc',rack=~'$rack',host_id=~'$host_id'})"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 0,
+                        "y": 21,
+                        "i": "dc6dd2b7-6aef-4775-9635-2be1f41a5d57"
+                    }
+                },
+                {
+                    "uuid": "94ecde9a-d35e-436c-b688-2531162fe627",
+                    "type": "row",
+                    "title": "Consistency Distribution",
+                    "details": {},
+                    "layout": {
+                        "w": 18,
+                        "h": 1,
+                        "x": 0,
+                        "y": 6,
+                        "i": "94ecde9a-d35e-436c-b688-2531162fe627"
+                    }
+                },
+                {
+                    "uuid": "1bb80ebf-868f-41c9-a8b8-8e545a1b9db4",
+                    "type": "pie-chart",
+                    "title": "Coordinator Reads distribution",
+                    "group": "94ecde9a-d35e-436c-b688-2531162fe627",
+                    "details": {
+                        "isHideNullValue": true,
+                        "isShowLabels": false,
+                        "queries": [
+                            {
+                                "legend": "$scope",
+                                "operation": "sum",
+                                "prevValue": 0,
+                                "query": "sum(cas_ClientRequest_Latency{axonfunction='rate',scope='Read*',scope!='Read',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}) by (scope)"
+                            }
+                        ],
+                        "sortOrder": "asc",
+                        "topK": 999,
+                        "widgetGroup": "metrics"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 0,
+                        "y": 7,
+                        "i": "1bb80ebf-868f-41c9-a8b8-8e545a1b9db4"
+                    }
+                },
+                {
+                    "uuid": "2bb80ebf-868f-41c9-a8b8-8e545a1b9db4",
+                    "type": "pie-chart",
+                    "title": "Coordinator Writes distribution",
+                    "group": "94ecde9a-d35e-436c-b688-2531162fe627",
+                    "details": {
+                        "isHideNullValue": true,
+                        "isShowLabels": false,
+                        "queries": [
+                            {
+                                "legend": "$scope",
+                                "operation": "sum",
+                                "prevValue": 0,
+                                "query": "sum(cas_ClientRequest_Latency{axonfunction='rate',scope='Write*',scope!='Write',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}) by (scope)"
+                            }
+                        ],
+                        "sortOrder": "asc",
+                        "topK": 999,
+                        "widgetGroup": "metrics"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 9,
+                        "y": 7,
+                        "i": "2bb80ebf-868f-41c9-a8b8-8e545a1b9db4"
+                    }
+                },
+                {
+                    "uuid": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "type": "row",
+                    "title": "Errors Statistics",
+                    "details": {},
+                    "layout": {
+                        "w": 18,
+                        "h": 1,
+                        "x": 0,
+                        "y": 18,
+                        "i": "24510e68-6308-4517-af9c-58a26e62e6b9"
+                    }
+                },
+                {
+                    "uuid": "a9a49c98-9653-4095-a980-cc16b7a96045",
+                    "type": "line-chart",
+                    "title": "Total Timeouts Per Second",
+                    "group": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "color": "#dd6b66",
+                                "isAutoColors": true,
+                                "legend": "$groupBy",
+                                "operation": "diff",
+                                "query": "sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='Read|Write',function='Count',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 18,
+                        "h": 4,
+                        "x": 0,
+                        "y": 19,
+                        "i": "a9a49c98-9653-4095-a980-cc16b7a96045"
+                    }
+                },
+                {
+                    "uuid": "1213ff6e-c760-4cb3-aa45-b18ab8469ad0",
+                    "type": "line-chart",
+                    "title": "Write Timeouts Per Second",
+                    "group": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='Write',function='Count',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 12,
+                        "y": 23,
+                        "i": "1213ff6e-c760-4cb3-aa45-b18ab8469ad0"
+                    }
+                },
+                {
+                    "uuid": "afe003b5-8b60-493f-b72c-8aac1976e524",
+                    "type": "line-chart",
+                    "title": "Range Read Request Timeouts Per Second",
+                    "group": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='RangeSlice',function='Count',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 6,
+                        "y": 23,
+                        "i": "afe003b5-8b60-493f-b72c-8aac1976e524"
+                    }
+                },
+                {
+                    "uuid": "a7fbf517-315f-486f-9218-5e75983b891b",
+                    "type": "line-chart",
+                    "title": "Read Timeouts Per Second",
+                    "group": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Timeouts{axonfunction='rate',scope='Read',function='Count',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 0,
+                        "y": 23,
+                        "i": "a7fbf517-315f-486f-9218-5e75983b891b"
+                    }
+                },
+                {
+                    "uuid": "473705ac-9865-4ded-93df-b810d12a3074",
+                    "type": "line-chart",
+                    "title": "Write Unavailables Per Second",
+                    "group": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "query": "sum(cas_ClientRequest_Unavailables{axonfunction='rate',scope='RangeSlice',function='Count',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 12,
+                        "y": 27,
+                        "i": "473705ac-9865-4ded-93df-b810d12a3074"
+                    }
+                },
+                {
+                    "uuid": "7b59611d-a944-4880-aee1-da574938ac0d",
+                    "type": "line-chart",
+                    "title": "Range Read Request Unavailables Per Second",
+                    "group": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Unavailables{axonfunction='rate',scope='RangeSlice',function='Count',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 6,
+                        "y": 27,
+                        "i": "7b59611d-a944-4880-aee1-da574938ac0d"
+                    }
+                },
+                {
+                    "uuid": "6092c198-4196-4938-98b2-193eab5a4a21",
+                    "type": "line-chart",
+                    "title": "Read Unavailables Per Second",
+                    "group": "24510e68-6308-4517-af9c-58a26e62e6b9",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$groupBy",
+                                "query": "sum(cas_ClientRequest_Unavailables{axonfunction='rate',scope='Read',function='Count',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 6,
+                        "h": 4,
+                        "x": 0,
+                        "y": 27,
+                        "i": "6092c198-4196-4938-98b2-193eab5a4a21"
+                    }
+                },
+                {
+                    "uuid": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "type": "row",
+                    "title": "CAS Metrics",
+                    "details": {},
+                    "layout": {
+                        "w": 18,
+                        "h": 1,
+                        "x": 0,
+                        "y": 15,
+                        "i": "51ce1fb6-057f-4eab-9498-261420e8ed35"
+                    }
+                },
+                {
+                    "uuid": "46fb6778-8c83-433d-9ae0-e336ba8750f7",
+                    "type": "line-chart",
+                    "title": "CAS Write throughput",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "color": "#dd6b66",
+                                "isAutoColors": true,
+                                "legend": "",
+                                "operation": "diff",
+                                "query": "sum(cas_ClientRequest_Latency{scope='CASWrite',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 0,
+                        "y": 16,
+                        "i": "46fb6778-8c83-433d-9ae0-e336ba8750f7"
+                    }
+                },
+                {
+                    "uuid": "18e983ed-b508-45e8-adcd-555586ed549e",
+                    "type": "line-chart",
+                    "title": "CAS Read throughput",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "color": "#dd6b66",
+                                "isAutoColors": true,
+                                "legend": "",
+                                "operation": "diff",
+                                "query": "sum(cas_ClientRequest_Latency{scope='CASRead',function='Count',function!='Min|Max',dc=~'$dc',rack=~'$rack', host_id=~'$host_id'})  by ($groupBy) "
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 9,
+                        "y": 16,
+                        "i": "18e983ed-b508-45e8-adcd-555586ed549e"
+                    }
+                },
+                {
+                    "uuid": "febdd763-8a7d-4a44-a6c4-391b263d8695",
+                    "type": "line-chart",
+                    "title": "CAS Write Latency - $percentile",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_Latency{scope='CASWrite',function='$percentile',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "microseconds"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 0,
+                        "y": 20,
+                        "i": "febdd763-8a7d-4a44-a6c4-391b263d8695"
+                    }
+                },
+                {
+                    "uuid": "11efdb52-f1a5-452f-94bf-f3b34b4deaaa",
+                    "type": "line-chart",
+                    "title": "CAS Read Latency - $percentile",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_Latency{scope='CASRead',function='$percentile',function!='Min|Max',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "microseconds"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 9,
+                        "y": 20,
+                        "i": "11efdb52-f1a5-452f-94bf-f3b34b4deaaa"
+                    }
+                },
+                {
+                    "uuid": "f4a191af-16fc-47e7-b335-5ee82c263d6c",
+                    "type": "line-chart",
+                    "title": "CAS Write Failures",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_Failures{axonfunction='rate',function='Count',scope='CASWrite',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 0,
+                        "y": 24,
+                        "i": "f4a191af-16fc-47e7-b335-5ee82c263d6c"
+                    }
+                },
+                {
+                    "uuid": "5febef0f-ccc9-46d2-9a11-1f7ae5166422",
+                    "type": "line-chart",
+                    "title": "CAS Read Failures",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_Failures{axonfunction='rate',function='Count',scope='CASRead',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 9,
+                        "y": 24,
+                        "i": "5febef0f-ccc9-46d2-9a11-1f7ae5166422"
+                    }
+                },
+                {
+                    "uuid": "460a25ab-d3de-43a6-8b90-1bb43a73029d",
+                    "type": "line-chart",
+                    "title": "CAS Write Unfinished Commit",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_UnfinishedCommit{axonfunction='rate',function='Count',scope='CASWrite',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 9,
+                        "y": 28,
+                        "i": "460a25ab-d3de-43a6-8b90-1bb43a73029d"
+                    }
+                },
+                {
+                    "uuid": "e2df97b3-f2dd-462b-9e22-7577a31f2f09",
+                    "type": "line-chart",
+                    "title": "CAS Read Unavailables",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_Unavailables{axonfunction='rate',function='Count',scope='CASRead',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 0,
+                        "y": 28,
+                        "i": "e2df97b3-f2dd-462b-9e22-7577a31f2f09"
+                    }
+                },
+                {
+                    "uuid": "3aeb0fc4-2da6-466b-b1b5-038481af03f4",
+                    "type": "line-chart",
+                    "title": "CAS Write Condition Not Met",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_ConditionNotMet{axonfunction='rate',function='Count',scope='CASWrite',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 9,
+                        "y": 32,
+                        "i": "3aeb0fc4-2da6-466b-b1b5-038481af03f4"
+                    }
+                },
+                {
+                    "uuid": "5d53d0c2-0f7a-4f61-9819-c668b422bd22",
+                    "type": "line-chart",
+                    "title": "CAS Read Unfinished Commit",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_UnfinishedCommit{axonfunction='rate',function='Count',scope='CASRead',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 0,
+                        "y": 32,
+                        "i": "5d53d0c2-0f7a-4f61-9819-c668b422bd22"
+                    }
+                },
+                {
+                    "uuid": "07a6051e-5522-475f-93b3-3fec709bef19",
+                    "type": "line-chart",
+                    "title": "CAS Read Condition Not Met",
+                    "group": "51ce1fb6-057f-4eab-9498-261420e8ed35",
+                    "details": {
+                        "eventsLevel": [],
+                        "eventsMessage": "",
+                        "eventsSource": [],
+                        "eventsType": [],
+                        "isShowLabels": false,
+                        "isSmoothLines": true,
+                        "lineThickness": 1,
+                        "nullAsZero": false,
+                        "queries": [
+                            {
+                                "legend": "$dc - $host_id - $scope",
+                                "query": "cas_ClientRequest_ConditionNotMet{axonfunction='rate',function='Count',scope='CASRead',dc=~'$dc',rack=~'$rack',host_id=~'$host_id'}"
+                            }
+                        ],
+                        "resolution": "low",
+                        "topK": 999,
+                        "useCache": true,
+                        "widgetGroup": "metrics",
+                        "yMax": 0,
+                        "ySi": false,
+                        "yUnit": "short"
+                    },
+                    "layout": {
+                        "w": 9,
+                        "h": 4,
+                        "x": 0,
+                        "y": 36,
+                        "i": "07a6051e-5522-475f-93b3-3fec709bef19"
+                    }
+                }
+           ]
+        }
