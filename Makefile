@@ -33,10 +33,10 @@ endpoints: check-env ## Create alert endpoints and integrations
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_alert_endpoints.yml --diff ${EXTRA}
 
 routes: check-env ## Create alert routes
-	@${PIPENVCMD} ansible-playbook -v -i localhost, setup_alert_routes.yml --diff ${EXTRA}
+	@${PIPENVCMD} ansible-playbook -i localhost, setup_alert_routes.yml --diff ${EXTRA}
 
 metrics-alerts: check-env ## Create alerts based on metrics
-	@${PIPENVCMD} ansible-playbook -v -i localhost, setup_metrics_alerts.yml --diff ${EXTRA}
+	@${PIPENVCMD} ansible-playbook -i localhost, setup_metrics_alerts.yml --diff ${EXTRA}
 
 log-alerts: check-env ## Create alerts based on logs
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_log_alerts.yml --diff ${EXTRA}
@@ -47,8 +47,11 @@ service-checks: check-env ## Create alerts for TCP and shell connections
 backups: check-env ## Create backup
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_backups.yml --diff ${EXTRA}
 
-commitlog: check-env ## Create commitlog archive
+commitlog: check-env ### Create commitlog archive
 	@${PIPENVCMD} ansible-playbook -i localhost, setup_commitlogs_archive.yml --diff ${EXTRA}
+
+dashboard: check-env ## Create custom dashboard
+	@${PIPENVCMD} ansible-playbook -i localhost, setup_dashboards.yml --diff ${EXTRA}
 
 validate: ## Validate YAML config
 	@${PIPENVCMD} python validate_yaml.py

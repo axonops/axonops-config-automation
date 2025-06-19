@@ -1,0 +1,45 @@
+- hosts: localhost
+  name: "Creates or Updates the AxonOps custom dashboards"
+  become: false
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Get the Org name
+      tags: always
+      ansible.builtin.set_fact:
+        org: "{{ lookup('env', 'AXONOPS_ORG') }}"
+      when: org is not defined
+
+    - name: Get the cluster name
+      tags: always
+      ansible.builtin.set_fact:
+        cl: "{{ lookup('env', 'AXONOPS_CLUSTER') }}"
+      when: cl is not defined and lookup('env', 'AXONOPS_CLUSTER') != ''
+
+    - name: Fail if no org
+      ansible.builtin.assert:
+        that:
+          - org is defined
+          - org | length > 1
+
+    - name: Execute tasks for a single cluster
+      include_tasks: tasks/dashboards.yml
+      vars:
+        cluster: "{{ cl }}"
+      when: cl is defined and cl != ''
+
+    - name: List clusters in the org
+      axonops.configuration.get_clusters:
+        org: "{{ org }}"
+      register: clusters
+      tags: always
+      when: cl is not defined
+
+    - name: Execute tasks for each cluster in the org
+      include_tasks: tasks/dashboards.yml
+      vars:
+        cluster: "{{ item }}"
+      with_flattened: "{{ clusters['clusters'] | dict2items | map(attribute='value') | flatten }}"
+      when: cl is not defined
+# code: language=ansible
