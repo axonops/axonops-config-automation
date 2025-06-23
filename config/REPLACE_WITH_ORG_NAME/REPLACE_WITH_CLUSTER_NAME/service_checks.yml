@@ -30,20 +30,29 @@ axonops_shell_check:
   script: |-
     import urllib.request
     import json
+    import sys
 
     url = "http://169.254.169.254/latest/meta-data/events/maintenance/scheduled"
-    response = urllib.request.urlopen(url).read()
+    try:
+      response = urllib.request.urlopen(url, timeout=2).read()
+    except urllib.error.URLError as e:
+      print("Connection refused: assuming not running in AWS")
+      sys.exit(0)
+    except urllib.error.HTTPError as e:
+      if e.code == 404:
+        print("No scheduled maintenance events found or not an AWS instance")
+        sys.exit(0)
 
     data = json.loads(response.decode('utf-8'))
 
     if not data:
         print("No events for this node")
-        exit(0)
+        sys.exit(0)
     else:
         print("Events detected:")
         for event in data:
             print(f"{event['NotBefore']} - {event['Description']}")
-        exit(1)
+        sys.exit(1)
 
 axonops_tcp_check:
 - name: cql_client_port
