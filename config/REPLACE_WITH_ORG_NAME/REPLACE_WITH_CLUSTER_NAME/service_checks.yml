@@ -37,6 +37,7 @@ axonops_shell_check:
       response = urllib.request.urlopen(url, timeout=2).read()
     except urllib.error.URLError as e:
       print("Connection refused: assuming not running in AWS")
+      sys.exit(0)
     except urllib.error.HTTPError as e:
       if e.code == 404:
         print("No scheduled maintenance events found or not an AWS instance")
