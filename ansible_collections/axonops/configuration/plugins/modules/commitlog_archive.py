@@ -189,6 +189,7 @@ def run_module():
     if module.params['remote_type'] == 's3':
         requested_setting['s3_region'] = module.params['s3_region']
         requested_setting['s3_access_key_id'] = module.params['s3_access_key_id']
+        requested_setting['s3_secret_access_key'] = module.params['s3_secret_access_key']
         requested_setting['s3_storage_class'] = module.params['s3_storage_class']
         requested_setting['s3_acl'] = module.params['s3_acl']
         requested_setting['s3_encryption'] = module.params['s3_encryption']
@@ -238,7 +239,7 @@ def run_module():
             remote_config_dict['env_auth'] = 'false'
             remote_config_dict['access_key_id'] = requested_setting[
                 's3_access_key_id'] if 's3_access_key_id' in requested_setting else module.params['s3_access_key_id']
-            remote_config_dict['secret_access_key'] = requested_setting[
+            remote_config_dict['s3_secret_access_key'] = requested_setting[
                 's3_secret_access_key'] if 's3_secret_access_key' in requested_setting else module.params[
                 's3_secret_access_key']
         else:
@@ -315,15 +316,14 @@ def run_module():
     if requested_setting['present']:
         _, return_error = axonops.do_request(
             rel_url=commitlog_settings_url,
-            method='PUT',
+            method='POST',
             json_data=payload,
         )
 
         if return_error:
-            module.fail_json(msg='PUT' + return_error, **result)
+            module.fail_json(msg='POST' + return_error, **result)
 
     module.exit_json(**result)
-
 
 def main():
     run_module()
