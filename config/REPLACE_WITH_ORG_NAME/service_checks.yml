@@ -224,6 +224,41 @@ axonops_shell_check:
             print(f"{event['NotBefore']} - {event['Description']}")
         exit(1)
 
+- name: Check for commitlog archives
+  interval: 12h
+  present: true
+  timeout: 1m
+  script: |-
+    #!/bin/bash
+
+    # Directory containing .axon_commit_log as a subdirectory
+    commit_log_dir="{{ .comp_commitlog_directory }}"
+
+    # Random sleep between 0 and 60 seconds
+    sleep $(shuf -i 1-60 -n 1)
+
+    # Full path to the .axon_commit_log directory
+    log_dir="${commit_log_dir}/.axon_commit_log"
+
+    # Exit silently with 0 if directory does not exist
+    if [[ ! -d "$log_dir" ]]; then
+        exit 0
+    fi
+
+    # Count the number of files (not directories) in the directory
+    file_count=$(find "$log_dir" -type f | wc -l)
+
+    if (( file_count > 20 )); then
+        echo "ERROR: More than 20 files ($file_count) in $log_dir."
+        exit 2
+    elif (( file_count > 10 )); then
+        echo "WARNING: More than 10 files ($file_count) in $log_dir."
+        exit 1
+    else
+        echo "OK: $file_count files in $log_dir."
+        exit 0
+    fi
+
 - name: Cassandra CQL Consistency Level Test Script
   interval: 12h
   present: true
