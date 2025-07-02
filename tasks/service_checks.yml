@@ -37,13 +37,13 @@
   with_fileglob:
     - "config/{{ org }}/{{ cluster }}/service_checks.yml"
 
-- name: Apply TCP Check on {{ org }}/{{ cluster }}
+- name: "Apply TCP Check on {{ org }}/{{ cluster }}"
   axonops.configuration.tcp_check:
     org: "{{ org }}"
     cluster: "{{ cluster }}"
-    cluster_type: "{{ tcpcheck_item.cluster_type|default(omit) }}"
-    present: "{{ tcpcheck_item.present|default(true) }}"
-    name: "{{ tcpcheck_item.name|default('') }}"
+    cluster_type: "{{ tcpcheck_item.cluster_type | default(omit) }}"
+    present: "{{ tcpcheck_item.present | default(true) }}"
+    name: "{{ tcpcheck_item.name | default('') }}"
     interval: "{{ tcpcheck_item.interval }}"
     timeout: "{{ tcpcheck_item.timeout }}"
     tcp: "{{ tcpcheck_item.tcp }}"
@@ -57,17 +57,20 @@
   - check
   - tcp
 
-- name: Apply Shell Check on {{ org }}/{{ cluster }}
+- name: "Apply Shell Check on {{ org }}/{{ cluster }}"
   axonops.configuration.shell_check:
     org: "{{ org }}"
     cluster: "{{ cluster }}"
-    cluster_type: "{{ shellcheck_item.cluster_type|default(omit) }}"
-    present: "{{ shellcheck_item.present|default(true) }}"
-    name: "{{ shellcheck_item.name|default('') }}"
+    cluster_type: "{{ shellcheck_item.cluster_type | default(omit) }}"
+    present: "{{ shellcheck_item.present | default(true) }}"
+    name: "{{ shellcheck_item.name | default('') }}"
     interval: "{{ shellcheck_item.interval }}"
     timeout: "{{ shellcheck_item.timeout }}"
-    shell: "{{ shellcheck_item.shell|default('/bin/bash') }}"
+    shell: "{{ shellcheck_item.shell | default('/bin/bash') }}"
     script: "{{ shellcheck_item.script }}"
+    auth_token: "{{ shellcheck_item.auth_token | default(omit) }}"
+    username: "{{ shellcheck_item.username | default(omit) }}"
+    password: "{{ shellcheck_item.password | default(omit) }}"
   with_items:
     "{{ axonops_shell_check }}"
   no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
