@@ -17,6 +17,12 @@
   with_fileglob:
     - "config/{{ org }}/{{ cluster }}/commitlog_archive.yml"
 
+- name: Include the vault secrets
+  tags: always
+  ansible.builtin.include_vars: "{{ item }}"
+  with_fileglob:
+    - "config/{{ org }}/{{ cluster }}/vault.yml"
+
 - name: Apply Commitlog Archive Settings on {{ org }}/{{ cluster }}
   axonops.configuration.commitlog_archive:
     org: "{{ org }}"
@@ -38,8 +44,8 @@
     azure_msi_client_id: "{{ commitlog_item.azure_msi_client_id | default(omit)}}"
     azure_msi_mi_res_id: "{{ commitlog_item.azure_msi_mi_res_id | default(omit)}}"
     s3_region: "{{ commitlog_item.s3_region |default('')}}"
-    s3_access_key_id: "{{ commitlog_item.s3_access_key_id|default(none) }}"
-    s3_secret_access_key: "{{ commitlog_item.s3_secret_access_key|default(none) }}"
+    s3_access_key_id: "{{ s3_access_key_id }}"
+    s3_secret_access_key: "{{ s3_secret_access_key }}"
     s3_storage_class: "{{ commitlog_item.s3_storage_class|default('STANDARD') }}"
     s3_acl: "{{ commitlog_item.s3_acl|default('private') }}"
     s3_encryption: "{{ commitlog_item.s3_encryption|default('AES256') }}"
@@ -48,6 +54,9 @@
     ssh_user: "{{ commitlog_item.ssh_user |default(omit)}}"
     ssh_pass: "{{ commitlog_item.ssh_pass |default(omit)}}"
     key_file: "{{ commitlog_item.key_file |default(omit)}}"
+    auth_token: "{{ commitlog_item.auth_token | default(omit) }}"
+    username: "{{ commitlog_item.username | default(omit) }}"
+    password: "{{ commitlog_item.password | default(omit) }}"
   with_items:
     "{{ axonops_commitlog_archive }}"
   no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
