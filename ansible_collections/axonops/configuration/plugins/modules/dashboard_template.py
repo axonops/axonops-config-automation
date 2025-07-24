@@ -100,10 +100,14 @@ def run_module():
     # e.g  http://127.0.0.1:3000/api/v1/dashboardtemplate/demo/cassandra/demo-cluster
     dashboardtemplate_url = (f"/api/v1/dashboardtemplate/"
                              f"{module.params['org']}/{axonops.get_cluster_type()}/{module.params['cluster']}?dashver=2.0")
+    dashboardtemplate_v1_url = (f"/api/v1/dashboardtemplate/"
+                             f"{module.params['org']}/{axonops.get_cluster_type()}/{module.params['cluster']}")
 
     old_templates, return_error = axonops.do_request(dashboardtemplate_url)
-    if return_error:
-        module.fail_json(msg=return_error, **result)
+    if return_error or not old_templates:
+        old_templates, return_error_v1 = axonops.do_request(dashboardtemplate_v1_url)
+        if return_error_v1 or not old_templates:
+            module.fail_json(msg=f"API v2 error: {return_error}\n\n API v1 error:{return_error_v1}", **result)
 
     # the old template if exists
     old_template_found = None
@@ -158,9 +162,12 @@ def run_module():
 
     # result['payload'] = {'payload': payload}
     _, error = axonops.do_request(rel_url=dashboardtemplate_url, method='PUT', json_data=payload)
-    if error is not None:
-        module.fail_json(msg="Failed to create dashboard: " + str(error), **result)
-        return
+    if error is None:
+        # we also try the old API v1
+        _, error_v1 = axonops.do_request(rel_url=dashboardtemplate_v1_url, method='PUT', json_data=payload)
+        if error_v1 is not None:
+            module.fail_json(msg=f"Failed to create dashboard v2 API: {error}\n\n v1 API{error_v1}", **result)
+            return
 
     module.exit_json(**result)
 
