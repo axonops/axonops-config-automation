@@ -144,29 +144,33 @@ def run_module():
     if error is not None:
         error_message = "Error occurred accessing alert URL: " + alerts_url + str(error)
         module.fail_json(msg=error_message)
-        return
 
-    dash_templates, error = axonops.do_request(
-        f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}")
-    if error is not None:
-        error_message = ("Error occurred fetching AxonOps dashboard template: "
-                         + f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}"
-                         + str(error))
-        module.fail_json(msg=error_message)
-        return
+    dashboard_template_api = f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}?dashver=2.0"
+    dashboard_template_api_v1 = f"/api/v1/dashboardtemplate/{org}/{axonops.get_cluster_type()}/{cluster}"
 
-    # Find the referenced dashboard by name
-    new_dash = find_by_field(dash_templates.get('dashboards'), 'name', module.params['dashboard'])
-    if not new_dash:
-        module.fail_json(msg=f"Could not find dashboard '{module.params['dashboard']}' in AxonOps")
-        return
+    # Get the dashboard templates, try both API versions
+    new_charts = None
+    for url in [dashboard_template_api, dashboard_template_api_v1]:
+        dash_templates, error = axonops.do_request(url)
+        if error is not None or not dash_templates:
+            continue
 
-    # Find the referenced chart in the dashboard
-    new_charts = find_by_field(new_dash.get('panels'), 'title', module.params['chart'])
+        # Find the referenced dashboard by name
+        new_dash = find_by_field(dash_templates.get('dashboards'), 'name', module.params['dashboard'])
+        if not new_dash:
+            continue
+
+        # Find the referenced chart in the dashboard
+        new_charts = find_by_field(new_dash.get('panels'), 'title', module.params['chart'])
+
+        if new_charts:
+            break
+
     new_chart = None
+    # if we did not find the chart in any of the dashboard templates, any API versions, fail
     if new_charts is None:
         module.fail_json(msg=f"Could not find chart '{module.params['chart']}' in AxonOps")
-        return
+
     # if new_charts is a list of elements, we have more than one charts and we need to choose the correct one
     elif isinstance(new_charts, list):
         result['response'] = new_charts
