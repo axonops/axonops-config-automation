@@ -174,7 +174,6 @@ def run_module():
     # if new_charts is a list of elements, we have more than one charts and we need to choose the correct one
     elif isinstance(new_charts, list):
         result['response'] = new_charts
-        #module.fail_json(new_charts)
 
         for chart in new_charts:
             # if the chart has a query, use it
@@ -191,7 +190,8 @@ def run_module():
         new_chart = new_charts
 
     if not new_chart:
-        module.fail_json(msg=f"Could not find chart '{module.params['chart']}' in AxonOps dashboard '{module.params['dashboard']}'")
+        module.fail_json(
+            msg=f"Could not find chart '{module.params['chart']}' in AxonOps dashboard '{module.params['dashboard']}'")
 
     raw_query = None
     # check if it is an event base alert rather than metrics
@@ -208,7 +208,8 @@ def run_module():
             if 'eventsType' in new_chart['details']:
                 new_chart_filters['type'] = ','.join(new_chart['details']['eventsType'])
             if not new_chart_filters:
-                module.fail_json(msg=f"Could not find filters in chart '{module.params['chart']}' in AxonOps dashboard '{module.params['dashboard']}'")
+                module.fail_json(
+                    msg=f"Could not find filters in chart '{module.params['chart']}' in AxonOps dashboard '{module.params['dashboard']}'")
 
     # if it is not, get the chart query if not specified in the params
     elif not module.params['metric']:
