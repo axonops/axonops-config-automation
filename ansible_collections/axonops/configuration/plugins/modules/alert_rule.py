@@ -174,33 +174,48 @@ def run_module():
     # if new_charts is a list of elements, we have more than one charts and we need to choose the correct one
     elif isinstance(new_charts, list):
         result['response'] = new_charts
+        #module.fail_json(new_charts)
 
         for chart in new_charts:
             # if the chart has a query, use it
-            if chart['details']['queries']:
+            if 'details' in chart and 'queries' in chart['details'] and chart['details']['queries']:
                 new_chart = chart
                 break
             # if we find type == 'events_timeline', use it
-            if chart.get('type') == 'events_timeline':
+            if chart.get('type') in ['events_timeline', 'table']:
                 new_chart = chart
                 break
+
     else:
         # if it is not a list, we have a single element, we can use it directly
         new_chart = new_charts
 
+    if not new_chart:
+        module.fail_json(msg=f"Could not find chart '{module.params['chart']}' in AxonOps dashboard '{module.params['dashboard']}'")
+
     raw_query = None
     # check if it is an event base alert rather than metrics
     new_chart_filters = None
-    if new_chart.get('type') == 'events_timeline':
+    if new_chart.get('type') in ['events_timeline', 'table']:
         metric = ''
-        new_chart_filters = new_chart['details']['filters']
+        if 'details' in new_chart and 'filters' in new_chart['details']:
+            new_chart_filters = new_chart['details']['filters']
+        else:
+            # find `type` and `level` in the chart details
+            new_chart_filters = {}
+            if 'eventsLevel' in new_chart['details']:
+                new_chart_filters['level'] = ','.join(new_chart['details']['eventsLevel'])
+            if 'eventsType' in new_chart['details']:
+                new_chart_filters['type'] = ','.join(new_chart['details']['eventsType'])
+            if not new_chart_filters:
+                module.fail_json(msg=f"Could not find filters in chart '{module.params['chart']}' in AxonOps dashboard '{module.params['dashboard']}'")
 
     # if it is not, get the chart query if not specified in the params
     elif not module.params['metric']:
         try:
             raw_query = new_chart['details']['queries'][0]['query']
         except (TypeError, IndexError):
-            module.fail_json(msg='Failed getting the metric query from the specified chart')
+            module.fail_json(msg=f'Failed getting the metric query from the specified chart: {new_chart}')
             return
 
         # remove var similar to: dc=~'$dc',rack=~'$rack', host_id=~'$host_id'
@@ -353,7 +368,7 @@ def run_module():
 
     new_data_normalized = normalize_numbers(new_data)
     # Set up alert expression
-    if new_chart['details']['queries']:
+    if 'details' in new_chart and 'queries' in new_chart['details'] and new_chart['details']['queries']:
         orig_query = new_chart['details']['queries'][0]['query']
         pattern = re.compile(r"\{([^}]*)\}")
         match = pattern.search(orig_query)
@@ -414,7 +429,7 @@ def run_module():
                           + " " + module.params['operator'] + " " + str(module.params['warning_value']))
         result['new_expression'] = new_expression
         result['new_data'] = new_data
-    elif new_chart.get('type') == 'events_timeline':
+    elif new_chart.get('type') in ['events_timeline', 'table']:
         filters = []
         if module.params['host_id']:
             host_id_list = ",".join(module.params['host_id'])
