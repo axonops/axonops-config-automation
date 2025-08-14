@@ -18,14 +18,17 @@
   with_fileglob:
     - "config/{{ org }}/{{ cluster }}/dashboards.yml"
 
-- name: Install dashboard templates on {{ org }}/{{ cluster }}
+- name: "Install dashboard templates on {{ org }}/{{ cluster }}"
   axonops.configuration.dashboard_template:
     org: "{{ org }}"
     cluster: "{{ cluster }}"
-    cluster_type: "{{ dashboard_item.cluster_type|default(omit) }}"
+    cluster_type: "{{ dashboard_item.cluster_type | default(omit) }}"
     name: "{{ dashboard_item.name }}"
-    filters: "{{ dashboard_item.filters |default(omit) }}"
-    panels: "{{ dashboard_item.panels |default(omit)}}"
+    filters: "{{ dashboard_item.filters | default(omit) }}"
+    panels: "{{ dashboard_item.panels | default(omit) }}"
+    auth_token: "{{ dashboard_item.auth_token | default(omit) }}"
+    username: "{{ dashboard_item.username | default(omit) }}"
+    password: "{{ dashboard_item.password | default(omit) }}"
   with_items:
     "{{ axonops_dashboard_templates }}"
   no_log: "{{ false if enable_logging is defined and enable_logging else true }}"
