@@ -4,16 +4,28 @@ import sys
 from typing import Sequence
 
 from .axonops import AxonOps
+from .components.repair import AdaptiveRepair
 
 class Application:
-    adaptive_repair_url = "/api/v1/adaptiveRepair"
+    
 
     def __init__(self):
         """
         This object represents the main application
         """
+        self.axonops = None
         # the option taken from the files and argv parameter
         #self.options:dict[str, str] = {}
+        
+    def get_axonops(self, args):
+        if self.axonops is None:
+            self.axonops = AxonOps(args.org,
+                          api_token=args.token,
+                          base_url=args.url,
+                          username=args.username,
+                          password=args.password,
+                          cluster_type=args.cluster)
+        return self.axonops
 
     def run(self, argv: Sequence):
 
@@ -51,19 +63,28 @@ class Application:
 
         # if func() is not present it means that no command was inserted
         if hasattr(parsed_result, 'func'):
+            self.run_mandatory_args_check(parsed_result)
             parsed_result.func(parsed_result)
         else:
             parser.print_help()
 
-    def run_adaptive_repair(self, args):
+    def run_mandatory_args_check(self, args: argparse.Namespace):
+        """ Check if mandatory variable are present """
+        if not args.org or not args.cluster:
+            print("The org and the cluster are mandatory")
+            sys.exit(1)
+        else:
+            if args.v:
+                print(f"Org: {args.org}")
+                print(f"Cluster: {args.cluster}")
+
+    def run_adaptive_repair(self, args: argparse.Namespace):
+        """ Run the adaptive repair """
         if args.v:
             print(f"Running repairs on {args.org}")
             print(args)
 
-        if not args.org or not args.cluster:
-            print("The org and the cluster are mandatory")
-            sys.exit(1)
-
+        # input checking
         if args.enabled and args.disabled:
             print("The option enabled and disabled are mutually exclusive, you can't choose both at the same time.")
             sys.exit(1)
@@ -72,29 +93,14 @@ class Application:
             print("At least one option enabled or disabled should be present.")
             sys.exit(1)
 
-        url = f"{Application.adaptive_repair_url}/{args.org}/cassandra/{args.cluster}"
+        axonops = self.get_axonops(args)
+        
+        adaptive_repair = AdaptiveRepair(args, axonops)
 
-        payload = {
-            'Active': args.enabled,
-            # 'GcGraceThreshold': requested_setting['gc_grace'],
-            # 'TableParallelism': requested_setting['parallelism'],
-            # 'BlacklistedTables': requested_setting['blacklisted'],
-            # 'FilterTWCSTables': requested_setting['filter_twcs'],
-            # 'SegmentRetries': requested_setting['retries']
-        }
+        adaptive_repair.get_actual_repair()
 
-        if args.v:
-            print("POST", url, payload)
+        adaptive_repair.check_repair_status()
 
-        axonops = AxonOps(args.org,
-                          api_token=args.token,
-                          base_url=args.url,
-                          username=args.username,
-                          password=args.password,
-                          cluster_type=args.cluster)
+        adaptive_repair.check_repair_active()
 
-        axonops.do_request(
-            url=url,
-            method='POST',
-            json_data=payload,
-        )
+        adaptive_repair.set_repair()

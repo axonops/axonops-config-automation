@@ -41,6 +41,9 @@ class AxonOps:
         """
         return self.cluster_type
 
+    def dash_url(self):
+        return self.base_url
+
     def get_jwt(self) -> str:
         """
         Get the JWT from the login endpoint
@@ -60,9 +63,6 @@ class AxonOps:
                 self.errors.append(return_error)
             self.jwt = result['token']
             return self.jwt
-
-    def dash_url(self):
-        return self.base_url
 
     def do_request(self, url: str,
                    method: str = "GET",
