@@ -31,6 +31,12 @@ Manages **Adaptive Repair** in AxonOps.
 
 * `--enabled` Enables AxonOps Adaptive Repair.
 * `--disabled` Disable AxonOps Adaptive Repair.
+* `--gcgrace` GG Grace Threshold in Seconds.
+* `--tableparallelism` Cuncurrent Repair Processes.
+* `--segmentretries` Segment Retries.
+* `--excludedtables` Excluded Tables. This parameter accepts a comma-separated list in the format `keyspace.table1,keyspace.table2`.
+* `--excludetwcstables` Exclude TWCS tables.
+* `--segmenttargetsizemb` Segment Target Size in MB.
 
 #### Example: 
 

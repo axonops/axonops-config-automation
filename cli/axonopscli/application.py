@@ -6,8 +6,8 @@ from typing import Sequence
 from .axonops import AxonOps
 from .components.repair import AdaptiveRepair
 
+
 class Application:
-    
 
     def __init__(self):
         """
@@ -15,16 +15,16 @@ class Application:
         """
         self.axonops = None
         # the option taken from the files and argv parameter
-        #self.options:dict[str, str] = {}
-        
+        # self.options:dict[str, str] = {}
+
     def get_axonops(self, args):
         if self.axonops is None:
             self.axonops = AxonOps(args.org,
-                          api_token=args.token,
-                          base_url=args.url,
-                          username=args.username,
-                          password=args.password,
-                          cluster_type=args.cluster)
+                                   api_token=args.token,
+                                   base_url=args.url,
+                                   username=args.username,
+                                   password=args.password,
+                                   cluster_type=args.cluster)
         return self.axonops
 
     def run(self, argv: Sequence):
@@ -54,10 +54,28 @@ class Application:
         adaptive_repair_parser.set_defaults(func=self.run_adaptive_repair)
 
         adaptive_repair_parser.add_argument('--enabled', action='store_true',
-                            help='Enables AxonOps Adaptive Repair')
+                                            help='Enables AxonOps Adaptive Repair')
 
         adaptive_repair_parser.add_argument('--disabled', action='store_true',
-                            help='Disable AxonOps Adaptive Repair')
+                                            help='Disable AxonOps Adaptive Repair')
+
+        adaptive_repair_parser.add_argument('--gcgrace', type=int, required=False,
+                                            help='GG Grace Threshold in Seconds')
+
+        adaptive_repair_parser.add_argument('--tableparallelism', type=int, required=False,
+                                            help='Concurrent Repair Processes')
+
+        adaptive_repair_parser.add_argument('--segmentretries', type=int, required=False,
+                                            help='Segment Retries')
+
+        adaptive_repair_parser.add_argument('--excludedtables', type=str, required=False,
+                                            help='Comma-separated list og table excluded from the Adapted Repair')
+
+        adaptive_repair_parser.add_argument('--excludetwcstables', type=str, required=False,
+                                            help='Exclude TWCS tables from the Adaptive Repair. true/false default true')
+
+        adaptive_repair_parser.add_argument('--segmenttargetsizemb', type=int, required=False,
+                                            help='Segment Target Size in MB')
 
         parsed_result: argparse.Namespace = parser.parse_args(args=argv)
 
@@ -94,7 +112,7 @@ class Application:
             sys.exit(1)
 
         axonops = self.get_axonops(args)
-        
+
         adaptive_repair = AdaptiveRepair(args, axonops)
 
         adaptive_repair.get_actual_repair()
@@ -102,5 +120,7 @@ class Application:
         adaptive_repair.check_repair_status()
 
         adaptive_repair.check_repair_active()
+
+        adaptive_repair.set_options()
 
         adaptive_repair.set_repair()

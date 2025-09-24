@@ -1,6 +1,7 @@
 import argparse
 from axonopscli.axonops import AxonOps
 
+
 class AdaptiveRepair:
     """
     This class manages the logic for the adaptive repair.
@@ -20,22 +21,22 @@ class AdaptiveRepair:
                 print("GET", self.full_url)
 
             self.repair_data = self.axonops.do_request(
-            url=self.full_url,
-            method='GET',
-        )
+                url=self.full_url,
+                method='GET',
+            )
         return self.repair_data
 
     def check_repair_status(self):
         """ Check if the repair is failing and why"""
-        if not  self.repair_data['Ready']:
+        if not self.repair_data['Ready']:
             print("The repair is not ready")
             if self.repair_data['NotReadyReason']:
-                print("Reason:",self.repair_data['NotReadyReason'])
+                print("Reason:", self.repair_data['NotReadyReason'])
 
     def check_repair_active(self):
         """ Check if the repair needs to be enabled/disabled"""
         if self.args.v:
-            print("Actual", self.repair_data['Active']) 
+            print("Actual", self.repair_data['Active'])
             print("Enabled", self.args.enabled)
             print("Disabled", self.args.disabled)
 
@@ -47,24 +48,34 @@ class AdaptiveRepair:
             print("The repair is currently enabled, it needs to be disabled. Disabling it")
             self.repair_data['Active'] = False
 
+    def set_options(self):
+        """Apply optional CLI parameters into the payload before sending it."""
+
+        if getattr(self.args, 'gcgrace', None) is not None:
+            print("Setting GcGraceThreshold to", self.args.gcgrace, "seconds")
+            self.repair_data['GcGraceThreshold'] = self.args.gcgrace
+
+        if getattr(self.args, 'tableparallelism', None) is not None:
+            print("Setting TableParallelism to", self.args.tableparallelism)
+            self.repair_data['TableParallelism'] = self.args.tableparallelism
+
+        if getattr(self.args, 'segmentretries', None) is not None:
+            print("Setting SegmentRetries to", self.args.segmentretries)
+            self.repair_data['SegmentRetries'] = self.args.segmentretries
+
+        if getattr(self.args, 'excludedtables', None) is not None:
+            print("Setting excludedtables to", self.args.excludedtables)
+            self.repair_data['BlacklistedTables'] = self.args.excludedtables
+
+        if getattr(self.args, 'excludetwcstables', None) is not None:
+            print("Setting excludetwcstables to", self.args.excludetwcstables)
+            self.repair_data['FilterTWCSTables'] = self.args.excludetwcstables
+
+        if getattr(self.args, 'segmenttargetsizemb', None) is not None:
+            print("Setting SegmentTargetSizeMB to", self.args.segmenttargetsizemb)
+            self.repair_data['SegmentTargetSizeMB'] = self.args.segmenttargetsizemb
+
     def set_repair(self):
-        # payload = {
-        #     'Active': self.args.enabled,
-        #     'Ready': self.repair_data['Ready'],
-        #     'NotReadyReason': self.repair_data['NotReadyReason'],
-        #     'GcGraceThreshold': self.repair_data['GcGraceThreshold'],
-        #     'SegmentsPerVnode': self.repair_data['SegmentsPerVnode'],
-        #     'TableParallelism': self.repair_data['TableParallelism'],
-        #     'SegmentRetries': self.repair_data['SegmentRetries'],
-        #     'BlacklistedTables': self.repair_data['BlacklistedTables'],
-        #     'FilterTWCSTables': self.repair_data['FilterTWCSTables'],
-        #     'SegmentTargetSizeMB': self.repair_data['SegmentTargetSizeMB'],
-        #     'SkipPaxos': self.repair_data['SkipPaxos'],
-        #     'PaxosOnly': self.repair_data['PaxosOnly'],
-        #     'OptimiseStreams': self.repair_data['OptimiseStreams'],
-        #     'MaxSegmentsPerTable': self.repair_data['MaxSegmentsPerTable'],
-        # }
-        # print(self.repair_data)
 
         if self.args.v:
             print("POST", self.full_url, self.repair_data)
@@ -74,5 +85,3 @@ class AdaptiveRepair:
             method='POST',
             json_data=self.repair_data,
         )
-
-    
