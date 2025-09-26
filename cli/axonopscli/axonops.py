@@ -3,8 +3,10 @@ import requests
 import urllib.parse
 from typing import List
 
+
 class HTTPCodeError(Exception):
     pass
+
 
 class AxonOps:
 
@@ -41,6 +43,9 @@ class AxonOps:
         """
         return self.cluster_type
 
+    def dash_url(self):
+        return self.base_url
+
     def get_jwt(self) -> str:
         """
         Get the JWT from the login endpoint
@@ -60,9 +65,6 @@ class AxonOps:
                 self.errors.append(return_error)
             self.jwt = result['token']
             return self.jwt
-
-    def dash_url(self):
-        return self.base_url
 
     def do_request(self, url: str,
                    method: str = "GET",
@@ -110,7 +112,7 @@ class AxonOps:
         print(f"{method} {full_url} {headers}")
 
         try:
-            response = requests.request(method, full_url, headers=headers,data=data)
+            response = requests.request(method, full_url, headers=headers, data=data)
             if response.status_code == 204:
                 print(f"204 No Content received from {full_url}")
                 return {}
@@ -210,6 +212,7 @@ class AxonOps:
                     break
 
         return list_of_ids, None
+
 
 if __name__ == "__main__":
     print("This file is not meant to be run directly. This file only contains object that other scripts are using.")
