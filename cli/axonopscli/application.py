@@ -24,7 +24,8 @@ class Application:
                                    base_url=args.url,
                                    username=args.username,
                                    password=args.password,
-                                   cluster_type=args.cluster)
+                                   cluster_type=args.cluster,
+                                   verbose=args.v)
         return self.axonops
 
     def run(self, argv: Sequence):
@@ -69,7 +70,7 @@ class Application:
                                             help='Segment Retries')
 
         adaptive_repair_parser.add_argument('--excludedtables', type=str, required=False,
-                                            help='Comma-separated list og table excluded from the Adapted Repair')
+                                            help='Comma-separated list of table excluded from the Adapted Repair')
 
         adaptive_repair_parser.add_argument('--excludetwcstables', type=str, required=False,
                                             help='Exclude TWCS tables from the Adaptive Repair. true/false default true')
