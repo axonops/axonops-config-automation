@@ -38,14 +38,47 @@ Manages **Adaptive Repair** in AxonOps.
 * `--excludetwcstables` Exclude TWCS tables.
 * `--segmenttargetsizemb` Segment Target Size in MB.
 
-#### Example: 
+#### Examples: 
 
-Activating Adaptive Repair for organisation `test` and cluster `thingscluster` on AxonOps Cloud:
+The following Activating Adaptive Repair examples are for the organisation `test` and the cluster `thingscluster` on AxonOps Cloud.
+For self-hosted authentication, refer to the authentication section of the main project.
 
+Authenticate to the cluster: 
 ```shell
 export AXONOPS_ORG='test'
 export AXONOPS_CLUSTER="thingscluster"
 export AXONOPS_TOKEN='aaaaabbbbccccddddeeee'
+```
 
+Print the list of options for the repair command:
+```shell
+$ pipenv run python axonops.py repair -h
+```
+Enable the AxonOps Adaptive Repair:
+```shell
 pipenv run python axonops.py repair --enabled
+```
+Disable the repair:
+```shell
+$ pipenv run python axonops.py repair --disable
+```
+Enable the repair and set the GC Grace Threshold to 86,400 seconds (AxonOps will ignore tables that have a gc_grace_seconds value lower than the specified threshold):
+```shell
+$ pipenv run python axonops.py repair --enable --gcgrace 86400
+```
+Enable the repair and set the table parallelism to 100 (number of tables processed in parallel):
+```shell
+$ pipenv run python axonops.py repair --enable --tableparallelism 100
+```
+Enable the repair and set the segment retry limit to 10 (number of times a segment can fail before raising an alert and stopping repairs for that cycle):
+```shell
+$ pipenv run python axonops.py repair --enable --segmentretries 10
+```
+Enable the repair and set the segment chunk size to 250 MB (amount of data repaired at a time):
+```shell
+$ pipenv run python axonops.py repair --enable --segmenttargetsizemb 250
+```
+Exclude specific tables from repair (comma separated list of `keyspace.table`):
+```shell
+pipenv run python axonops.py repair --enable --excludedtables system_auth.roles,system_auth.role_permissions
 ```

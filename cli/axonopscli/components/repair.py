@@ -64,8 +64,12 @@ class AdaptiveRepair:
             self.repair_data['SegmentRetries'] = self.args.segmentretries
 
         if getattr(self.args, 'excludedtables', None) is not None:
-            print("Setting excludedtables to", self.args.excludedtables)
-            self.repair_data['BlacklistedTables'] = self.args.excludedtables
+            tables_args = self.args.excludedtables.split(',')
+            self.repair_data['BlacklistedTables'] = []
+            for table in tables_args:
+                if table not in self.repair_data['BlacklistedTables']:
+                    self.repair_data['BlacklistedTables'].append(table.strip())
+            print("Setting excludedtables to", self.repair_data['BlacklistedTables'])
 
         if getattr(self.args, 'excludetwcstables', None) is not None:
             print("Setting excludetwcstables to", self.args.excludetwcstables)
