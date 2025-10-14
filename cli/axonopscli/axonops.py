@@ -11,13 +11,14 @@ class HTTPCodeError(Exception):
 class AxonOps:
 
     def __init__(self, org_name: str, base_url: str = '', username: str = '', password: str = '',
-                 cluster_type: str = 'cassandra', api_token: str = ''):
+                 cluster_type: str = 'cassandra', api_token: str = '', verbose=False):
         self.org_name = org_name
         self.api_token = api_token
         self.username = username
         self.password = password
         self.cluster_type = cluster_type
         self.jwt = ''
+        self.verbose = verbose
 
         # save the integration output to a var so we can use it multiple times
         self.integrations_output = {}
@@ -109,12 +110,14 @@ class AxonOps:
             headers['Content-type'] = 'application/json'
 
         method = method.upper()
-        print(f"{method} {full_url} {headers}")
+        if self.verbose:
+            print(f"{method} {full_url} {headers}")
 
         try:
             response = requests.request(method, full_url, headers=headers, data=data)
             if response.status_code == 204:
-                print(f"204 No Content received from {full_url}")
+                if self.verbose:
+                    print(f"204 No Content received from {full_url}")
                 return {}
 
             if response.status_code not in ok_codes:
