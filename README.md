@@ -17,6 +17,12 @@
 ---
 
 ## Overview
+### Overview
+
+<p align="center">
+  <strong>⚠️ This repository is no longer maintained — the project has moved to <a href="https://github.com/axonops/axonops-ansible-collection">axonops/axonops-ansible-collection</a>.</strong>
+</p>is repository is not maintained anymore, the project was move on https://github.com/axonops/axonops-ansible-collection
+
 
 This repository provides production-ready Ansible playbooks to automate the configuration of [AxonOps](https://axonops.com) - a comprehensive management platform for Apache Cassandra® and Apache Kafka®. With these playbooks, you can programmatically configure alerts, dashboards, backups, and monitoring rules without manual GUI interaction.
 
